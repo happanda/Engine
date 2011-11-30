@@ -19,6 +19,7 @@ public:
    void invY() { v2 = -v2; }
    Vector2 perpendicular() { return Vector2(v2, -v1); }
    const Vector2& operator=(const Vector2& vect);
+   static const Vector2 ORIGIN;
 };
 
 class Vector3

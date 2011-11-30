@@ -6,7 +6,7 @@
 #include "shape.h"
 #include "collision.h"
 
-const double GJK_INDENT_EPSILON = 0.1;
+const double GJK_INDENT_EPSILON = 0.01;
 const double GJK_INDENT_EPSILON_CHECK = GJK_INDENT_EPSILON * 2;
 
 enum simplex_min_norm
@@ -44,6 +44,8 @@ bool gjk_check_collision(shape& shapeA, shape& shapeB,
                         Collision& collision);
 
 bool gjk_process_simplex(Simplex& simplex, Vector2& direction);
+
+void epa_get_features(Simplex& simplex, Collision& collision);
 
 void gjk_get_points(const Simplex& simplex,
                     Collision& collision);

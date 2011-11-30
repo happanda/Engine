@@ -14,8 +14,8 @@ bool gjk_check_collision(shape& shapeA, shape& shapeB,
    Vector2 direction = shapeB.point - shapeA.point;
    direction = direction.perpendicular();
    direction.normalize2();
-   Vector2 indent = Vector2(GJK_INDENT_EPSILON, GJK_INDENT_EPSILON);
-   //Vector2 indent = Vector2(0, 0);
+   //Vector2 indent = direction * GJK_INDENT_EPSILON;
+   Vector2 indent(0, 0);
    Vector2 suppA = support(direction, shapeA) - indent;
    Vector2 suppB = support(-direction, shapeB) - indent;
    Vector2 s = suppA - suppB;
@@ -28,23 +28,24 @@ bool gjk_check_collision(shape& shapeA, shape& shapeB,
    while(numIter < maxIter)
    {
       numIter++;
+      //indent = direction * GJK_INDENT_EPSILON;
       suppA = support(direction, shapeA) - indent;
       suppB = support(-direction, shapeB) - indent;
       s = suppA - suppB;
       if (s * direction < 0)
       {
-         double snorm = simplex.norm();
+         /*double snorm = simplex.norm();
          if (snorm < GJK_INDENT_EPSILON_CHECK)
          {
             gjk_get_points(simplex, collision);
             return true;
-         }
+         }*/
          return false;
       }
       simplex.push(suppA, suppB, s);
       if (gjk_process_simplex(simplex, direction))
       {
-         gjk_get_points(simplex, collision);
+         //gjk_get_points(simplex, collision);
          return true;
       }
    }
@@ -56,18 +57,17 @@ bool gjk_process_simplex(Simplex& simplex, Vector2& direction)
    assert(simplex.size() > 1);
 
    bool intersect = false;
-   Vector2 origin(0, 0);
    Vector2 A = simplex.P[0],
       B = simplex.P[1];
    Vector2 AB = B - A,
-      AO = origin - A;
+      AO = Vector2::ORIGIN - A;
    switch (simplex.size())
    {
    case 2:
       {
          if (same_direction(AB, AO))
          {
-            if (isOn(origin, A, B))
+            if (isOn(Vector2::ORIGIN, A, B))
                intersect = true;
             direction = perpendicular(AB, -AO);
             simplex.feature = SIMPLEX_AB_EDGE;
@@ -133,6 +133,10 @@ bool gjk_process_simplex(Simplex& simplex, Vector2& direction)
       }
    }
    return intersect;
+}
+
+void epa_get_features(Simplex& simplex, Collision& collision)
+{
 }
 
 void gjk_edge_case(const Simplex& simplex, Collision& collision,
@@ -264,7 +268,6 @@ double Simplex::norm()
 {
    assert(size() > 0);
 
-   Vector2 origin(0,0);
    double norms[6];
    int count = 1;
 
@@ -276,7 +279,7 @@ double Simplex::norm()
       Vector2 B = P[1];
       Segment AB(A, B);
       norms[1] = B.norm2();
-      norms[2] = distance(origin, AB);
+      norms[2] = distance(Vector2::ORIGIN, AB);
       if (size() > 2)
       {
          count = 6;
@@ -284,8 +287,8 @@ double Simplex::norm()
          Segment BC(B, C),
             CA(C, A);
          norms[3] = C.norm2();
-         norms[4] = distance(origin, BC);
-         norms[5] = distance(origin, CA);
+         norms[4] = distance(Vector2::ORIGIN, BC);
+         norms[5] = distance(Vector2::ORIGIN, CA);
       }
    }
    int ind = 0;

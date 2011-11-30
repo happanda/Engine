@@ -1,6 +1,8 @@
 
 #include "geometry.h"
 /* Vector2 members */
+const Vector2 Vector2::ORIGIN = Vector2(0, 0);
+
 void Vector2::rot(double angle)
 {
    double acos = cos(angle);
