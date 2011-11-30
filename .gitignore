@@ -1,0 +1,7 @@
+# Build folders
+Debug/
+
+# Trash files
+*.suo
+*.ncb
+*.user
