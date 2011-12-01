@@ -22,7 +22,7 @@ bool gjk_check_collision(shape& shapeA, shape& shapeB,
 
    simplex.push(suppA, suppB, s);
    direction = -s;
-   int maxIter = 10000,
+   int maxIter = 100,
       numIter = 0;
    simplex.feature = SIMPLEX_A_POINT;
    while(numIter < maxIter)
@@ -37,7 +37,7 @@ bool gjk_check_collision(shape& shapeA, shape& shapeB,
          /*double snorm = simplex.norm();
          if (snorm < GJK_INDENT_EPSILON_CHECK)
          {
-            gjk_get_points(simplex, collision);
+            gjk_get_features(simplex, collision);
             return true;
          }*/
          return false;
@@ -45,7 +45,8 @@ bool gjk_check_collision(shape& shapeA, shape& shapeB,
       simplex.push(suppA, suppB, s);
       if (gjk_process_simplex(simplex, direction))
       {
-         //gjk_get_points(simplex, collision);
+         //gjk_get_features(simplex, collision);
+         epa_get_features(shapeA, shapeB, support, simplex, collision);
          return true;
       }
    }
@@ -135,11 +136,7 @@ bool gjk_process_simplex(Simplex& simplex, Vector2& direction)
    return intersect;
 }
 
-void epa_get_features(Simplex& simplex, Collision& collision)
-{
-}
-
-void gjk_edge_case(const Simplex& simplex, Collision& collision,
+void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
                    size_t edgeP1, size_t edgeP2)
 {
    // these conditions
@@ -173,7 +170,48 @@ void gjk_edge_case(const Simplex& simplex, Collision& collision,
    }
 }
 
-void gjk_get_points(const Simplex& simplex,
+void epa_get_features(shape& shapeA, shape& shapeB,
+                      Vector2 (*support)(Vector2 direction, shape& sh),
+                      Simplex& simplex, Collision& collision)
+{
+   int maxIter = 100,
+      numIter = 0;
+   while(numIter < maxIter)
+   {
+      numIter++;
+      size_t simpl_size = simplex.size();
+      double min_dist = DBL_MAX;
+      int min_ind = 0;
+      for (size_t s_num = 0; s_num < simpl_size; s_num++)
+      {
+         size_t s_num_next = (s_num + 1) % simpl_size;
+         Segment edge(simplex.P[s_num], simplex.P[s_num_next]);
+         double dist = distance(Vector2::ORIGIN, edge);
+         if (dist < min_dist)
+         {
+            min_dist = dist;
+            min_ind = s_num;
+         }
+      }
+      Vector2 min_edge_vect = simplex.P[(min_ind + 1) % simpl_size] -
+         simplex.P[min_ind];
+      Vector2 direction = perpendicular(min_edge_vect, -simplex.P[min_ind]);
+      direction.normalize2();
+
+      Vector2 suppA = support(direction, shapeA);
+      Vector2 suppB = support(-direction, shapeB);
+      Vector2 s = suppA - suppB;
+      // the edge is on the Minkowsky difference, and it's the closest
+      if (abs(s * direction - min_dist) < DBL_EPSILON * 1000)
+      {
+         gjk_get_edge_features(simplex, collision, min_ind, (min_ind + 1) % simpl_size);
+         return;
+      }
+      simplex.insert(suppA, suppB, s, (min_ind + 1) % simpl_size);
+   }
+}
+
+void gjk_get_features(const Simplex& simplex,
                        Collision& collision)
 {
    collision.edge_edge = false;
@@ -199,15 +237,15 @@ void gjk_get_points(const Simplex& simplex,
          break;
       case SIMPLEX_AB_EDGE:
          //printf("SIMPLEX_AB_POINT\n");
-         gjk_edge_case(simplex, collision, 0, 1);
+         gjk_get_edge_features(simplex, collision, 0, 1);
          break;
       case SIMPLEX_BC_EDGE:
          //printf("SIMPLEX_BC_POINT\n");
-         gjk_edge_case(simplex, collision, 1, 2);
+         gjk_get_edge_features(simplex, collision, 1, 2);
          break;
       case SIMPLEX_CA_EDGE:
          //printf("SIMPLEX_CA_POINT\n");
-         gjk_edge_case(simplex, collision, 2, 0);
+         gjk_get_edge_features(simplex, collision, 2, 0);
          break;
    }
    collision.normal.normalize2();
@@ -218,6 +256,12 @@ void Simplex::push(Vector2 a, Vector2 b, Vector2 p)
    A.push_front(a);
    B.push_front(b);
    P.push_front(p);
+}
+void Simplex::insert(Vector2 a, Vector2 b, Vector2 p, size_t place)
+{
+   A.insert(A.begin() + place, a);
+   B.insert(B.begin() + place, b);
+   P.insert(P.begin() + place, p);
 }
 void Simplex::clear()
 {

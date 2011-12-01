@@ -124,7 +124,7 @@ void init_bodies()
 
    rect = new rectangle(0, 0, 0, 4, 4);
    body = Body(rect, 4, 0, 0, -1);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(0, 5, 2, 2, 2);
@@ -134,27 +134,27 @@ void init_bodies()
 
    rect = new rectangle(-5, 0, 0, 2, 2);
    body = Body(rect, 4, 1, 0, angle_vel);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(0, -5, 2, 2, 2);
    body = Body(rect, 4, 0, 1, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(5, 0, 0, 2, 2);
    body = Body(rect, 4, -1, 0, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(10, 5, 4, 3, 1);
    body = Body(rect, 4, -3, -3, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(-8, -5, -2.5, 1, 10);
    body = Body(rect, 4, 3, 3, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    // bounds

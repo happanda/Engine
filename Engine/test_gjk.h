@@ -78,7 +78,7 @@ void test_gjk_init()
    world.addBody(body);
    delete rect;
 
-   rect = new rectangle(0, 5, 2, 3, 3);
+   rect = new rectangle(0, 5, 0, 3, 3);
    body = Body(rect, 4, 0, 0, 0);
    world.addBody(body);
    delete rect;

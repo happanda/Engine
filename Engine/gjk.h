@@ -27,6 +27,7 @@ public:
    std::deque<Vector2> P;
    simplex_min_norm feature;
    void push(Vector2 a, Vector2 b, Vector2 p);
+   void insert(Vector2 a, Vector2 b, Vector2 p, size_t place);
    void clear();
    void pop();
    void pop(Vector2& a, Vector2& b, Vector2& p);
@@ -45,9 +46,11 @@ bool gjk_check_collision(shape& shapeA, shape& shapeB,
 
 bool gjk_process_simplex(Simplex& simplex, Vector2& direction);
 
-void epa_get_features(Simplex& simplex, Collision& collision);
+void epa_get_features(shape& shapeA, shape& shapeB,
+                      Vector2 (*support)(Vector2 direction, shape& sh),
+                      Simplex& simplex, Collision& collision);
 
-void gjk_get_points(const Simplex& simplex,
+void gjk_get_features(const Simplex& simplex,
                     Collision& collision);
 
 #endif
