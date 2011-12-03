@@ -68,12 +68,14 @@ void World::resolve_collision()
             double j = 0;
             Vector3 n3(it->normal.v1, it->normal.v2, 0);
 
-            Vector3 ra(it->one.p.v1, it->one.p.v2, 0);
+            Vector2 ra_2d = it->one.p - it->body_one->form->point;
+            Vector3 ra(ra_2d.v1, ra_2d.v2, 0);
             Vector3 ra_copy = ra;
             Vector3 a_add3 = (ra.cross(n3)).cross(ra_copy);
             Vector2 a_add2(a_add3.v1, a_add3.v2);
 
-            Vector3 rb(it->two.p.v1, it->two.p.v2, 0);
+            Vector2 rb_2d = it->two.p - it->body_two->form->point;
+            Vector3 rb(rb_2d.v1, rb_2d.v2, 0);
             Vector3 rb_copy = ra;
             Vector3 b_add3 = (rb.cross(n3)).cross(rb_copy);
             Vector2 b_add2(b_add3.v1, b_add3.v2);

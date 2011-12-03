@@ -154,11 +154,15 @@ void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
    }
    else if ((simplex.B[edgeP1] - simplex.B[edgeP2]).norm2sq() < DBL_EPSILON)
    {
-      collision.two.p = simplex.B[edgeP1];
-      collision.one.p = closest_point(collision.two.p,
+      Body* body_tmp = collision.body_one;
+      collision.body_one = collision.body_two;
+      collision.body_two = body_tmp;
+
+      collision.one.p = simplex.B[edgeP1];
+      collision.two.p = closest_point(collision.one.p,
          Segment(simplex.A[edgeP1], simplex.A[edgeP2]));
       collision.normal = perpendicular(simplex.A[edgeP2] - simplex.A[edgeP1],
-         collision.body_one->form->point);
+         collision.one.p - collision.two.p);
    }
    else
    {
@@ -205,6 +209,7 @@ void epa_get_features(shape& shapeA, shape& shapeB,
       if (abs(s * direction - min_dist) < DBL_EPSILON * 1000)
       {
          gjk_get_edge_features(simplex, collision, min_ind, (min_ind + 1) % simpl_size);
+         collision.normal.normalize2();
          return;
       }
       simplex.insert(suppA, suppB, s, (min_ind + 1) % simpl_size);

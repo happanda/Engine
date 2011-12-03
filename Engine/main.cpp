@@ -114,7 +114,7 @@ void init_bodies()
 {
    world.init();
 
-   double angle_vel = 2;
+   double angle_vel = 0;
    std::vector<Body> bodies;
 
    Body body = Body(&(rectangle()), 0, 0, 0, 0);
@@ -123,11 +123,11 @@ void init_bodies()
    //surface* surf;
 
    rect = new rectangle(0, 0, 0, 4, 4);
-   body = Body(rect, 4, 0, 0, -1);
+   body = Body(rect, 4, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
 
-   rect = new rectangle(0, 5, 2, 2, 2);
+   rect = new rectangle(0, 5, 0, 2, 2);
    body = Body(rect, 4, 0, -2, 0);
    bodies.push_back(body);
    delete rect;
@@ -137,7 +137,7 @@ void init_bodies()
    bodies.push_back(body);
    delete rect;
 
-   rect = new rectangle(0, -5, 2, 2, 2);
+   rect = new rectangle(0, -5, 0, 2, 2);
    body = Body(rect, 4, 0, 1, 0);
    bodies.push_back(body);
    delete rect;
@@ -147,12 +147,12 @@ void init_bodies()
    bodies.push_back(body);
    delete rect;
 
-   rect = new rectangle(10, 5, 4, 3, 1);
+   rect = new rectangle(10, 5, 0, 3, 1);
    body = Body(rect, 4, -3, -3, 0);
    bodies.push_back(body);
    delete rect;
 
-   rect = new rectangle(-8, -5, -2.5, 1, 10);
+   rect = new rectangle(-8, -5, 0, 1, 10);
    body = Body(rect, 4, 3, 3, 0);
    bodies.push_back(body);
    delete rect;
