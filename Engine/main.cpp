@@ -123,7 +123,7 @@ void init_bodies()
    //surface* surf;
 
    rect = new rectangle(0, 0, 0, 4, 4);
-   body = Body(rect, 4, 0, 0, 0);
+   body = Body(rect, 16, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
 
@@ -148,12 +148,12 @@ void init_bodies()
    delete rect;
 
    rect = new rectangle(10, 5, 0, 3, 1);
-   body = Body(rect, 4, -3, -3, 0);
+   body = Body(rect, 3, -3, -3, 0);
    bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(-8, -5, 0, 1, 10);
-   body = Body(rect, 4, 3, 3, 0);
+   body = Body(rect, 10, 3, 3, 0);
    bodies.push_back(body);
    delete rect;
 
