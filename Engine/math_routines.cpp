@@ -23,12 +23,11 @@ void get_points(rectangle rect, Vector2& p1, Vector2& p2,
    p4 = rect.point + rotate(point, rect.alpha);
 }
 
-// computes a vector V, such that (V * vect = 0)
-// and V * from < 0
-Vector2 perpendicular(Vector2 vect, Vector2 from)
+// computes a vector V, such that (V * codirect > 0)
+Vector2 perpendicular(Vector2 vect, Vector2 codirect)
 {
    Vector2 perp = vect.perpendicular();
-   if (same_direction(perp, from))
+   if (perp * codirect < 0)
       perp = -perp;
    return perp;
 }

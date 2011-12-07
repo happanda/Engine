@@ -70,7 +70,7 @@ bool gjk_process_simplex(Simplex& simplex, Vector2& direction)
          {
             if (isOn(Vector2::ORIGIN, A, B))
                intersect = true;
-            direction = perpendicular(AB, -AO);
+            direction = perpendicular(AB, AO);
             simplex.feature = SIMPLEX_AB_EDGE;
          }
          else
@@ -85,8 +85,8 @@ bool gjk_process_simplex(Simplex& simplex, Vector2& direction)
          Vector2 C = simplex.P[2];
          Vector2 AC = C - A;
 
-         Vector2 ofAC = perpendicular(AC, AB);
-         Vector2 ofAB = perpendicular(AB, AC);
+         Vector2 ofAC = perpendicular(AC, A - B);
+         Vector2 ofAB = perpendicular(AB, A - C);
 
          if (same_direction(ofAC, AO))
          {
@@ -150,7 +150,7 @@ void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
       collision.two.p = closest_point(collision.one.p,
          Segment(simplex.B[edgeP1], simplex.B[edgeP2]));
       collision.normal = perpendicular(simplex.B[edgeP2] - simplex.B[edgeP1],
-         collision.body_two->form->point);
+         collision.body_one->form->point - collision.body_two->form->point);
    }
    else if ((simplex.B[edgeP1] - simplex.B[edgeP2]).norm2sq() < DBL_EPSILON)
    {
@@ -162,7 +162,7 @@ void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
       collision.two.p = closest_point(collision.one.p,
          Segment(simplex.A[edgeP1], simplex.A[edgeP2]));
       collision.normal = perpendicular(simplex.A[edgeP2] - simplex.A[edgeP1],
-         collision.one.p - collision.two.p);
+         collision.body_one->form->point - collision.body_two->form->point);
    }
    else
    {
@@ -170,7 +170,7 @@ void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
       collision.one.segm = Segment(simplex.A[edgeP1], simplex.A[edgeP2]);
       collision.two.segm = Segment(simplex.B[edgeP1], simplex.B[edgeP2]);
       collision.normal = perpendicular(simplex.B[edgeP2] - simplex.B[edgeP1],
-         collision.body_two->form->point - collision.body_one->form->point);
+         collision.body_one->form->point - collision.body_two->form->point);
    }
 }
 
@@ -199,7 +199,7 @@ void epa_get_features(shape& shapeA, shape& shapeB,
       }
       Vector2 min_edge_vect = simplex.P[(min_ind + 1) % simpl_size] -
          simplex.P[min_ind];
-      Vector2 direction = perpendicular(min_edge_vect, -simplex.P[min_ind]);
+      Vector2 direction = perpendicular(min_edge_vect, simplex.P[min_ind]);
       direction.normalize2();
 
       Vector2 suppA = support(direction, shapeA);
