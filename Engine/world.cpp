@@ -79,19 +79,16 @@ void World::resolve_collision()
             Vector3 rb_copy = ra;
             Vector3 b_add3 = (rb.cross(n3)).cross(rb_copy);
             Vector2 b_add2(b_add3.v1, b_add3.v2);
-            double den = 1/m1 + 1/m2 + (it->normal * a_add2)
-               * iinrt1 + (it->normal * b_add2) * iinrt2;
 
             double vel_one_tang = it->body_one->velocity * tang;
             double vel_two_tang = it->body_two->velocity * tang;
 
-            j = (-2 * rel_vel) / den;
-            it->body_one->velocity = it->body_one->velocity + (it->normal * (j / m1))
-               + tang * vel_one_tang;
-            it->body_two->velocity = it->body_two->velocity - (it->normal * (j / m2))
-               + tang * vel_two_tang;
+            j = (-2 * rel_vel) / (1/m1 + 1/m2);
+            it->body_one->velocity = it->body_one->velocity + (it->normal * (j / m1));
+            it->body_two->velocity = it->body_two->velocity - (it->normal * (j / m2));
 
-            Vector3 Jn(j * it->normal.v1, j * it->normal.v2, 0);
+
+            /*Vector3 Jn(j * it->normal.v1, j * it->normal.v2, 0);
 
             Vector2 pn_one = it->normal * (vel_one_norm * m1);
             Vector3 pn_one3(pn_one.v1, pn_one.v2, 0);
@@ -103,7 +100,7 @@ void World::resolve_collision()
             Vector3 pn_two3(pn_two.v1, pn_two.v2, 0);
             Vector3 cross_two = pn_two3.cross(Jn);
             double ang_two_delta = cross_two.v3 * iinrt2;
-            it->body_two->angle_vel += ang_two_delta;
+            it->body_two->angle_vel += ang_two_delta;*/
          }
       }
    }
