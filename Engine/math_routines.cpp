@@ -71,3 +71,11 @@ double distance(Vector2 point, Segment segment)
    Vector2 proj = closest_point(point, segment);
    return (proj - point).norm2();
 }
+
+Vector2 cross_cross(Vector2 vect1, Vector2 vect2)
+{
+   Vector3 v3d1(vect1.v1, vect1.v2, 0);
+   Vector3 v3d2(vect2.v1, vect2.v2, 0);
+   Vector3 res = (v3d1.cross(v3d2)).cross(v3d1);
+   return Vector2(res.v1, res.v2);
+}

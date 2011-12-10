@@ -17,5 +17,8 @@ bool isOn(Vector2 point, Vector2 interval1, Vector2 interval2);
 double project(Vector2 vect, Vector2 line);
 Vector2 closest_point(Vector2 point, Segment segment);
 double distance(Vector2 point, Segment segment);
+// creates 3D vectors from vect1 and vect2 (z component is zero)
+// and computes (v1 x v2) x v1, takes x and y components as resulting 2D vector
+Vector2 cross_cross(Vector2 vect1, Vector2 vect2);
 
 #endif
