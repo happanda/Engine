@@ -7,25 +7,33 @@
 
 World::World()
 {
-   timeStep = 20;
+   init();
 }
 
 void World::init()
 {
    bodies.clear();
    collisions.clear();
+   restitution = 0.7;
+   friction = 0.75;
    timeStep = 20;
+   gravitation = Vector2(0, 0);
 }
 
 void World::update(double deltaT)
 {
    gjk_collide(bodies, collisions);
    resolve_collision();
+   apply_forces(deltaT);
+   double energy = 0;
    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
    {
-      (it)->form->rotate((it)->angle_vel * deltaT);
-      (it)->form->point = (it)->form->point + (it)->velocity * deltaT;
+      it->form->rotate(it->angle_vel * deltaT);
+      it->form->point = it->form->point + it->velocity * deltaT;
+      energy += (it->mass * it->velocity.norm2sq()
+         + it->inert * it->angle_vel * it->angle_vel) / 2;
    }
+   printf("Total kinetic energy: %.2f\n", energy);
 }
 
 void World::resolve_collision()
@@ -83,25 +91,32 @@ void World::resolve_collision()
             double vel_one_tang = it->body_one->velocity * tang;
             double vel_two_tang = it->body_two->velocity * tang;
 
-            j = (-2 * rel_vel) / (1/m1 + 1/m2);
-            it->body_one->velocity = it->body_one->velocity + (it->normal * (j / m1));
-            it->body_two->velocity = it->body_two->velocity - (it->normal * (j / m2));
+            j = (-(1 + restitution) * rel_vel) * (m1 * m2) / (m1 + m2);
+            Vector2 deltaV1 = it->normal * j;
+            if (m1 < 5000)
+               it->body_one->velocity = it->body_one->velocity + deltaV1 * (1 / m1)
+               + tang * ((1 - friction) * -vel_one_tang);
+            Vector2 deltaV2 = -deltaV1;
+            if (m2 < 5000)
+               it->body_two->velocity = it->body_two->velocity + deltaV2 * (1 / m2)
+               + tang * ((1 - friction) * -vel_two_tang);
 
-
-            /*Vector3 Jn(j * it->normal.v1, j * it->normal.v2, 0);
-
-            Vector2 pn_one = it->normal * (vel_one_norm * m1);
-            Vector3 pn_one3(pn_one.v1, pn_one.v2, 0);
-            Vector3 cross_one = pn_one3.cross(Jn);
-            double ang_one_delta = cross_one.v3 * iinrt1;
-            it->body_one->angle_vel += ang_one_delta;
-
-            Vector2 pn_two = it->normal * (vel_two_norm * m2);
-            Vector3 pn_two3(pn_two.v1, pn_two.v2, 0);
-            Vector3 cross_two = pn_two3.cross(Jn);
-            double ang_two_delta = cross_two.v3 * iinrt2;
-            it->body_two->angle_vel += ang_two_delta;*/
+            Vector3 deltaV1_3d(deltaV1.v1, deltaV1.v2, 0);
+            if (m1 < 5000)
+               it->body_one->angle_vel += iinrt1 * ra.cross(deltaV1_3d).v3;
+            Vector3 deltaV2_3d(deltaV2.v1, deltaV2.v2, 0);
+            if (m2 < 5000)
+               it->body_two->angle_vel += iinrt2 * ra.cross(deltaV2_3d).v3;
          }
       }
+   }
+}
+
+void World::apply_forces(double deltaT)
+{
+   for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
+   {
+      if (it->mass < 5000)
+         it->velocity = it->velocity + gravitation * deltaT;
    }
 }

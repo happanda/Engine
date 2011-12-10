@@ -54,15 +54,27 @@ public:
 
    ~Body()
    {
-      if (form != NULL)
+      if (form != 0)
       {
          if (form->type == sh_rectangle)
          {
             rectangle* rect = static_cast<rectangle*>(form);
             delete rect;
          }
+         if (form->type == sh_circle)
+         {
+            circle* circ = static_cast<circle*>(form);
+            delete circ;
+         }
+         if (form->type == sh_surface)
+         {
+            surface* surf = static_cast<surface*>(form);
+            delete surf;
+         }
       }
    }
+
+   Vector2 point_velocity(Vector2 point);
 };
 
 #endif

@@ -178,6 +178,10 @@
 			Name="Body"
 			>
 			<File
+				RelativePath=".\body.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\body.h"
 				>
 			</File>

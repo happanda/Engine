@@ -26,7 +26,7 @@ void step()
       draw_bodies(world.bodies);
       draw_collisions(world.collisions);
       world.update((double)world.timeStep / 1000);
-      draw_point(Vector2(0, 0));
+      //draw_point(Vector2(0, 0));
       prevCl = cl;
       glutSwapBuffers();
    }
