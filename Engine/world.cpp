@@ -14,10 +14,10 @@ void World::init()
 {
    bodies.clear();
    collisions.clear();
-   restitution = 0.7;
+   restitution = 0.2;
    friction = 0.75;
    timeStep = 20;
-   gravitation = Vector2(0, 0);
+   gravitation = Vector2(0, -9.8);
 }
 
 void World::update(double deltaT)
@@ -55,58 +55,77 @@ void World::resolve_collision()
             double msum = m1 + m2;
             it->body_one->velocity = it->normal
                * ((m1 - m2)/msum * vel_one_norm + 2 * m2 / msum * vel_two_norm)
-               + tang * vel_one_tang;
+               + tang * (friction * vel_one_tang);
             it->body_two->velocity = (it->normal)
                * ((m2 - m1)/msum * vel_two_norm + 2 * m1 / msum * vel_one_norm)
-               + tang * vel_two_tang;
+               + tang * (friction * vel_two_tang);
          }
       }
       else
       {
          Vector2 tang = it->normal.perpendicular();
-         double vel_one_norm = it->body_one->velocity * it->normal;
-         double vel_two_norm = it->body_two->velocity * it->normal;
-         double rel_vel = vel_one_norm - vel_two_norm;
-         double m1 = it->body_one->mass;
-         double m2 = it->body_two->mass;
-         double iinrt1 = 1 / it->body_one->inert;
-         double iinrt2 = 1 / it->body_two->inert;
-         if (rel_vel < 0)
+
+         int maxIter = 100;
+         int numIter = 0;
+         bool enough = false;
+         double summary_impulse = 0;
+         while (!enough && numIter < maxIter)
          {
-            double j = 0;
-            Vector3 n3(it->normal.v1, it->normal.v2, 0);
+            numIter++;
+            Vector2 vel_one = it->body_one->point_velocity(it->one.p);
+            Vector2 vel_two = it->body_two->point_velocity(it->two.p);
+            Vector2 vel_rel = vel_one - vel_two;
+            double vel_rel_n = vel_rel * it->normal;
+            if (vel_rel_n < 0)
+            {
+               double m1 = it->body_one->mass;
+               double m2 = it->body_two->mass;
+               double iinrt1 = 1 / it->body_one->inert;
+               double iinrt2 = 1 / it->body_two->inert;
 
-            Vector2 ra_2d = it->one.p - it->body_one->form->point;
-            Vector3 ra(ra_2d.v1, ra_2d.v2, 0);
-            Vector3 ra_copy = ra;
-            Vector3 a_add3 = (ra.cross(n3)).cross(ra_copy);
-            Vector2 a_add2(a_add3.v1, a_add3.v2);
+               Vector3 n3(it->normal.v1, it->normal.v2, 0);
 
-            Vector2 rb_2d = it->two.p - it->body_two->form->point;
-            Vector3 rb(rb_2d.v1, rb_2d.v2, 0);
-            Vector3 rb_copy = ra;
-            Vector3 b_add3 = (rb.cross(n3)).cross(rb_copy);
-            Vector2 b_add2(b_add3.v1, b_add3.v2);
+               Vector2 ra_2d = it->one.p - it->body_one->form->point;
+               Vector3 ra(ra_2d.v1, ra_2d.v2, 0);
+               Vector3 a_add3 = (ra.cross(n3)).cross(ra);
+               Vector2 a_add2 = Vector2(a_add3.v1, a_add3.v2) * iinrt1;
 
-            double vel_one_tang = it->body_one->velocity * tang;
-            double vel_two_tang = it->body_two->velocity * tang;
+               Vector2 rb_2d = it->two.p - it->body_two->form->point;
+               Vector3 rb(rb_2d.v1, rb_2d.v2, 0);
+               Vector3 b_add3 = (rb.cross(n3)).cross(rb);
+               Vector2 b_add2 = Vector2(b_add3.v1, b_add3.v2) * iinrt2;
 
-            j = (-(1 + restitution) * rel_vel) * (m1 * m2) / (m1 + m2);
-            Vector2 deltaV1 = it->normal * j;
-            if (m1 < 5000)
-               it->body_one->velocity = it->body_one->velocity + deltaV1 * (1 / m1)
-               + tang * ((1 - friction) * -vel_one_tang);
-            Vector2 deltaV2 = -deltaV1;
-            if (m2 < 5000)
-               it->body_two->velocity = it->body_two->velocity + deltaV2 * (1 / m2)
-               + tang * ((1 - friction) * -vel_two_tang);
+               double vel_one_tang = vel_one * tang;
+               double vel_two_tang = vel_two * tang;
 
-            Vector3 deltaV1_3d(deltaV1.v1, deltaV1.v2, 0);
-            if (m1 < 5000)
-               it->body_one->angle_vel += iinrt1 * ra.cross(deltaV1_3d).v3;
-            Vector3 deltaV2_3d(deltaV2.v1, deltaV2.v2, 0);
-            if (m2 < 5000)
-               it->body_two->angle_vel += iinrt2 * ra.cross(deltaV2_3d).v3;
+               double kn = ((m1 + m2) / (m1 * m2) + it->normal * (a_add2 + b_add2));
+               double Pn = -(1 + restitution) * vel_rel_n / kn;
+               if (Pn < 0)
+                  Pn = 0;
+               Vector2 P = it->normal * Pn;
+               if (Pn < 0.01)
+                  enough = true;
+               if (summary_impulse + Pn < 0)
+                  Pn = -summary_impulse;
+               summary_impulse += Pn;
+
+               Vector2 deltaV1 = P * (1 / m1);
+               Vector2 deltaV2 = P * (-1 / m2);
+               double deltaW1 = iinrt1 * (ra_2d.v1 * P.v2 - ra_2d.v2 * P.v1);
+               double deltaW2 = -iinrt2 * (rb_2d.v1 * P.v2 - rb_2d.v2 * P.v1);
+
+               if (m1 < 5000)
+                  it->body_one->velocity = it->body_one->velocity + deltaV1;
+               if (m2 < 5000)
+                  it->body_two->velocity = it->body_two->velocity + deltaV2;
+
+               if (m1 < 5000)
+                  it->body_one->angle_vel += deltaW1;
+               if (m2 < 5000)
+                  it->body_two->angle_vel += deltaW2;
+            }
+            else
+               enough = true;
          }
       }
    }

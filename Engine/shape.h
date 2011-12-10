@@ -17,7 +17,7 @@ public:
    double alpha;// rotation angle
    shape_type type;
    void rotate(double angle)
-   { alpha += angle / (2.0f * 3.14159f); }
+   { alpha += angle; }
    shape(): point(Vector2(0, 0)), alpha(0) { }
    shape(shape_type sh, double point_x, double point_y,
       double alpha): type(sh), point(Vector2(point_x, point_y)), alpha(alpha) { }
