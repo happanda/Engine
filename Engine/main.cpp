@@ -24,7 +24,7 @@ void step()
    {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       draw_bodies(world.bodies);
-      draw_collisions(world.collisions);
+      //draw_collisions(world.collisions);
       world.update((double)world.timeStep / 1000);
       //draw_point(Vector2(0, 0));
       prevCl = cl;
@@ -118,38 +118,38 @@ void init_bodies()
    std::vector<Body> bodies;
 
    Body body = Body(&(rectangle()), 0, 0, 0, 0);
-   circle* circ;
    rectangle* rect;
+   //circle* circ;
    //surface* surf;
 
    rect = new rectangle(0, 0, 2, 4, 4);
    body = Body(rect, 16, 0, 0, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(0, 5, 1, 2, 2);
    body = Body(rect, 4, 0, -2, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(-5, 0, 0, 2, 2);
    body = Body(rect, 4, 1, 0, angle_vel);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(0, -5, 0, 2, 2);
    body = Body(rect, 4, 0, 1, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(5, 0, 0, 2, 2);
    body = Body(rect, 4, -1, 0, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(10, 5, 0, 3, 1);
    body = Body(rect, 3, -3, -3, 0);
-   //bodies.push_back(body);
+   bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(-9, -6, 0.2, 1, 10);

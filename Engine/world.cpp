@@ -24,7 +24,7 @@ void World::init()
 void World::update(double deltaT)
 {
    gjk_collide(bodies, collisions);
-   resolve_collision();
+   resolve_collision(deltaT);
    apply_forces(deltaT);
    double energy = 0;
    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
@@ -37,9 +37,11 @@ void World::update(double deltaT)
    printf("Total kinetic energy: %.2f\n", energy);
 }
 
-void World::resolve_collision()
+void World::resolve_collision(double deltaT)
 {
-   double min_impulse = 0.01;
+   const double min_impulse = 0.01;
+   const double bias_factor = 0.3;
+   const double delta_slop = 0.002;
    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
    {
       Vector2 tang = it->normal.perpendicular();
@@ -75,7 +77,10 @@ void World::resolve_collision()
             double mm = (m1 + m2) / (m1 * m2);
             double kn = mm + it->normal * (a_add_n + b_add_n);
             double kt = mm + tang * (a_add_t + b_add_t);
-            double Pn = -(1 + RESTITUTION) * vel_rel_n / kn;
+            double delta = (it->one.p - it->two.p).norm2();
+            double v_bias = 0;
+            if (delta > delta_slop) v_bias = bias_factor * (delta - delta_slop) / deltaT;
+            double Pn = (-(1 + RESTITUTION) * vel_rel_n + v_bias) / kn;
             double Pt = -FRICTION * vel_rel_t / kt;
 
             if (Pn < 0) Pn = 0;
@@ -119,7 +124,7 @@ void World::apply_forces(double deltaT)
 {
    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
    {
-      if (it->mass < 5000)
+      if (it->mass < UNMOVABLE_MASS)
          it->velocity = it->velocity + GRAVITATION * deltaT;
    }
 }
