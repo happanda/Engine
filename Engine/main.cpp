@@ -124,54 +124,54 @@ void init_bodies()
 
    rect = new rectangle(0, 0, 2, 4, 4);
    body = Body(rect, 16, 0, 0, 0);
-   bodies.push_back(body);
+   //bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(0, 5, 1, 2, 2);
    body = Body(rect, 4, 0, -2, 0);
-   bodies.push_back(body);
+   //bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(-5, 0, 0, 2, 2);
    body = Body(rect, 4, 1, 0, angle_vel);
-   bodies.push_back(body);
+   //bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(0, -5, 0, 2, 2);
    body = Body(rect, 4, 0, 1, 0);
-   bodies.push_back(body);
+   //bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(5, 0, 0, 2, 2);
    body = Body(rect, 4, -1, 0, 0);
-   bodies.push_back(body);
+   //bodies.push_back(body);
    delete rect;
 
    rect = new rectangle(10, 5, 0, 3, 1);
    body = Body(rect, 3, -3, -3, 0);
-   bodies.push_back(body);
+   //bodies.push_back(body);
    delete rect;
 
-   rect = new rectangle(-8, -5, 0, 1, 10);
-   body = Body(rect, 10, 3, 3, 0);
+   rect = new rectangle(-9, -6, 0.2, 1, 10);
+   body = Body(rect, 10, 2, 0, 0);
    bodies.push_back(body);
    delete rect;
 
    // bounds
    double bigmass = 100000;
-   rect = new rectangle(-12, 0, 0, 1, 22);
+   rect = new rectangle(-14, 0, 0, 3, 25);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
-   rect = new rectangle(12, 0, 0, 1, 22);
+   rect = new rectangle(14, 0, 0, 3, 25);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
-   rect = new rectangle(0, 12, 0, 22, 1);
+   rect = new rectangle(0, 14, 0, 200, 3);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
-   rect = new rectangle(0, -12, 0, 22, 1);
+   rect = new rectangle(0, -14, 0, 200, 3);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
    delete rect;

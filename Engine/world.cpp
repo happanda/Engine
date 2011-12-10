@@ -14,10 +14,11 @@ void World::init()
 {
    bodies.clear();
    collisions.clear();
-   restitution = 0.2;
-   friction = 0.75;
    timeStep = 20;
-   gravitation = Vector2(0, -9.8);
+   UNMOVABLE_MASS = 5000;
+   RESTITUTION = 0.2;
+   FRICTION = 0.4;
+   GRAVITATION = Vector2(0, -9.8);
 }
 
 void World::update(double deltaT)
@@ -38,6 +39,7 @@ void World::update(double deltaT)
 
 void World::resolve_collision()
 {
+   double min_impulse = 0.01;
    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
    {
       Vector2 tang = it->normal.perpendicular();
@@ -45,7 +47,8 @@ void World::resolve_collision()
       int maxIter = 100;
       int numIter = 0;
       bool enough = false;
-      double summary_impulse = 0;
+      double sum_impulse_n = 0,
+         sum_impulse_t = 0;
       while (!enough && numIter < maxIter)
       {
          numIter++;
@@ -72,34 +75,39 @@ void World::resolve_collision()
             double mm = (m1 + m2) / (m1 * m2);
             double kn = mm + it->normal * (a_add_n + b_add_n);
             double kt = mm + tang * (a_add_t + b_add_t);
-            double Pn = -(1 + restitution) * vel_rel_n / kn;
-            double Pt = -(1 + restitution) * vel_rel_t / kt;
+            double Pn = -(1 + RESTITUTION) * vel_rel_n / kn;
+            double Pt = -FRICTION * vel_rel_t / kt;
 
             if (Pn < 0) Pn = 0;
-            if (Pt < -friction * Pn) Pt = -friction * Pn;
-            else if (Pt > friction * Pn) Pt = friction * Pn;
+            if (Pt < -FRICTION * Pn) Pt = -FRICTION * Pn;
+            else if (Pt > FRICTION * Pn) Pt = FRICTION * Pn;
 
+            // total impulse
             Vector2 P = it->normal * Pn + tang * Pt;
-            if (Pn < 0.01 && Pt < 0.01)
+
+            if (Pn < min_impulse && Pt < min_impulse)
                enough = true;
-            if (summary_impulse + Pn < 0)
-               Pn = -summary_impulse;
-            summary_impulse += Pn;
+            // correcting impulses
+            if (sum_impulse_n + Pn < 0) Pn = -sum_impulse_n;
+            sum_impulse_n += Pn;
+            if (sum_impulse_t + Pt < 0) Pt = -sum_impulse_t;
+            sum_impulse_t += Pt;
 
             Vector2 deltaV1 = P * (1 / m1);
             Vector2 deltaV2 = P * (-1 / m2);
             double deltaW1 = iinrt1 * (ra_2d.v1 * P.v2 - ra_2d.v2 * P.v1);
             double deltaW2 = -iinrt2 * (rb_2d.v1 * P.v2 - rb_2d.v2 * P.v1);
 
-            if (m1 < 5000)
+            if (m1 < UNMOVABLE_MASS)
+            {
                it->body_one->velocity = it->body_one->velocity + deltaV1;
-            if (m2 < 5000)
-               it->body_two->velocity = it->body_two->velocity + deltaV2;
-
-            if (m1 < 5000)
                it->body_one->angle_vel += deltaW1;
-            if (m2 < 5000)
+            }
+            if (m2 < UNMOVABLE_MASS)
+            {
+               it->body_two->velocity = it->body_two->velocity + deltaV2;
                it->body_two->angle_vel += deltaW2;
+            }
          }
          else
             enough = true;
@@ -112,6 +120,6 @@ void World::apply_forces(double deltaT)
    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
    {
       if (it->mass < 5000)
-         it->velocity = it->velocity + gravitation * deltaT;
+         it->velocity = it->velocity + GRAVITATION * deltaT;
    }
 }

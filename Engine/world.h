@@ -17,9 +17,10 @@ public:
 
    std::vector<Collision> collisions;
    std::vector<Body> bodies;
-   double restitution;
-   double friction;
-   Vector2 gravitation;
+   double RESTITUTION;
+   double FRICTION;
+   Vector2 GRAVITATION;
+   double UNMOVABLE_MASS;
    // timestep in milliseconds
    int timeStep;
 };
