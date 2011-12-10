@@ -6,16 +6,15 @@
 void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
 {
    collisions.clear();
-   Collision coll;
    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
    {
       for (std::vector<Body>::iterator jt = it; jt != bodies.end(); jt++)
       {
          if (it != jt)
          {
+            Collision coll;
             coll.body_one = &(*it);
             coll.body_two = &(*jt);
-            coll.edge_edge = false;
             if (gjk_check_collision(*(it->form), *(jt->form), &gjk_support, coll))
             {
                collisions.push_back(coll);
@@ -31,7 +30,7 @@ Collision sat_collide(Body* bodyA, Body* bodyB)
    coll.body_one = bodyA;
    coll.body_two = bodyA;
 
-   shape* shapeA = bodyA->form;
+   /*shape* shapeA = bodyA->form;
    shape* shapeB = bodyB->form;
    if (shapeA->type == sh_rectangle && shapeB->type == sh_rectangle)
    {
@@ -60,7 +59,7 @@ Collision sat_collide(Body* bodyA, Body* bodyB)
       direction.normalize2();
       coll.normal = direction;
       coll.one.p = circA->point + direction * circA->radius;
-   }
+   }*/
 
    return coll;
 }

@@ -10,12 +10,8 @@ class Collision
 public:
    Body* body_one;
    Body* body_two;
-   bool edge_edge;
-   struct
-   {
-      Segment segm;
-      Vector2 p;
-   } one, two;
+   std::vector<Vector2> one;
+   std::vector<Vector2> two;
    Vector2 normal;
 };
 

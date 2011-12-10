@@ -68,6 +68,7 @@ void test_gjk_draw()
 void test_gjk_init()
 {
    world.init();
+   world.GRAVITATION = Vector2::ORIGIN;
    Body body = Body(&(rectangle()), 0, 0, 0, 0);
    circle* circ;
    rectangle* rect;

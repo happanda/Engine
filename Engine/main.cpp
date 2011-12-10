@@ -12,6 +12,7 @@
 World world = World();
 int speed = 20;
 bool pause = false;
+bool draw_colls = false;
 
 void init_bodies();
 void main_init();
@@ -24,9 +25,9 @@ void step()
    {
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       draw_bodies(world.bodies);
-      //draw_collisions(world.collisions);
+      if (draw_colls)
+         draw_collisions(world.collisions);
       world.update((double)world.timeStep / 1000);
-      //draw_point(Vector2(0, 0));
       prevCl = cl;
       glutSwapBuffers();
    }
@@ -40,6 +41,14 @@ void keyboard(unsigned char key, int x, int y)
       init_bodies();
    if (key == 'q')
       exit(0);
+   if (key == '\'')
+      draw_colls = !draw_colls;
+   if (key == 'y')
+   {
+      int r = rand() % world.bodies.size();
+      if (world.bodies.at(r).mass < world.UNMOVABLE_MASS)
+         world.bodies.at(r).velocity = world.bodies.at(r).velocity + Vector2(0, 12);
+   }
    printf("key ‘%c’ pressed at (%d,%d)\n",
       key, x, y);
    glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
@@ -127,7 +136,7 @@ void init_bodies()
    bodies.push_back(body);
    delete rect;
 
-   rect = new rectangle(0, 5, 1, 2, 2);
+   rect = new rectangle(0, 5, -1, 2, 2);
    body = Body(rect, 4, 0, -2, 0);
    bodies.push_back(body);
    delete rect;
@@ -157,6 +166,7 @@ void init_bodies()
    bodies.push_back(body);
    delete rect;
 
+   //bodies.erase((bodies.begin() + 1), bodies.end());
    // bounds
    double bigmass = 100000;
    rect = new rectangle(-14, 0, 0, 3, 25);

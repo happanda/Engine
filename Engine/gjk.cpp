@@ -146,9 +146,9 @@ void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
    // can't be true simultaneously
    if ((simplex.A[edgeP1] - simplex.A[edgeP2]).norm2sq() < DBL_EPSILON)
    {
-      collision.one.p = simplex.A[edgeP1];
-      collision.two.p = closest_point(collision.one.p,
-         Segment(simplex.B[edgeP1], simplex.B[edgeP2]));
+      collision.one.push_back(simplex.A[edgeP1]);
+      collision.two.push_back(closest_point(collision.one.at(0),
+         Segment(simplex.B[edgeP1], simplex.B[edgeP2])));
       collision.normal = perpendicular(simplex.B[edgeP2] - simplex.B[edgeP1],
          collision.body_one->form->point - collision.body_two->form->point);
    }
@@ -158,17 +158,20 @@ void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
       collision.body_one = collision.body_two;
       collision.body_two = body_tmp;
 
-      collision.one.p = simplex.B[edgeP1];
-      collision.two.p = closest_point(collision.one.p,
-         Segment(simplex.A[edgeP1], simplex.A[edgeP2]));
+      collision.one.push_back(simplex.B[edgeP1]);
+      collision.two.push_back(closest_point(collision.one.at(0),
+         Segment(simplex.A[edgeP1], simplex.A[edgeP2])));
       collision.normal = perpendicular(simplex.A[edgeP2] - simplex.A[edgeP1],
          collision.body_one->form->point - collision.body_two->form->point);
    }
    else
    {
-      collision.edge_edge = true;
-      collision.one.segm = Segment(simplex.A[edgeP1], simplex.A[edgeP2]);
-      collision.two.segm = Segment(simplex.B[edgeP1], simplex.B[edgeP2]);
+      Segment AA(simplex.A[edgeP1], simplex.A[edgeP2]);
+      Segment BB(simplex.B[edgeP1], simplex.B[edgeP2]);
+      collision.one.push_back(closest_point(simplex.B[edgeP1], AA));
+      collision.one.push_back(closest_point(simplex.B[edgeP2], AA));
+      collision.two.push_back(closest_point(simplex.A[edgeP2], BB));
+      collision.two.push_back(closest_point(simplex.A[edgeP1], BB));
       collision.normal = perpendicular(simplex.B[edgeP2] - simplex.B[edgeP1],
          collision.body_one->form->point - collision.body_two->form->point);
    }
@@ -219,26 +222,25 @@ void epa_get_features(shape& shapeA, shape& shapeB,
 void gjk_get_features(const Simplex& simplex,
                        Collision& collision)
 {
-   collision.edge_edge = false;
    switch(simplex.feature)
    {
       case SIMPLEX_A_POINT:
          //printf("SIMPLEX_A_POINT\n");
-         collision.one.p = simplex.A[0];
-         collision.two.p = simplex.B[0];
-         collision.normal = collision.one.p - collision.two.p;
+         collision.one.push_back(simplex.A[0]);
+         collision.two.push_back(simplex.B[0]);
+         collision.normal = collision.one.at(0) - collision.two.at(0);
          break;
       case SIMPLEX_B_POINT:
          //printf("SIMPLEX_B_POINT\n");
-         collision.one.p = simplex.A[1];
-         collision.two.p = simplex.B[1];
-         collision.normal = collision.one.p - collision.two.p;
+         collision.one.push_back(simplex.A[1]);
+         collision.two.push_back(simplex.B[1]);
+         collision.normal = collision.one.at(0) - collision.two.at(0);
          break;
       case SIMPLEX_C_POINT:
          //printf("SIMPLEX_C_POINT\n");
-         collision.one.p = simplex.A[2];
-         collision.two.p = simplex.B[2];
-         collision.normal = collision.one.p - collision.two.p;
+         collision.one.push_back(simplex.A[2]);
+         collision.two.push_back(simplex.B[2]);
+         collision.normal = collision.one.at(0) - collision.two.at(0);
          break;
       case SIMPLEX_AB_EDGE:
          //printf("SIMPLEX_AB_POINT\n");
