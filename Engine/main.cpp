@@ -43,8 +43,6 @@ void keyboard(unsigned char key, int x, int y)
 {
    if (key == 'p')
       pause = !pause;
-   if (key == 'r')
-      init_bodies();
    if (key == 'q')
       exit(0);
    if (key == '\'')
@@ -55,7 +53,8 @@ void keyboard(unsigned char key, int x, int y)
       if (world.bodies.at(r).mass < world.UNMOVABLE_MASS)
          world.bodies.at(r).velocity = world.bodies.at(r).velocity + Vector2(0, 12);
    }
-   TwEventKeyboardGLUT(key, x, y);
+   if (draw_tw)
+      TwEventKeyboardGLUT(key, x, y);
    glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
    glutPostRedisplay();
 }
@@ -77,9 +76,9 @@ void passiveMotion(int x, int y)
 
 void choice_selected(int value)
 {
-   if (value == 1) { glut_init(); tw_init(); init_bodies(); draw_tw = true; }
+   if (value == 1) { glut_init(); init_bodies(); tw_init(); draw_tw = true; }
    if (value == 2) { test_gjk_init(); draw_tw = false; }
-   if (value == 3) { stack_init(); tw_init(); draw_tw = true; }
+   if (value == 3) { glut_init(); stack_init(); tw_init(); draw_tw = true; }
 }
 
 void specialKey(int key, int x, int y)
@@ -104,6 +103,10 @@ void reshape(int width, int height)
 int main(int argc, char** argv)
 {
    glutInit(&argc, argv);
+   glutInitWindowSize(800, 600);
+   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+   glutCreateWindow("Engine");
+
    glut_init();
    tw_init();
    init_color();
@@ -116,10 +119,6 @@ int main(int argc, char** argv)
 
 void glut_init()
 {
-   glutInitWindowSize(800, 600);
-   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-   glutCreateWindow("Engine");
-
    glutDisplayFunc(step);
    glutIdleFunc(step);
    glutKeyboardFunc(keyboard);
