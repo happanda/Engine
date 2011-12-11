@@ -89,19 +89,22 @@ void World::resolve_collision(double deltaT)
                double Pn = (-(1 + RESTITUTION) * vel_rel_n + v_bias) / kn;
                double Pt = -FRICTION * vel_rel_t / kt;
 
-               if (Pn < 0) Pn = 0;
-               if (Pt < -FRICTION * Pn) Pt = -FRICTION * Pn;
-               else if (Pt > FRICTION * Pn) Pt = FRICTION * Pn;
+               if (Pt < -FRICTION * Pn)
+                  Pt = -FRICTION * Pn;
+               else if (Pt > FRICTION * Pn)
+                  Pt = FRICTION * Pn;
 
                // total impulse
                Vector2 P = it->normal * Pn + tang * Pt;
 
-               if (Pn < min_impulse && Pt < min_impulse)
+               if (abs(Pn) < min_impulse && abs(Pt) < min_impulse)
                   enough = true;
                // correcting impulses
-               if (sum_impulse_n + Pn < 0) Pn = -sum_impulse_n;
+               if (sum_impulse_n + Pn < 0)
+                  Pn = -sum_impulse_n;
                sum_impulse_n += Pn;
-               if (sum_impulse_t + Pt < 0) Pt = -sum_impulse_t;
+               if (sum_impulse_t + Pt < 0)
+                  Pt = -sum_impulse_t;
                sum_impulse_t += Pt;
 
                Vector2 deltaV1 = P * (1 / m1);
