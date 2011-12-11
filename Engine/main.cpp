@@ -16,6 +16,7 @@ bool draw_colls = false;
 
 void init_bodies();
 void main_init();
+void stack_init();
 
 clock_t prevCl = 0;
 void step()
@@ -72,8 +73,9 @@ void passiveMotion(int x, int y)
 
 void choice_selected(int value)
 {
-   if (value == 1) main_init();
+   if (value == 1) { main_init(); init_bodies(); }
    if (value == 2) test_gjk_init();
+   if (value == 3) { main_init(); stack_init(); }
 }
 
 void specialKey(int key, int x, int y)
@@ -96,6 +98,7 @@ int main(int argc, char** argv)
    glutCreateWindow("Engine");
 
    main_init();
+   init_bodies();
 
    init_screen();
    glutMainLoop();
@@ -104,7 +107,6 @@ int main(int argc, char** argv)
 void main_init()
 {
    pause = false;
-   init_bodies();
    glutDisplayFunc(step);
    glutIdleFunc(step);
    glutKeyboardFunc(keyboard);
@@ -116,6 +118,7 @@ void main_init()
    glutCreateMenu(choice_selected);
    glutAddMenuEntry("Main simulation", 1);
    glutAddMenuEntry("Test GJK", 2);
+   glutAddMenuEntry("Stack boxes", 3);
    glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
@@ -186,6 +189,48 @@ void init_bodies()
    bodies.push_back(body);
    delete rect;
    // bounds
+
+   for (size_t nb = 0; nb < bodies.size(); nb++)
+   {
+      world.addBody(bodies[nb]);
+   }
+}
+
+void stack_init()
+{
+   world.init();
+
+   double angle_vel = 0;
+   std::vector<Body> bodies;
+
+   Body body = Body(&(rectangle()), 0, 0, 0, 0);
+   rectangle* rect;
+
+   // lower bound
+   rect = new rectangle(0, -14, 0, 200, 4);
+   body = Body(rect, 100000, 0, 0, 0);
+   bodies.push_back(body);
+   delete rect;
+
+   rect = new rectangle(0, -10, 0, 4, 4);
+   body = Body(rect, 16, 0, 0, 0);
+   bodies.push_back(body);
+   delete rect;
+
+   rect = new rectangle(0, -7, 0, 8, 2);
+   body = Body(rect, 16, 0, 0, 0);
+   bodies.push_back(body);
+   delete rect;
+
+   rect = new rectangle(0, -3, 0, 2, 6);
+   body = Body(rect, 12, 0, 0, 0);
+   bodies.push_back(body);
+   delete rect;
+
+   rect = new rectangle(0.5, 2, 0, 4, 4);
+   body = Body(rect, 12, 0, 0, 0);
+   bodies.push_back(body);
+   delete rect;
 
    for (size_t nb = 0; nb < bodies.size(); nb++)
    {
