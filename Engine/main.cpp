@@ -7,15 +7,18 @@
 #include "draw.h"
 #include "test_gjk.h"
 #include "glut/glut.h"
+#include "anttweakbar\AntTweakBar.h"
 
 
 World world = World();
 int speed = 20;
 bool pause = false;
 bool draw_colls = false;
+bool draw_tw = true;
 
 void init_bodies();
-void main_init();
+void glut_init();
+void tw_init();
 void stack_init();
 
 clock_t prevCl = 0;
@@ -30,6 +33,8 @@ void step()
          draw_collisions(world.collisions);
       world.update((double)world.timeStep / 1000);
       prevCl = cl;
+      if (draw_tw)
+         TwDraw();
       glutSwapBuffers();
    }
 }
@@ -50,32 +55,31 @@ void keyboard(unsigned char key, int x, int y)
       if (world.bodies.at(r).mass < world.UNMOVABLE_MASS)
          world.bodies.at(r).velocity = world.bodies.at(r).velocity + Vector2(0, 12);
    }
-   printf("key ‘%c’ pressed at (%d,%d)\n",
-      key, x, y);
+   TwEventKeyboardGLUT(key, x, y);
    glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
    glutPostRedisplay();
 }
 
 void mouse(int btn, int state, int x, int y)
 {
-   //printf("button %d is %s at (%d,%d)\n", btn, state == GLUT_DOWN ? "down" : "up", x, y);
+   TwEventMouseButtonGLUT(btn, state, x, y);
 }
 
 void motion(int x, int y)
 {
-   //printf("button motion at (%d,%d)\n", x, y);
+   TwEventMouseMotionGLUT(x, y);
 }
 
 void passiveMotion(int x, int y)
 {
-   //printf("passive motion at (%d,%d)\n", x, y);
+   TwEventMouseMotionGLUT(x, y);
 }
 
 void choice_selected(int value)
 {
-   if (value == 1) { main_init(); init_bodies(); }
-   if (value == 2) test_gjk_init();
-   if (value == 3) { main_init(); stack_init(); }
+   if (value == 1) { glut_init(); tw_init(); init_bodies(); draw_tw = true; }
+   if (value == 2) { test_gjk_init(); draw_tw = false; }
+   if (value == 3) { stack_init(); tw_init(); draw_tw = true; }
 }
 
 void specialKey(int key, int x, int y)
@@ -90,23 +94,32 @@ void specialKey(int key, int x, int y)
    }
 }
 
+void reshape(int width, int height)
+{
+   reshape_window(width, height);
+   if (draw_tw)
+      TwWindowSize(width, height);
+}
+
 int main(int argc, char** argv)
 {
    glutInit(&argc, argv);
-   glutInitWindowSize(600, 600);
-   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-   glutCreateWindow("Engine");
+   glut_init();
+   tw_init();
+   init_color();
 
-   main_init();
    init_bodies();
+   pause = false;
 
-   init_screen();
    glutMainLoop();
 }
 
-void main_init()
+void glut_init()
 {
-   pause = false;
+   glutInitWindowSize(800, 600);
+   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+   glutCreateWindow("Engine");
+
    glutDisplayFunc(step);
    glutIdleFunc(step);
    glutKeyboardFunc(keyboard);
@@ -114,12 +127,29 @@ void main_init()
    glutMotionFunc(motion);
    glutPassiveMotionFunc(passiveMotion);
    glutSpecialFunc(specialKey);
+   glutReshapeFunc(reshape);
 
    glutCreateMenu(choice_selected);
    glutAddMenuEntry("Main simulation", 1);
    glutAddMenuEntry("Test GJK", 2);
    glutAddMenuEntry("Stack boxes", 3);
    glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+
+void tw_init()
+{
+   // Initialize AntTweakBar
+   TwInit(TW_OPENGL, NULL);
+
+   // Create a tweak bar
+   TwBar* bar = TwNewBar("TweakBar");
+   TwDefine(" TweakBar size='200 200' color='100 100 100' ");
+   TwAddVarRW(bar, "Restitution", TW_TYPE_DOUBLE, &world.RESTITUTION,
+      " min=0.0 max=1.0 step=0.05 help='Coefficient of restitution, default 0.5.' ");
+   TwAddVarRW(bar, "Friction", TW_TYPE_DOUBLE, &world.FRICTION,
+      " min=0.0 max=1.0 step=0.05 help='Coefficient of restitution, default 0.4.' ");
+   TwAddVarRW(bar, "Gravity", TW_TYPE_DOUBLE, &world.GRAVITATION.v2,
+      " min=-100 max=100 step=0.5 help='Coefficient of restitution, default -9.8.' ");
 }
 
 void init_bodies()
@@ -172,11 +202,11 @@ void init_bodies()
    //bodies.erase((bodies.begin() + 1), bodies.end());
    // bounds
    double bigmass = 100000;
-   rect = new rectangle(-14, 0, 0, 3, 25);
+   rect = new rectangle(-40, 0, 0, 50, 25);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
-   rect = new rectangle(14, 0, 0, 3, 25);
+   rect = new rectangle(40, 0, 0, 50, 25);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
    delete rect;

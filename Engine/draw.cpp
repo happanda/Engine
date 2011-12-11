@@ -3,20 +3,24 @@
 GLfloat light_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
 GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
 
-void init_screen()
+void init_color()
 {
-   //glEnable(GL_DEPTH_TEST);
+   glClearColor(1, 1, 1, 0);
+   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void reshape_window(int width, int height)
+{
+   glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
-   gluPerspective( /* field of view in degrees */ 100.0,
-      /* aspect ratio */ 1.0,
-      /* Z near */ 1.0, /* Z far */ 50.0);
+   glLoadIdentity();
+   gluPerspective(100, (double)width/height, 1, 50);
    glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
    gluLookAt(0.0, 0.0, 10.0, /* eye is at (0,0,5) */
       0.0, 0.0, 0.0, /* center is at (0,0,0) */
       0.0, 1.0, 0.0); /* up is in +Y direction */
-   glTranslatef(0.0, 0.0, -1.0);
-   glClearColor(1, 1, 1, 0);
-   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   glTranslatef(0, 0.0, -1.0);
 }
 
 void draw_bodies(const std::vector<Body>& bodies)

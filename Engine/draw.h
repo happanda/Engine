@@ -12,7 +12,8 @@
 const double SURFACE_DISTANCE = 1000;
 const double CIRCLE_SEGMENTS = 50;
 
-void init_screen();
+void init_color();
+void reshape_window(int width, int height);
 void draw_bodies(const std::vector<Body>& bodies);
 void draw_collisions(const std::vector<Collision>& collisions);
 void draw_simplex(Simplex simplex);

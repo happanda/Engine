@@ -70,9 +70,7 @@ void test_gjk_init()
    world.init();
    world.GRAVITATION = Vector2::ORIGIN;
    Body body = Body(&(rectangle()), 0, 0, 0, 0);
-   circle* circ;
    rectangle* rect;
-   //surface* surf;
 
    rect = new rectangle(0, 0, 0, 4, 4);
    body = Body(rect, 4, 0, 0, 0);

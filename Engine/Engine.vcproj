@@ -60,7 +60,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/NODEFAULTLIB:msvcrt"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\glut&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\glut&quot;;&quot;$(SolutionDir)\lib\anttweakbar&quot;"
 				IgnoreAllDefaultLibraries="false"
 				GenerateDebugInformation="true"
 				TargetMachine="1"
@@ -85,7 +85,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(SolutionDir)\lib\glut\glut32.dll $(OutDir)"
+				CommandLine="copy $(SolutionDir)\lib\glut\glut32.dll $(OutDir)&#x0D;&#x0A;copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)"
 			/>
 		</Configuration>
 		<Configuration
