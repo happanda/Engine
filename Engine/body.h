@@ -24,6 +24,14 @@ public:
             rect->h, rect->w);
          inert = mass * (rect->h * rect->h + rect->w * rect->w) / 12;// inertia of rectangle
       }
+      if (sh->type == sh_circle)
+      {
+         const circle* circ = static_cast<const circle*>(sh);
+         form = new circle(sh->point.v1, sh->point.v2, sh->alpha,
+            circ->radius);
+         inert = mass * (3.14 * circ->radius * circ->radius
+             * circ->radius * circ->radius) / 4;// inertia of circle
+      }
    }
 
    Body(const Body& body): mass(body.mass),
@@ -34,6 +42,14 @@ public:
          rectangle* rect = static_cast<rectangle*>(body.form);
          form = new rectangle(body.form->point.v1, body.form->point.v2, body.form->alpha,
             rect->h, rect->w);
+      }
+      if (body.form->type == sh_circle)
+      {
+         const circle* circ = static_cast<const circle*>(body.form);
+         form = new circle(body.form->point.v1, body.form->point.v2, body.form->alpha,
+            circ->radius);
+         inert = mass * (3.14 * circ->radius * circ->radius
+             * circ->radius * circ->radius) / 4;// inertia of circle
       }
    }
 
@@ -48,6 +64,12 @@ public:
          rectangle* rect = static_cast<rectangle*>(body.form);
          form = new rectangle(body.form->point.v1, body.form->point.v2, body.form->alpha,
             rect->h, rect->w);
+      }
+      else if (body.form->type == sh_circle)
+      {
+         circle* circ = static_cast<circle*>(body.form);
+         form = new circle(body.form->point.v1, body.form->point.v2, body.form->alpha,
+            circ->radius);
       }
       return *this;
    }

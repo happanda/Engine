@@ -37,6 +37,8 @@ struct circle : public shape
 {
 public:
    circle() { type = sh_circle; }
+   circle(double point_x, double point_y, double alpha, double radius):
+      shape(sh_circle, point_x, point_y, alpha), radius(radius) { }
    double radius;
 };
 

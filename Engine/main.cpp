@@ -160,7 +160,7 @@ void init_bodies()
 
    Body body = Body(&(rectangle()), 0, 0, 0, 0);
    rectangle* rect;
-   //circle* circ;
+   circle* circ;
    //surface* surf;
 
    rect = new rectangle(0, 0, 2, 4, 4);
@@ -197,6 +197,16 @@ void init_bodies()
    body = Body(rect, 10, 2, 0, 0);
    bodies.push_back(body);
    delete rect;
+
+   circ = new circle(-3, 4, 0, 2);
+   body = Body(circ, 2, 0, -4, 0);
+   bodies.push_back(body);
+   delete circ;
+
+   circ = new circle(4, 7, 0, 3);
+   body = Body(circ, 4, -2, -2, 0);
+   bodies.push_back(body);
+   delete circ;
 
    //bodies.erase((bodies.begin() + 1), bodies.end());
    // bounds
