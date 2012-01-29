@@ -1,5 +1,5 @@
-#ifndef INCLUDE_LINEAR_ALGEBRA
-#define INCLUDE_LINEAR_ALGEBRA
+#ifndef INCLUDE_GEOMETRY
+#define INCLUDE_GEOMETRY
 
 #include <math.h>
 

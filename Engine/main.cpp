@@ -204,7 +204,7 @@ void init_bodies()
    delete circ;
 
    circ = new circle(4, 7, 0, 3);
-   body = Body(circ, 4, -2, -2, 0);
+   body = Body(circ, 8, -2, -2, 0);
    bodies.push_back(body);
    delete circ;
 
