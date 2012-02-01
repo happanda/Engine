@@ -58,7 +58,7 @@ void test_gjk_draw()
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       draw_bodies(world.bodies);
       draw_collisions(world.collisions);
-      world.update((double)world.timeStep / 1000);
+      world.update((double)world.vars.timeStep / 1000);
       draw_point(Vector2(0, 0));
       prevCl = cl;
       glutSwapBuffers();
@@ -68,7 +68,7 @@ void test_gjk_draw()
 void test_gjk_init()
 {
    world.init();
-   world.GRAVITATION = Vector2::ORIGIN;
+   world.vars.GRAVITATION = Vector2::ORIGIN;
    Body body = Body(&(rectangle()), 0, 0, 0, 0);
    rectangle* rect;
 

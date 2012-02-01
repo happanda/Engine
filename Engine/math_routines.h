@@ -5,8 +5,8 @@
 #include "geometry.h"
 #include "shape.h"
 
-void get_points(rectangle rect, Vector2& p1, Vector2& p2,
-                Vector2& p3, Vector2& p4, double indent);
+//void get_points(rectangle rect, Vector2& p1, Vector2& p2,
+//                 Vector2& p3, Vector2& p4, double indent);
 
 inline bool same_direction(Vector2 v, Vector2 u)
 { return (v * u > 0); }

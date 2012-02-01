@@ -10,7 +10,7 @@ void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
    {
       for (std::vector<Body>::iterator jt = it; jt != bodies.end(); jt++)
       {
-         if (it != jt)
+         if (it != jt && bbox_check_collision(&(*it), &(*jt)))
          {
             Collision coll;
             coll.body_one = &(*it);
@@ -22,6 +22,16 @@ void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
          }
       }
    }
+}
+
+bool bbox_check_collision(Body* bodyA, Body* bodyB)
+{
+   bbox bboxA = bodyA->form->bounding_box();
+   bbox bboxB = bodyB->form->bounding_box();
+   if (bboxA.right < bboxB.left || bboxB.right < bboxA.left
+      || bboxA.top < bboxB.bottom || bboxB.top < bboxA.bottom)
+      return false;
+   return true;
 }
 
 Collision sat_collide(Body* bodyA, Body* bodyB)

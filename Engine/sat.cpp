@@ -40,8 +40,8 @@ double find_min_intersection(const rectangle& rectA, const rectangle& rectB,
 {
    Vector2 pA[4];
    Vector2 pB[4];
-   get_points(rectA, pA[0], pA[1], pA[2], pA[3], 0);
-   get_points(rectB, pB[0], pB[1], pB[2], pB[3], 0);
+   rectA.get_points(pA[0], pA[1], pA[2], pA[3], 0);
+   rectB.get_points(pB[0], pB[1], pB[2], pB[3], 0);
 
    double minProjIntersect = DBL_MAX;// minimum intersection of projections
 

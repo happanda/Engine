@@ -4,24 +4,24 @@
 #include "geometry.h"
 #include "gjk.h"
 
-void get_points(rectangle rect, Vector2& p1, Vector2& p2,
-                 Vector2& p3, Vector2& p4, double indent)
-{
-   Vector2 v(rect.h, rect.w);
-   double diag = v.norm2sq();// diagonal in rectangle
-   double cosphi = rect.h / (2 * diag);
-   double sinphi = rect.w / (2 * diag);
-   
-   Vector2 point(-rect.h / 2 + indent, -rect.w / 2 + indent);
-
-   p1 = rect.point + rotate(point, rect.alpha);
-   point.invX();
-   p2 = rect.point + rotate(point, rect.alpha);
-   point.invY();
-   p3 = rect.point + rotate(point, rect.alpha);
-   point.invX();
-   p4 = rect.point + rotate(point, rect.alpha);
-}
+//void get_points(rectangle rect, Vector2& p1, Vector2& p2,
+//                 Vector2& p3, Vector2& p4, double indent)
+//{
+//   Vector2 v(rect.h, rect.w);
+//   double diag = v.norm2sq();// diagonal in rectangle
+//   double cosphi = rect.h / (2 * diag);
+//   double sinphi = rect.w / (2 * diag);
+//   
+//   Vector2 point(-rect.h / 2 + indent, -rect.w / 2 + indent);
+//
+//   p1 = rect.point + rotate(point, rect.alpha);
+//   point.invX();
+//   p2 = rect.point + rotate(point, rect.alpha);
+//   point.invY();
+//   p3 = rect.point + rotate(point, rect.alpha);
+//   point.invX();
+//   p4 = rect.point + rotate(point, rect.alpha);
+//}
 
 // computes a vector V, such that (V * codirect > 0)
 Vector2 perpendicular(Vector2 vect, Vector2 codirect)

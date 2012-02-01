@@ -5,6 +5,16 @@
 #include "body.h"
 #include "collision.h"
 
+struct world_vars
+{
+   double RESTITUTION;
+   double FRICTION;
+   Vector2 GRAVITATION;
+   double UNMOVABLE_MASS;
+   // timestep in milliseconds
+   int timeStep;
+};
+
 class World
 {
 public:
@@ -17,12 +27,7 @@ public:
 
    std::vector<Collision> collisions;
    std::vector<Body> bodies;
-   double RESTITUTION;
-   double FRICTION;
-   Vector2 GRAVITATION;
-   double UNMOVABLE_MASS;
-   // timestep in milliseconds
-   int timeStep;
+   world_vars vars;
 };
 
 #endif

@@ -14,11 +14,11 @@ void World::init()
 {
    bodies.clear();
    collisions.clear();
-   timeStep = 16;
-   UNMOVABLE_MASS = 5000;
-   RESTITUTION = 0.5;
-   FRICTION = 0.4;
-   GRAVITATION = Vector2(0, -9.8);
+   vars.timeStep = 16;
+   vars.UNMOVABLE_MASS = 5000;
+   vars.RESTITUTION = 0.5;
+   vars.FRICTION = 0.4;
+   vars.GRAVITATION = Vector2(0, -9.8);
 }
 
 void World::update(double deltaT)
@@ -79,13 +79,13 @@ void World::resolve_collision(double deltaT)
                   a_add_t(0, 0), b_add_t(0, 0);
                double mm = 0;
 
-               if (m1 < UNMOVABLE_MASS)
+               if (m1 < vars.UNMOVABLE_MASS)
                {
                   mm += 1 / m1;
                   a_add_n = cross_cross(ra_2d, it->normal) * iinrt1;
                   a_add_t = cross_cross(ra_2d, tang) * iinrt1;
                }
-               if (m2 < UNMOVABLE_MASS)
+               if (m2 < vars.UNMOVABLE_MASS)
                {
                   mm += 1 / m2;
                   b_add_n = cross_cross(rb_2d, it->normal) * iinrt2;
@@ -99,13 +99,13 @@ void World::resolve_collision(double deltaT)
                // penetration correction impulse
                if (delta > delta_slop)
                   v_bias = bias_factor * (delta - delta_slop) / deltaT;
-               double Pn = (-(1 + RESTITUTION) * vel_rel_n + v_bias) / kn;
-               double Pt = -FRICTION * vel_rel_t / kt;
+               double Pn = (-(1 + vars.RESTITUTION) * vel_rel_n + v_bias) / kn;
+               double Pt = -vars.FRICTION * vel_rel_t / kt;
 
-               if (Pn > 0 && Pt < -FRICTION * Pn)
-                  Pt = -FRICTION * Pn;
-               else if (Pn > 0 && Pt > FRICTION * Pn)
-                  Pt = FRICTION * Pn;
+               if (Pn > 0 && Pt < -vars.FRICTION * Pn)
+                  Pt = -vars.FRICTION * Pn;
+               else if (Pn > 0 && Pt > vars.FRICTION * Pn)
+                  Pt = vars.FRICTION * Pn;
 
                // total impulse
                Vector2 P = it->normal * Pn + tang * Pt;
@@ -126,12 +126,12 @@ void World::resolve_collision(double deltaT)
                double deltaW1 = 0;
                double deltaW2 = 0;
 
-               if (m1 < UNMOVABLE_MASS)
+               if (m1 < vars.UNMOVABLE_MASS)
                {
                   deltaV1 = P * (1 / m1);
                   deltaW1 = iinrt1 * (ra_2d.v1 * P.v2 - ra_2d.v2 * P.v1);
                }
-               if (m2 < UNMOVABLE_MASS)
+               if (m2 < vars.UNMOVABLE_MASS)
                {
                   deltaV2 = P * (-1 / m2);
                   deltaW2 = -iinrt2 * (rb_2d.v1 * P.v2 - rb_2d.v2 * P.v1);
@@ -152,7 +152,7 @@ void World::apply_forces(double deltaT)
 {
    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
    {
-      if (it->mass < UNMOVABLE_MASS)
-         it->velocity = it->velocity + GRAVITATION * deltaT;
+      if (it->mass < vars.UNMOVABLE_MASS)
+         it->velocity = it->velocity + vars.GRAVITATION * deltaT;
    }
 }

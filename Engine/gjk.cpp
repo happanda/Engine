@@ -386,7 +386,7 @@ Vector2 gjk_support(Vector2 direction, shape& sh)
       {
          rectangle* rect = static_cast<rectangle*>(&sh);
          Vector2 p1, p2, p3, p4;
-         get_points(*rect, p1, p2, p3, p4, 0);
+         rect->get_points(p1, p2, p3, p4, 0);
          double max = direction * p1;
          point = p1;
          double next = direction * p2;

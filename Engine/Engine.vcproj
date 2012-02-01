@@ -85,7 +85,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy $(SolutionDir)\lib\glut\glut32.dll $(OutDir)&#x0D;&#x0A;copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)"
+				CommandLine="copy $(SolutionDir)\lib\glut\glut32.dll $(OutDir)&#x0D;&#x0A;copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -183,6 +183,10 @@
 			</File>
 			<File
 				RelativePath=".\body.h"
+				>
+			</File>
+			<File
+				RelativePath=".\shape.cpp"
 				>
 			</File>
 			<File

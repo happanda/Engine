@@ -33,7 +33,7 @@ void draw_bodies(const std::vector<Body>& bodies)
       {
          rectangle* rect = static_cast<rectangle*>(bodies[i].form);
          Vector2 p1, p2, p3, p4;
-         get_points(*rect, p1, p2, p3, p4, 0);
+         rect->get_points(p1, p2, p3, p4, 0);
 
          glBegin(GL_LINE_LOOP);
          glVertex2f(p1.v1, p1.v2);

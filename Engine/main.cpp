@@ -31,7 +31,7 @@ void step()
       draw_bodies(world.bodies);
       if (draw_colls)
          draw_collisions(world.collisions);
-      world.update((double)world.timeStep / 1000);
+      world.update((double)world.vars.timeStep / 1000);
       prevCl = cl;
       if (draw_tw)
          TwDraw();
@@ -50,7 +50,7 @@ void keyboard(unsigned char key, int x, int y)
    if (key == 'y')
    {
       int r = rand() % world.bodies.size();
-      if (world.bodies.at(r).mass < world.UNMOVABLE_MASS)
+      if (world.bodies.at(r).mass < world.vars.UNMOVABLE_MASS)
          world.bodies.at(r).velocity = world.bodies.at(r).velocity + Vector2(0, 12);
    }
    if (draw_tw)
@@ -85,11 +85,11 @@ void specialKey(int key, int x, int y)
 {
    if (key == GLUT_KEY_UP)
    {
-      world.timeStep += 5;
+      world.vars.timeStep += 5;
    }
    if (key == GLUT_KEY_DOWN)
    {
-      world.timeStep -= 5;
+      world.vars.timeStep -= 5;
    }
 }
 
@@ -143,17 +143,19 @@ void tw_init()
    // Create a tweak bar
    TwBar* bar = TwNewBar("TweakBar");
    TwDefine(" TweakBar size='200 200' color='100 100 100' ");
-   TwAddVarRW(bar, "Restitution", TW_TYPE_DOUBLE, &world.RESTITUTION,
+   TwAddVarRW(bar, "Restitution", TW_TYPE_DOUBLE, &world.vars.RESTITUTION,
       " min=0.0 max=1.0 step=0.05 help='Coefficient of restitution, default 0.5.' ");
-   TwAddVarRW(bar, "Friction", TW_TYPE_DOUBLE, &world.FRICTION,
+   TwAddVarRW(bar, "Friction", TW_TYPE_DOUBLE, &world.vars.FRICTION,
       " min=0.0 max=1.0 step=0.05 help='Coefficient of restitution, default 0.4.' ");
-   TwAddVarRW(bar, "Gravity", TW_TYPE_DOUBLE, &world.GRAVITATION.v2,
+   TwAddVarRW(bar, "Gravity", TW_TYPE_DOUBLE, &world.vars.GRAVITATION.v2,
       " min=-100 max=100 step=0.5 help='Coefficient of restitution, default -9.8.' ");
 }
 
 void init_bodies()
 {
+   world_vars wvars = world.vars;
    world.init();
+   world.vars = wvars;
 
    double angle_vel = 0;
    std::vector<Body> bodies;
