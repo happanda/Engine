@@ -142,7 +142,7 @@ void tw_init()
 
    // Create a tweak bar
    TwBar* bar = TwNewBar("TweakBar");
-   TwDefine(" TweakBar size='200 200' color='100 100 100' ");
+   TwDefine(" TweakBar size='200 100' color='100 100 100' ");
    TwAddVarRW(bar, "Restitution", TW_TYPE_DOUBLE, &world.vars.RESTITUTION,
       " min=0.0 max=1.0 step=0.05 help='Coefficient of restitution, default 0.5.' ");
    TwAddVarRW(bar, "Friction", TW_TYPE_DOUBLE, &world.vars.FRICTION,
