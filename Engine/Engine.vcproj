@@ -206,6 +206,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\LinearAlgebra.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\LinearAlgebra.h"
+				>
+			</File>
+			<File
 				RelativePath=".\math_routines.cpp"
 				>
 			</File>
@@ -259,6 +267,26 @@
 			>
 			<File
 				RelativePath=".\test_gjk.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Contraints"
+			>
+			<File
+				RelativePath=".\CollisionContraint.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\CollisionContraint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Constraint.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Constraint.h"
 				>
 			</File>
 		</Filter>

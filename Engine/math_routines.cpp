@@ -2,6 +2,7 @@
 #include "math_routines.h"
 #include <float.h>
 #include "geometry.h"
+#include "LinearAlgebra.h"
 #include "gjk.h"
 
 //void get_points(rectangle rect, Vector2& p1, Vector2& p2,
