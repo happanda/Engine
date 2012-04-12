@@ -221,6 +221,14 @@
 				RelativePath=".\math_routines.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Matrix3.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix3.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="World"
