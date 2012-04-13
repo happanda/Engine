@@ -1,6 +1,7 @@
 #ifndef INCLUDE_CONTRAINT
 #define INCLUDE_CONTRAINT
 
+#include <vector>
 #include "Body.h"
 #include "geometry.h"
 
@@ -17,7 +18,10 @@ public:
 
    static const size_t MAX_ITER = 100;
 protected:
-
+   std::vector<std::vector<double>> Jacobian;
+   std::vector<std::vector<double>> A;
+   std::vector<double> Eta;
+   std::vector<double> Lambda;
 };
 
 #endif

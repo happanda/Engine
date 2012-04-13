@@ -21,4 +21,6 @@ double distance(Vector2 point, Segment segment);
 // and computes (v1 x v2) x v1, takes x and y components as resulting 2D vector
 Vector2 cross_cross(Vector2 vect1, Vector2 vect2);
 
+double clamp(double value, double minValue, double maxValue);
+
 #endif

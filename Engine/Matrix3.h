@@ -11,6 +11,7 @@ public:
 
    static Matrix3 Diag(double a11, double a22, double a33);
    static Matrix3 Eye();
+   static Matrix3 Zero();
 
    double& a11();
    double& a12();

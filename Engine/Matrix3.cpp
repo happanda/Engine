@@ -23,6 +23,11 @@ Matrix3 Matrix3::Eye()
    return m;
 }
 
+Matrix3 Matrix3::Zero()
+{
+   return Matrix3();
+}
+
 const Matrix3& Matrix3::operator=(const Matrix3& m)
 {
    a[0][0] = m.a[0][0]; a[0][1] = m.a[0][1]; a[0][2] = m.a[0][2];

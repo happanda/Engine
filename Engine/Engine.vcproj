@@ -115,6 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)include&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -131,6 +132,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\lib\glut&quot;;&quot;$(SolutionDir)\lib\anttweakbar&quot;"
 				GenerateDebugInformation="true"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
@@ -222,11 +224,43 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Matrix2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Matrix2.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Matrix3.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Matrix3.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PGSsolver.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\PGSsolver.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector2.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector2.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Vector3.h"
 				>
 			</File>
 		</Filter>

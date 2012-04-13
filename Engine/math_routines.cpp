@@ -1,6 +1,7 @@
 
 #include "math_routines.h"
 #include <float.h>
+#include <assert.h>
 #include "geometry.h"
 #include "LinearAlgebra.h"
 #include "gjk.h"
@@ -79,4 +80,10 @@ Vector2 cross_cross(Vector2 vect1, Vector2 vect2)
    Vector3 v3d2(vect2.v1, vect2.v2, 0);
    Vector3 res = (v3d1.cross(v3d2)).cross(v3d1);
    return Vector2(res.v1, res.v2);
+}
+
+double clamp(double value, double minValue, double maxValue)
+{
+   assert(minValue <= maxValue);
+   return std::max(minValue, std::min(maxValue, value));
 }
