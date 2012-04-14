@@ -1,13 +1,13 @@
-#ifndef INCLUDE_COLLISION_CONTRAINT
-#define INCLUDE_COLLISION_CONTRAINT
+#ifndef INCLUDE_CONTACT_CONTRAINT
+#define INCLUDE_CONTACT_CONTRAINT
 
 #include "Constraint.h"
 #include "collision.h"
 
-class CollisionContraint : public Constraint
+class ContactConstraint : public Constraint
 {
 public:
-   CollisionContraint(Collision* collision, world_vars* vars);
+   ContactConstraint(Collision* collision, world_vars* vars);
    void Init(Vector2 ForceExternal);
    Vector2 ImpulseDirection(void) const;
    double DeltaImpulse(void);

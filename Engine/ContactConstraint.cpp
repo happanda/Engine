@@ -1,4 +1,4 @@
-#include "CollisionContraint.h"
+#include "ContactConstraint.h"
 #include "body.h"
 #include "Vector2.h"
 #include "Vector3.h"
@@ -6,7 +6,7 @@
 #include "PGSsolver.h"
 #include "float.h"
 
-CollisionContraint::CollisionContraint(Collision* collision, world_vars* vars):
+ContactConstraint::ContactConstraint(Collision* collision, world_vars* vars):
 Constraint(collision->body_one, collision->body_two, vars), _collision(collision)
 {
    _sum_impulse_n = 0;
@@ -51,16 +51,16 @@ Constraint(collision->body_one, collision->body_two, vars), _collision(collision
    Lambda = std::vector<double>(1, 1);
 }
 
-Vector2 CollisionContraint::ImpulseDirection(void) const
+Vector2 ContactConstraint::ImpulseDirection(void) const
 {
    return _collision->normal;
 }
 
-void CollisionContraint::Init(Vector2 ForceExternal)
+void ContactConstraint::Init(Vector2 ForceExternal)
 {
 }
 
-double CollisionContraint::DeltaImpulse(void)
+double ContactConstraint::DeltaImpulse(void)
 {
    std::vector<double> L(1);
    

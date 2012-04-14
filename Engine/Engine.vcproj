@@ -316,19 +316,19 @@
 			Name="Contraints"
 			>
 			<File
-				RelativePath=".\CollisionContraint.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\CollisionContraint.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Constraint.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Constraint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\ContactConstraint.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\ContactConstraint.h"
 				>
 			</File>
 		</Filter>
