@@ -1,7 +1,7 @@
 #ifndef INCLUDE_SHAPE
 #define INCLUDE_SHAPE
 
-#include "geometry.h"
+#include "Math\Geometry.h"
 
 enum shape_type
 {

@@ -1,10 +1,10 @@
 #include "ContactConstraint.h"
-#include "body.h"
-#include "Vector2.h"
-#include "Vector3.h"
-#include "world.h"
-#include "PGSsolver.h"
-#include "float.h"
+#include <float.h>
+#include "Body\Body.h"
+#include "Math\Vector2.h"
+#include "Math\Vector3.h"
+#include "World\World.h"
+#include "Math\PGSsolver.h"
 
 ContactConstraint::ContactConstraint(Collision* collision, world_vars* vars):
 Constraint(collision->body_one, collision->body_two, vars), _collision(collision)

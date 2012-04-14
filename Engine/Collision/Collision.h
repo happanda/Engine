@@ -2,9 +2,9 @@
 #define INCLUDE_COLLISION
 
 #include <vector>
-#include "math_routines.h"
-#include "body.h"
-#include "shape.h"
+#include "Math\MathRoutines.h"
+#include "Body\Body.h"
+#include "Body\Shape.h"
 
 class Collision
 {

@@ -1,10 +1,10 @@
 
-#include "math_routines.h"
+#include "Math\MathRoutines.h"
 #include <float.h>
 #include <assert.h>
-#include "geometry.h"
+#include "Math\Geometry.h"
 #include "LinearAlgebra.h"
-#include "gjk.h"
+#include "Collision\GJK.h"
 
 //void get_points(rectangle rect, Vector2& p1, Vector2& p2,
 //                 Vector2& p3, Vector2& p4, double indent)

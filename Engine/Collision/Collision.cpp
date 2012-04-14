@@ -1,7 +1,7 @@
 
-#include "collision.h"
-#include "gjk.h"
-#include "sat.h"
+#include "Collision.h"
+#include "Collision\GJK.h"
+#include "SAT.h"
 
 void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
 {

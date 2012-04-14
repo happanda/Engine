@@ -2,7 +2,7 @@
 #define INCLUDE_CONTACT_CONTRAINT
 
 #include "Constraint.h"
-#include "collision.h"
+#include "Collision\Collision.h"
 
 class ContactConstraint : public Constraint
 {

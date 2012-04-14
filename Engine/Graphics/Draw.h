@@ -3,10 +3,10 @@
 
 #include <vector>
 #include <deque>
-#include "body.h"
-#include "gjk.h"
-#include "collision.h"
-#include "math_routines.h"
+#include "Body\Body.h"
+#include "Collision\GJK.h"
+#include "Collision\Collision.h"
+#include "Math\MathRoutines.h"
 #include "glut/glut.h"
 
 const double SURFACE_DISTANCE = 1000;

@@ -1,5 +1,5 @@
 
-#include "geometry.h"
+#include "Math\Geometry.h"
 
 
 const Segment& Segment::operator=(const Segment& segm)

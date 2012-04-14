@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <time.h>
 #include <vector>
-#include "world.h"
-#include "shape.h"
-#include "body.h"
-#include "draw.h"
-#include "test_gjk.h"
+#include "World\World.h"
+#include "Body\Shape.h"
+#include "Body\Body.h"
+#include "Graphics\Draw.h"
+#include "test_GJK.h"
 #include "glut/glut.h"
 #include "anttweakbar\AntTweakBar.h"
 

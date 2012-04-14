@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\include&quot;;&quot;$(ProjectDir)&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -168,11 +168,11 @@
 			Name="Graphics"
 			>
 			<File
-				RelativePath=".\draw.cpp"
+				RelativePath=".\Graphics\Draw.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\draw.h"
+				RelativePath=".\Graphics\Draw.h"
 				>
 			</File>
 		</Filter>
@@ -180,19 +180,19 @@
 			Name="Body"
 			>
 			<File
-				RelativePath=".\body.cpp"
+				RelativePath=".\Body\Body.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\body.h"
+				RelativePath=".\Body\Body.h"
 				>
 			</File>
 			<File
-				RelativePath=".\shape.cpp"
+				RelativePath=".\Body\Shape.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\shape.h"
+				RelativePath=".\Body\Shape.h"
 				>
 			</File>
 		</Filter>
@@ -200,67 +200,67 @@
 			Name="Math"
 			>
 			<File
-				RelativePath=".\geometry.cpp"
+				RelativePath=".\Math\Geometry.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\geometry.h"
+				RelativePath=".\Math\Geometry.h"
 				>
 			</File>
 			<File
-				RelativePath=".\LinearAlgebra.cpp"
+				RelativePath=".\Math\LinearAlgebra.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\LinearAlgebra.h"
+				RelativePath=".\Math\LinearAlgebra.h"
 				>
 			</File>
 			<File
-				RelativePath=".\math_routines.cpp"
+				RelativePath=".\Math\MathRoutines.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\math_routines.h"
+				RelativePath=".\Math\MathRoutines.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Matrix2.cpp"
+				RelativePath=".\Math\Matrix2.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Matrix2.h"
+				RelativePath=".\Math\Matrix2.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Matrix3.cpp"
+				RelativePath=".\Math\Matrix3.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Matrix3.h"
+				RelativePath=".\Math\Matrix3.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PGSsolver.cpp"
+				RelativePath=".\Math\PGSsolver.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PGSsolver.h"
+				RelativePath=".\Math\PGSsolver.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Vector2.cpp"
+				RelativePath=".\Math\Vector2.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Vector2.h"
+				RelativePath=".\Math\Vector2.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Vector3.cpp"
+				RelativePath=".\Math\Vector3.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Vector3.h"
+				RelativePath=".\Math\Vector3.h"
 				>
 			</File>
 		</Filter>
@@ -268,11 +268,11 @@
 			Name="World"
 			>
 			<File
-				RelativePath=".\world.cpp"
+				RelativePath=".\World\World.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\world.h"
+				RelativePath=".\World\World.h"
 				>
 			</File>
 		</Filter>
@@ -280,27 +280,27 @@
 			Name="Collision"
 			>
 			<File
-				RelativePath=".\collision.cpp"
+				RelativePath=".\Collision\Collision.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\collision.h"
+				RelativePath=".\Collision\Collision.h"
 				>
 			</File>
 			<File
-				RelativePath=".\gjk.cpp"
+				RelativePath=".\Collision\GJK.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\gjk.h"
+				RelativePath=".\Collision\GJK.h"
 				>
 			</File>
 			<File
-				RelativePath=".\sat.cpp"
+				RelativePath=".\Collision\SAT.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\sat.h"
+				RelativePath=".\Collision\SAT.h"
 				>
 			</File>
 		</Filter>
@@ -316,19 +316,19 @@
 			Name="Contraints"
 			>
 			<File
-				RelativePath=".\Constraint.cpp"
+				RelativePath=".\Constraints\Constraint.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Constraint.h"
+				RelativePath=".\Constraints\Constraint.h"
 				>
 			</File>
 			<File
-				RelativePath=".\ContactConstraint.cpp"
+				RelativePath=".\Constraints\ContactConstraint.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\ContactConstraint.h"
+				RelativePath=".\Constraints\ContactConstraint.h"
 				>
 			</File>
 		</Filter>

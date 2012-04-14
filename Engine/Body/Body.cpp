@@ -1,5 +1,5 @@
 
-#include "body.h"
+#include "Body.h"
 
 Vector2 Body::point_velocity(Vector2 point)
 {

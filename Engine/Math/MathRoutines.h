@@ -1,9 +1,9 @@
-#ifndef INCLUDE_MATH_ROUTINES
-#define INCLUDE_MATH_ROUTINES
+#ifndef INCLUDE_MATHROUTINES
+#define INCLUDE_MATHROUTINES
 
 #include <math.h>
-#include "geometry.h"
-#include "shape.h"
+#include "Math\Geometry.h"
+#include "Body\Shape.h"
 
 //void get_points(rectangle rect, Vector2& p1, Vector2& p2,
 //                 Vector2& p3, Vector2& p4, double indent);

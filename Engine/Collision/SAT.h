@@ -1,8 +1,8 @@
 #ifndef INCLUDE_SAT
 #define INCLUDE_SAT
 
-#include "geometry.h"
-#include "shape.h"
+#include "Math\Geometry.h"
+#include "Body\Shape.h"
 
 int check_collide(const rectangle& rectA, const rectangle& rectB,
                    Vector2& point, Segment& edge);

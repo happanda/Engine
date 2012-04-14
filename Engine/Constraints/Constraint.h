@@ -2,9 +2,9 @@
 #define INCLUDE_CONTRAINT
 
 #include <vector>
-#include "Body.h"
-#include "geometry.h"
-#include "world.h"
+#include "Body\Body.h"
+#include "Math\Geometry.h"
+#include "World\World.h"
 
 class Constraint
 {

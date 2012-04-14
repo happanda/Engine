@@ -1,9 +1,10 @@
-#include "gjk.h"
+
+#include "GJK.h"
 #include <assert.h>
 #include <float.h>
-#include "geometry.h"
-#include "math_routines.h"
-#include "draw.h"
+#include "Math\Geometry.h"
+#include "Math\MathRoutines.h"
+#include "Graphics\Draw.h"
 #include <conio.h>
 
 bool gjk_check_collision(shape& shapeA, shape& shapeB,

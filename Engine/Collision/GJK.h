@@ -2,9 +2,9 @@
 #define INCLUDE_GJK
 
 #include <deque>
-#include "geometry.h"
-#include "shape.h"
-#include "collision.h"
+#include "Math\Geometry.h"
+#include "Body\Shape.h"
+#include "Collision\Collision.h"
 
 const double GJK_INDENT_EPSILON = 0.01;
 const double GJK_INDENT_EPSILON_CHECK = GJK_INDENT_EPSILON * 2;

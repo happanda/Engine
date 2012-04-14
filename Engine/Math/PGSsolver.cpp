@@ -1,7 +1,7 @@
 #include "PGSsolver.h"
 #include <assert.h>
 #include <math.h>
-#include "math_routines.h"
+#include "Math\MathRoutines.h"
 
 void SolveLambda(const vector<vector<double>> &matr, const vector<double> &eta,
       vector<double> &lambda, double lambdaMin, double lambdaMax)

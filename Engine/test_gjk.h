@@ -2,9 +2,9 @@
 #define TEST_GJK_H
 
 #include <vector>
-#include "world.h"
-#include "body.h"
-#include "draw.h"
+#include "World\World.h"
+#include "Body\Body.h"
+#include "Graphics\Draw.h"
 #include "glut/glut.h"
 
 extern World world;

@@ -1,7 +1,7 @@
 
-#include "sat.h"
+#include "SAT.h"
 #include <float.h>
-#include "math_routines.h"
+#include "Math\MathRoutines.h"
 
 int check_collide(const rectangle& rectA, const rectangle& rectB,
                   Vector2& point, Segment& edge)

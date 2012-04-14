@@ -1,7 +1,7 @@
 #ifndef INCLUDE_BODY
 #define INCLUDE_BODY
 
-#include "shape.h"
+#include "Body\Shape.h"
 
 class Body
 {

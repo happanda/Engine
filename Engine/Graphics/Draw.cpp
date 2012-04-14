@@ -1,4 +1,4 @@
-#include "draw.h"
+#include "Draw.h"
 
 GLfloat light_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
 GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };

@@ -1,5 +1,5 @@
 
-#include "shape.h"
+#include "Shape.h"
 
 void rectangle::get_points(Vector2& p1, Vector2& p2, Vector2& p3, Vector2& p4, double indent) const
 {
