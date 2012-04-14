@@ -1,9 +1,9 @@
 
 #include "world.h"
 #include <stdio.h>
-#include "gjk.h"
-#include "math_routines.h"
-#include "draw.h"
+#include "Collision\GJK.h"
+#include "Math\MathRoutines.h"
+#include "Graphics\Draw.h"
 
 World::World()
 {

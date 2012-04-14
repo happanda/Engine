@@ -2,8 +2,8 @@
 #define INCLUDE_WORLD
 
 #include <vector>
-#include "body.h"
-#include "collision.h"
+#include "Body\Body.h"
+#include "Collision\Collision.h"
 
 struct world_vars
 {
