@@ -35,7 +35,7 @@ void World::update(double deltaT)
       energy += (it->mass * it->velocity.norm2sq()
          + it->inert * it->angle_vel * it->angle_vel) / 2;
    }
-   printf("Total kinetic energy: %.2f\n", energy);
+   //printf("Total kinetic energy: %.2f\n", energy);
 }
 
 void World::resolve_collision(double deltaT)
