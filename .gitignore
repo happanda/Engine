@@ -1,6 +1,7 @@
 # Build folders
 Debug/
 Release/
+UnitTests
 
 # Trash files
 *.suo

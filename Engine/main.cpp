@@ -176,7 +176,7 @@ void init_bodies()
    bodies.push_back(body);
    delete rect;
 
-   /*rect = new rectangle(-5, 0, 0, 2, 2);
+   rect = new rectangle(-5, 0, 0, 2, 2);
    body = Body(rect, 4, 1, 0, angle_vel);
    bodies.push_back(body);
    delete rect;
@@ -209,11 +209,11 @@ void init_bodies()
    circ = new circle(4, 7, 0, 3);
    body = Body(circ, 8, -2, -2, 0);
    bodies.push_back(body);
-   delete circ;*/
+   delete circ;
 
    //bodies.erase((bodies.begin() + 1), bodies.end());
    // bounds
-   /*double bigmass = 100000;
+   double bigmass = 100000;
    rect = new rectangle(-40, 0, 0, 50, 25);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
@@ -229,7 +229,7 @@ void init_bodies()
    rect = new rectangle(0, -14, 0, 200, 3);
    body = Body(rect, bigmass, 0, 0, 0);
    bodies.push_back(body);
-   delete rect;*/
+   delete rect;
    // bounds
 
    for (size_t nb = 0; nb < bodies.size(); nb++)

@@ -16,9 +16,15 @@ void SolveLambda(const vector<vector<double>> &matr, const vector<double> &eta,
    }
    for (size_t i = 0; i < n; i++)
    {
-      double val = eta[i];
+      double val = 0;
       for (size_t j = 0; j < n; j++)
-         val = val - matr[i][j] * lambda[j];
-      lambda[i] = clamp(val / matr[i][i], lambdaMin, lambdaMax);
+      {
+         if (j != i)
+         {
+            val += matr[i][j] * lambda[j];
+         }
+      }
+      val = (eta[i] - val) / matr[i][i];
+      lambda[i] = clamp(val, lambdaMin, lambdaMax);
    }
 }

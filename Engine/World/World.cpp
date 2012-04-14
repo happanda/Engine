@@ -49,11 +49,16 @@ void World::resolve_collision(double deltaT)
       Vector2 dir = cc.ImpulseDirection();
       for (size_t num_iter = 0; num_iter < cc.NumIter(); num_iter++)
       {
+         cc.Init(Vector2::ORIGIN);
          Vector2 imp = dir * cc.DeltaImpulse();
-         it->body_one->velocity = it->body_one->velocity + imp;
-         //it->body_one->angle_vel += deltaW1;
-         it->body_two->velocity = it->body_two->velocity - imp;
-         //it->body_two->angle_vel += deltaW2;
+         if (it->body_one->mass < vars.UNMOVABLE_MASS)
+         {
+            it->body_one->velocity = it->body_one->velocity + imp;
+         }
+         if (it->body_two->mass < vars.UNMOVABLE_MASS)
+         {
+            it->body_two->velocity = it->body_two->velocity - imp;
+         }
       }
    }
    //for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
