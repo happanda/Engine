@@ -6,8 +6,8 @@
 #include "PGSsolver.h"
 #include "float.h"
 
-CollisionContraint::CollisionContraint(Collision* collision):
-Constraint(collision->body_one, collision->body_two), _collision(collision)
+CollisionContraint::CollisionContraint(Collision* collision, world_vars* vars):
+Constraint(collision->body_one, collision->body_two, vars), _collision(collision)
 {
    _sum_impulse_n = 0;
    _sum_impulse_t = 0;
@@ -47,11 +47,11 @@ Constraint(collision->body_one, collision->body_two), _collision(collision)
    + bB->velocity.v1 * Jacobian[0][3]
    + bB->velocity.v2 * Jacobian[0][4]
    + bB->angle_vel * Jacobian[0][5];
-   Eta[0] /= 20;//World::vars.timeStep;;
+   Eta[0] /= w_vars->timeStep;
    Lambda = std::vector<double>(1, 1);
 }
 
-Vector2 CollisionContraint::ImpulseDirection() const
+Vector2 CollisionContraint::ImpulseDirection(void) const
 {
    return _collision->normal;
 }
@@ -60,11 +60,10 @@ void CollisionContraint::Init(Vector2 ForceExternal)
 {
 }
 
-double CollisionContraint::DeltaImpulse() const
+double CollisionContraint::DeltaImpulse(void)
 {
    std::vector<double> L(1);
-   L[0] = Lambda[0];
-   SolveLambda(A, Eta, L, 0, DBL_MAX);
-   //Lambda[0] = Lambda[0] + L[0];
-   return L[0] * 20;//World::vars.timeStep;
+   
+   SolveLambda(A, Eta, Lambda, 0, DBL_MAX);
+   return Lambda[0] * w_vars->timeStep;
 }
