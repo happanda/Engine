@@ -11,6 +11,7 @@ public:
    void Init(Vector2 ForceExternal);
    Vector2 ImpulseDirection(void) const;
    double DeltaImpulse(void);
+   size_t NumIter(void) const;
 private:
    Collision* _collision;
    double _sum_impulse_n;
