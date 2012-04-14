@@ -22,6 +22,7 @@ public:
    void init();
    void addBody(Body body) { bodies.push_back(body); }
    void update(double deltaT);
+   void resolve_collision_old(double deltaT);
    void resolve_collision(double deltaT);
    void apply_forces(double deltaT);
 

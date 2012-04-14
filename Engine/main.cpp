@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <vector>
+#include <cstdlib>
 #include "World\World.h"
 #include "Body\Shape.h"
 #include "Body\Body.h"
@@ -155,6 +156,7 @@ void init_bodies()
 {
    world_vars wvars = world.vars;
    wvars.GRAVITATION.v2 = 0;
+   wvars.RESTITUTION = 1;
    world.init();
    world.vars = wvars;
 
@@ -165,8 +167,22 @@ void init_bodies()
    rectangle* rect;
    circle* circ;
    //surface* surf;
-
-   rect = new rectangle(0, 0, 2, 4, 4);
+   //srand(time(NULL));
+   int s = 12;
+   double sp = (double)RAND_MAX / 3;
+   for (int i = -s; i < s; i += 4)
+   {
+      for (int j = -s + 2; j < s; j += 4)
+      {
+         double r = rand() % 2 + 1;
+         rect = new rectangle(i, j, (double)rand() / sp, r, 3 - r);
+         body = Body(rect, 1, (double)rand() / sp - (double)rand() / sp,
+            (double)rand() / sp - (double)rand() / sp, 0);
+         bodies.push_back(body);
+         delete rect;
+      }
+   }
+   /*rect = new rectangle(0, 0, 2, 4, 4);
    body = Body(rect, 16, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
@@ -209,7 +225,7 @@ void init_bodies()
    circ = new circle(4, 7, 0, 3);
    body = Body(circ, 8, -2, -2, 0);
    bodies.push_back(body);
-   delete circ;
+   delete circ;*/
 
    //bodies.erase((bodies.begin() + 1), bodies.end());
    // bounds
