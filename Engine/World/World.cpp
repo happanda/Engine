@@ -46,7 +46,6 @@ void World::resolve_collision(double deltaT)
    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
    {
       ContactConstraint cc(&(*it), &vars);
-      Vector2 dir = cc.ImpulseDirection();
       for (size_t num_iter = 0; num_iter < cc.NumIter(); num_iter++)
       {
          cc.Init(Vector2::ORIGIN);
@@ -55,30 +54,8 @@ void World::resolve_collision(double deltaT)
          //// penetration correction impulse
          //if (delta > delta_slop)
          //   v_bias = bias_factor * (delta - delta_slop) / deltaT;
-         double impModule = cc.DeltaImpulse();
-         Vector2 imp = dir * impModule;
-         if (it->body_one->mass < vars.UNMOVABLE_MASS)
-         {
-            it->body_one->velocity = it->body_one->velocity + imp;
-            double iinrt1 = 1 / it->body_one->inert;
-            Vector2 r1 = it->one[0] - it->body_one->form->point;
-            Vector3 norm3(it->normal.v1, it->normal.v2, 0);
-            Vector3 r3(r1.v1, r1.v2, 0);
-            r3 = r3.cross(norm3);
-            double ro1 = r3.v3;
-            it->body_one->angle_vel += iinrt1 * ro1 * impModule;
-         }
-         if (it->body_two->mass < vars.UNMOVABLE_MASS)
-         {
-            it->body_two->velocity = it->body_two->velocity - imp;
-            double iinrt2 = 1 / it->body_two->inert;
-            Vector2 r2 = it->two[0] - it->body_two->form->point;
-            Vector3 norm3(it->normal.v1, it->normal.v2, 0);
-            Vector3 r3(r2.v1, r2.v2, 0);
-            r3 = r3.cross(norm3);
-            double ro2 = r3.v3;
-            it->body_two->angle_vel += iinrt2 * ro2 * impModule;
-         }
+         cc.DeltaImpulse();
+         cc.ApplyImpulse();
       }
    }
 }

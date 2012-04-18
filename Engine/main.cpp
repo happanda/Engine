@@ -168,7 +168,7 @@ void init_bodies()
    circle* circ;
    //surface* surf;
    //srand(time(NULL));
-   int s = 12;
+   /*int s = 12;
    double sp = (double)RAND_MAX / 3;
    for (int i = -s; i < s; i += 4)
    {
@@ -181,8 +181,8 @@ void init_bodies()
          bodies.push_back(body);
          delete rect;
       }
-   }
-   /*rect = new rectangle(0, 0, 2, 4, 4);
+   }*/
+   rect = new rectangle(0, 0, 2, 4, 4);
    body = Body(rect, 16, 0, 0, 0);
    bodies.push_back(body);
    delete rect;
@@ -225,7 +225,7 @@ void init_bodies()
    circ = new circle(4, 7, 0, 3);
    body = Body(circ, 8, -2, -2, 0);
    bodies.push_back(body);
-   delete circ;*/
+   delete circ;
 
    //bodies.erase((bodies.begin() + 1), bodies.end());
    // bounds

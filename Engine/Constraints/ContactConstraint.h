@@ -9,13 +9,15 @@ class ContactConstraint : public Constraint
 public:
    ContactConstraint(Collision* collision, world_vars* vars);
    void Init(Vector2 ForceExternal);
-   Vector2 ImpulseDirection(void) const;
-   double DeltaImpulse(void);
+   Vector2 _impulseDirection(void) const;
+   double _deltaImpulse(void);
    size_t NumIter(void) const;
+
+   static const double bias_factor;
+   static const double delta_slop;
 private:
    Collision* _collision;
-   double _sum_impulse_n;
-   double _sum_impulse_t;
+   double _sum_lambda;
 };
 
 #endif

@@ -9,17 +9,24 @@
 class Constraint
 {
 public:
-   Constraint(Body* bodyA, Body* bodyB, world_vars* vars);
+   Constraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars);
    virtual void Init(Vector2 ForceExternal) = 0;
-   virtual Vector2 ImpulseDirection(void) const = 0;
-   virtual double DeltaImpulse(void) = 0;
+   void DeltaImpulse();
+   void ApplyImpulse();
    size_t NumIter(void) const;
-   const Body* bodyA;
-   const Body* bodyB;
+
+   Body* bodyA;
+   Body* bodyB;
+   double impulse;
+   Vector2 impulseDirection;
+   const Vector2 rA;
+   const Vector2 rB;
+   world_vars* w_vars;
 
    static const size_t MAX_ITER = 100;
 protected:
-   world_vars* w_vars;
+   virtual Vector2 _impulseDirection(void) const = 0;
+   virtual double _deltaImpulse(void) = 0;
    std::vector<std::vector<double>> Jacobian;
    std::vector<std::vector<double>> A;
    std::vector<double> Eta;
