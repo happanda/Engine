@@ -331,6 +331,14 @@
 				RelativePath=".\Constraints\ContactConstraint.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Constraints\FrictionConstraint.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Constraints\FrictionConstraint.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\main.cpp"

@@ -1,21 +1,20 @@
-#ifndef INCLUDE_CONTACT_CONTRAINT
-#define INCLUDE_CONTACT_CONTRAINT
+#ifndef INCLUDE_FRICTION_CONTRAINT
+#define INCLUDE_FRICTION_CONTRAINT
 
 #include "Constraint.h"
 #include "Collision\Collision.h"
 
-class ContactConstraint : public Constraint
+class FrictionConstraint : public Constraint
 {
 public:
-   ContactConstraint(Collision* collision, world_vars* vars);
+   FrictionConstraint(Collision* collision, world_vars* vars);
    void Init(Vector2 ForceExternal);
    Vector2 _impulseDirection(void) const;
    double _deltaImpulse(void);
    size_t NumIter(void) const;
 
-   static const double bias_factor;
-   static const double delta_slop;
 private:
+   Vector2 tang;
    double vel_rel;
    Collision* _collision;
 };

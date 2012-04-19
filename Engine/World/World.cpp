@@ -5,6 +5,7 @@
 #include "Math\MathRoutines.h"
 #include "Graphics\Draw.h"
 #include "Constraints\ContactConstraint.h"
+#include "Constraints\FrictionConstraint.h"
 
 World::World()
 {
@@ -46,16 +47,27 @@ void World::resolve_collision(double deltaT)
    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
    {
       ContactConstraint cc(&(*it), &vars);
+      double sum_impulse = 0;
       for (size_t num_iter = 0; num_iter < cc.NumIter(); num_iter++)
       {
          cc.Init(Vector2::ORIGIN);
-         double delta = (it->one.at(0) - it->two.at(0)).norm2();
-         //double v_bias = 0;
-         //// penetration correction impulse
-         //if (delta > delta_slop)
-         //   v_bias = bias_factor * (delta - delta_slop) / deltaT;
          cc.DeltaImpulse();
+         sum_impulse += cc.impulse;
          cc.ApplyImpulse();
+         if (cc.impulse < min_impulse)
+            break;
+      }
+      //printf("%.2f\n", sum_impulse);
+      FrictionConstraint fc(&(*it), &vars);
+      sum_impulse = 0;
+      for (size_t num_iter = 0; num_iter < fc.NumIter(); num_iter++)
+      {
+         fc.Init(Vector2::ORIGIN);
+         fc.DeltaImpulse();
+         sum_impulse += fc.impulse;
+         fc.ApplyImpulse();
+         if (fc.impulse < min_impulse)
+            break;
       }
    }
 }
