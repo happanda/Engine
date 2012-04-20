@@ -37,7 +37,7 @@ void World::update(double deltaT)
       energy += (it->mass * it->velocity.norm2sq()
          + it->inert * it->angle_vel * it->angle_vel) / 2;
    }
-   //printf("Total kinetic energy: %.2f\n", energy);
+   printf("Total kinetic energy: %.2f\n", energy);
 }
 
 void World::resolve_collision(double deltaT)
@@ -47,30 +47,31 @@ void World::resolve_collision(double deltaT)
    const double delta_slop = 0.002;
    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
    {
-      ContactConstraint cc(&(*it), &vars);
-      double sum_impulse = 0;
-      for (size_t num_iter = 0; num_iter < cc.NumIter(); num_iter++)
+      if (it->body_one->mass < vars.UNMOVABLE_MASS
+         || it->body_two->mass < vars.UNMOVABLE_MASS)
       {
-         cc.Init(Vector2::ORIGIN);
-         cc.DeltaImpulse();
-         sum_impulse += cc.impulse;
-         cc.ApplyImpulse();
-         if (cc.impulse < min_impulse)
-            break;
-      }
-      FrictionConstraint fc(&(*it), &vars);
-      sum_impulse = 0;
-      for (size_t num_iter = 0; num_iter < fc.NumIter(); num_iter++)
-      {
-         fc.Init(Vector2::ORIGIN);
-         fc.DeltaImpulse();
-         sum_impulse += fc.impulse;
-         fc.ApplyImpulse();
-         if (fc.impulse < min_impulse)
-            break;
+         ContactConstraint cc(&(*it), &vars);
+         for (size_t num_iter = 0; num_iter < cc.NumIter() && !cc.Enough(); num_iter++)
+         {
+            cc.Init(Vector2::ORIGIN);
+            cc.DeltaImpulse();
+            cc.ApplyImpulse();
+            if (cc.impulse < min_impulse)
+               break;
+         }
+         /*FrictionConstraint fc(&(*it), &vars);
+         for (size_t num_iter = 0; num_iter < fc.NumIter() && !fc.Enough(); num_iter++)
+         {
+            fc.Init(Vector2::ORIGIN);
+            fc.DeltaImpulse();
+            fc.ApplyImpulse();
+            if (fc.impulse < min_impulse)
+               break;
+         }*/
       }
    }
 }
+
 void World::resolve_collision_old(double deltaT)
 {
    const double min_impulse = 0.0000001;
@@ -162,12 +163,12 @@ void World::resolve_collision_old(double deltaT)
 
                if (m1 < vars.UNMOVABLE_MASS)
                {
-                  deltaV1 = P * (1 / m1);
+                  deltaV1 = P * it->body_one->iMass;
                   deltaW1 = iinrt1 * (ra_2d.v1 * P.v2 - ra_2d.v2 * P.v1);
                }
                if (m2 < vars.UNMOVABLE_MASS)
                {
-                  deltaV2 = P * (-1 / m2);
+                  deltaV2 = P * (-it->body_two->iMass);
                   deltaW2 = -iinrt2 * (rb_2d.v1 * P.v2 - rb_2d.v2 * P.v1);
                }
                it->body_one->velocity = it->body_one->velocity + deltaV1;

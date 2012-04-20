@@ -13,6 +13,7 @@ public:
    virtual void Init(Vector2 ForceExternal) = 0;
    void DeltaImpulse();
    void ApplyImpulse();
+   virtual bool Enough(void) const = 0;
    size_t NumIter(void) const;
 
    Body* bodyA;

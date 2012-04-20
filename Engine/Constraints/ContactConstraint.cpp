@@ -14,11 +14,28 @@ Constraint(collision->body_one, collision->one[0] - collision->body_one->form->p
            collision->body_two, collision->two[0] - collision->body_two->form->point,
            vars), _collision(collision)
 {
+   sum_impulse = 0;
    A = std::vector<std::vector<double>>(1);
    A[0] = std::vector<double>(1);
    Eta = std::vector<double>(1);
    Lambda = std::vector<double>(1, 1);
    impulseDirection = _collision->normal;
+
+   Vector2 norm = _collision->normal;
+   vel_rel = norm * (bodyA->velocity - bodyB->velocity
+      + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
+      - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
+
+   A[0][0] = 0;
+   if (bodyA->mass < w_vars->UNMOVABLE_MASS)
+   {
+      A[0][0] += bodyA->iMass + norm * cross_cross(rA, norm) * bodyA->iInert;
+   }
+   if (bodyB->mass < w_vars->UNMOVABLE_MASS)
+   {
+      A[0][0] += bodyB->iMass + norm * cross_cross(rB, norm) * bodyB->iInert;
+   }
+   min_lambda = (1 + w_vars->RESTITUTION) / A[0][0] * w_vars->iTimeStep;
 }
 
 Vector2 ContactConstraint::_impulseDirection(void) const
@@ -28,29 +45,12 @@ Vector2 ContactConstraint::_impulseDirection(void) const
 
 void ContactConstraint::Init(Vector2 ForceExternal)
 {
-   Vector2 norm = -_collision->normal;
-   const Body* bA = bodyA;
-   const Body* bB = bodyB;
-   double invMA = bA->iMass;
-   double invMB = bB->iMass;
-   double invIA = bA->iInert;
-   double invIB = bB->iInert;
+   Vector2 norm = _collision->normal;
 
-   Vector3 norm3(norm.v1, norm.v2, 0);
-   Vector3 r3(rA.v1, rA.v2, 0);
-   r3 = r3.cross(norm3);
-   double ro1 = r3.v3;
-   r3 = Vector3(rB.v1, rB.v2, 0);
-   r3 = r3.cross(norm3);
-   double ro2 = r3.v3;
-
-   double norm2sq = norm.norm2sq();
-   A[0][0] = (invMA + invMB) + ro1 * ro1 * invIA
-      + ro2 * ro2 * invIB;
-
-   vel_rel = norm * (bA->velocity - bB->velocity) + ro1 * bA->angle_vel
-      - ro2 * bB->angle_vel;
-   Eta[0] = vel_rel;
+   vel_rel = norm * (bodyA->velocity - bodyB->velocity
+      + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
+      - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
+   Eta[0] = -vel_rel;
 
    // penetration correction impulse
    double v_bias = 0;
@@ -63,17 +63,32 @@ void ContactConstraint::Init(Vector2 ForceExternal)
 
 double ContactConstraint::_deltaImpulse(void)
 {
-   // TODO: RESTITUTION here is wrong, min force must depend on relative velocity
-   SolveLambda(A, Eta, Lambda, w_vars->RESTITUTION, DBL_MAX);
-   if (Lambda[0] > 1000)
+   if (vel_rel < 0)
+   {
+      SolveLambda(A, Eta, Lambda, min_lambda * (-vel_rel), DBL_MAX);
+      impulse = Lambda[0] * w_vars->timeStep;
+      if (impulse + sum_impulse < 0)
+         impulse = -sum_impulse;
+      sum_impulse += impulse;
+   }
+   else
+   {
+      SolveLambda(A, Eta, Lambda, 0, DBL_MAX);
+      impulse = 0;
+   }
+   if (Lambda[0] > 10000)
    {
       printf("To the moon!!\n");
    }
-   impulse = Lambda[0] * w_vars->timeStep;
    return impulse;
 }
 
 size_t ContactConstraint::NumIter(void) const
 {
-   return 200;
+   return 50;
+}
+
+bool ContactConstraint::Enough(void) const
+{
+   return vel_rel >= 0;
 }
