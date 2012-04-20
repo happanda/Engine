@@ -6,7 +6,7 @@
 #include "World\World.h"
 #include "Math\PGSsolver.h"
 
-const double ContactConstraint::bias_factor = 0.3;
+const double ContactConstraint::bias_factor = 0.5;
 const double ContactConstraint::delta_slop = 0.0001;
 
 ContactConstraint::ContactConstraint(Collision* collision, world_vars* vars):
@@ -31,10 +31,10 @@ void ContactConstraint::Init(Vector2 ForceExternal)
    Vector2 norm = -_collision->normal;
    const Body* bA = bodyA;
    const Body* bB = bodyB;
-   double invMA = 1 / bA->mass;
-   double invMB = 1 / bB->mass;
-   double invIA = 1 / bA->inert;
-   double invIB = 1 / bB->inert;
+   double invMA = bA->iMass;
+   double invMB = bB->iMass;
+   double invIA = bA->iInert;
+   double invIB = bB->iInert;
 
    Vector3 norm3(norm.v1, norm.v2, 0);
    Vector3 r3(rA.v1, rA.v2, 0);
@@ -54,20 +54,22 @@ void ContactConstraint::Init(Vector2 ForceExternal)
 
    // penetration correction impulse
    double v_bias = 0;
-   double delta = (bodyA->form->point + rA - bodyB->form->point - rB).norm2();
+   double delta = (bodyA->form->point + rA - bodyB->form->point - rB) * norm;
    if (delta > delta_slop)
-      v_bias = bias_factor * (delta - delta_slop) / w_vars->timeStep;
+      v_bias = bias_factor * (delta - delta_slop) * w_vars->iTimeStep;
    Eta[0] += v_bias;
-   // TODO: this operator must be present, but it leads to
-   // enormous speeds after contact
-   // Eta[0] = Eta[0] / ((double)w_vars->timeStep / 1000);
+   Eta[0] = Eta[0] * w_vars->iTimeStep;
 }
 
 double ContactConstraint::_deltaImpulse(void)
 {
    // TODO: RESTITUTION here is wrong, min force must depend on relative velocity
    SolveLambda(A, Eta, Lambda, w_vars->RESTITUTION, DBL_MAX);
-   impulse = Lambda[0] * ((double)w_vars->timeStep / 1000);
+   if (Lambda[0] > 1000)
+   {
+      printf("To the moon!!\n");
+   }
+   impulse = Lambda[0] * w_vars->timeStep;
    return impulse;
 }
 

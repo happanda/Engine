@@ -16,7 +16,8 @@ void World::init()
 {
    bodies.clear();
    collisions.clear();
-   vars.timeStep = 16;
+   vars.timeStep = 0.016;
+   vars.iTimeStep = 1 / vars.timeStep;
    vars.UNMOVABLE_MASS = 5000;
    vars.RESTITUTION = 0.5;
    vars.FRICTION = 0.4;
@@ -57,7 +58,6 @@ void World::resolve_collision(double deltaT)
          if (cc.impulse < min_impulse)
             break;
       }
-      //printf("%.2f\n", sum_impulse);
       FrictionConstraint fc(&(*it), &vars);
       sum_impulse = 0;
       for (size_t num_iter = 0; num_iter < fc.NumIter(); num_iter++)
@@ -103,8 +103,8 @@ void World::resolve_collision_old(double deltaT)
 
                double m1 = it->body_one->mass;
                double m2 = it->body_two->mass;
-               double iinrt1 = 1 / it->body_one->inert;
-               double iinrt2 = 1 / it->body_two->inert;
+               double iinrt1 = it->body_one->iInert;
+               double iinrt2 = it->body_two->iInert;
 
                // relative positions of contact points
                Vector2 ra_2d = it->one.at(pind) - it->body_one->form->point;
@@ -115,13 +115,13 @@ void World::resolve_collision_old(double deltaT)
 
                if (m1 < vars.UNMOVABLE_MASS)
                {
-                  mm += 1 / m1;
+                  mm += it->body_one->iMass;
                   a_add_n = cross_cross(ra_2d, it->normal) * iinrt1;
                   a_add_t = cross_cross(ra_2d, tang) * iinrt1;
                }
                if (m2 < vars.UNMOVABLE_MASS)
                {
-                  mm += 1 / m2;
+                  mm += it->body_two->iMass;
                   b_add_n = cross_cross(rb_2d, it->normal) * iinrt2;
                   b_add_t = cross_cross(rb_2d, tang) * iinrt2;
                }

@@ -21,8 +21,8 @@ void Constraint::ApplyImpulse()
    Vector2 imp = impulseDirection * impulse;
    if (bodyA->mass < w_vars->UNMOVABLE_MASS)
    {
-      bodyA->velocity = bodyA->velocity + imp * (1 / bodyA->mass);
-      double iinrt1 = 1 / bodyA->inert;
+      bodyA->velocity = bodyA->velocity + imp * bodyA->iMass;
+      double iinrt1 = bodyA->iInert;
       Vector3 dir3(impulseDirection.v1, impulseDirection.v2, 0);
       Vector3 r3(rA.v1, rA.v2, 0);
       r3 = r3.cross(dir3);
@@ -31,8 +31,8 @@ void Constraint::ApplyImpulse()
    }
    if (bodyB->mass < w_vars->UNMOVABLE_MASS)
    {
-      bodyB->velocity = bodyB->velocity - imp * (1 / bodyB->mass);
-      double iinrt2 = 1 / bodyB->inert;
+      bodyB->velocity = bodyB->velocity - imp * bodyB->iMass;
+      double iinrt2 = bodyB->iInert;
       Vector3 dir3(impulseDirection.v1, impulseDirection.v2, 0);
       Vector3 r3(rB.v1, rB.v2, 0);
       r3 = r3.cross(dir3);

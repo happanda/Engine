@@ -13,6 +13,7 @@ public:
    Body* body_two;
    std::vector<Vector2> one;
    std::vector<Vector2> two;
+   // from second body to first body
    Vector2 normal;
 };
 

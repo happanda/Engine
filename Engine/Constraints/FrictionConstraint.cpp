@@ -28,10 +28,10 @@ void FrictionConstraint::Init(Vector2 ForceExternal)
 {
    const Body* bA = bodyA;
    const Body* bB = bodyB;
-   double invMA = 1 / bA->mass;
-   double invMB = 1 / bB->mass;
-   double invIA = 1 / bA->inert;
-   double invIB = 1 / bB->inert;
+   double invMA = bA->iMass;
+   double invMB = bB->iMass;
+   double invIA = bA->iInert;
+   double invIB = bB->iInert;
 
    Vector3 tang3(tang.v1, tang.v2, 0);
    Vector3 r3(rA.v1, rA.v2, 0);
@@ -48,17 +48,14 @@ void FrictionConstraint::Init(Vector2 ForceExternal)
    vel_rel = tang * (bA->velocity - bB->velocity) + ro1 * bA->angle_vel
       - ro2 * bB->angle_vel;
    Eta[0] = vel_rel;
-
-   // TODO: this operator must be present, but it leads to
-   // enormous speeds after contact
-   // Eta[0] = Eta[0] / ((double)w_vars->timeStep / 1000);
+   Eta[0] = Eta[0] * w_vars->iTimeStep;
 }
 
 double FrictionConstraint::_deltaImpulse(void)
 {
    // TODO: RESTITUTION here is wrong, min force must depend on relative velocity
    SolveLambda(A, Eta, Lambda, -w_vars->FRICTION, w_vars->FRICTION);
-   impulse = Lambda[0] * ((double)w_vars->timeStep / 1000);
+   impulse = Lambda[0] * w_vars->timeStep;
    return impulse;
 }
 

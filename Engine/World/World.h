@@ -11,8 +11,9 @@ struct world_vars
    double FRICTION;
    Vector2 GRAVITATION;
    double UNMOVABLE_MASS;
-   // timestep in milliseconds
-   int timeStep;
+   // timestep in seconds
+   double timeStep;
+   double iTimeStep;
 };
 
 class World

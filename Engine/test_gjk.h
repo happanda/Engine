@@ -58,7 +58,7 @@ void test_gjk_draw()
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       draw_bodies(world.bodies);
       draw_collisions(world.collisions);
-      world.update((double)world.vars.timeStep / 1000);
+      world.update(world.vars.timeStep);
       draw_point(Vector2(0, 0));
       prevCl = cl;
       glutSwapBuffers();

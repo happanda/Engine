@@ -2,6 +2,7 @@
 #include <time.h>
 #include <vector>
 #include <cstdlib>
+#include <float.h>
 #include "World\World.h"
 #include "Body\Shape.h"
 #include "Body\Body.h"
@@ -32,7 +33,7 @@ void step()
       draw_bodies(world.bodies);
       if (draw_colls)
          draw_collisions(world.collisions);
-      world.update((double)world.vars.timeStep / 1000);
+      world.update(world.vars.timeStep);
       prevCl = cl;
       if (draw_tw)
          TwDraw();
@@ -86,12 +87,14 @@ void specialKey(int key, int x, int y)
 {
    if (key == GLUT_KEY_UP)
    {
-      world.vars.timeStep += 5;
+      world.vars.timeStep += 0.005;
    }
    if (key == GLUT_KEY_DOWN)
    {
-      world.vars.timeStep -= 5;
+      world.vars.timeStep -= 0.005;
    }
+   if (abs(world.vars.timeStep) > DBL_EPSILON)
+         world.vars.iTimeStep = 1 / world.vars.timeStep;
 }
 
 void reshape(int width, int height)
