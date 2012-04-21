@@ -6,11 +6,14 @@
 #include "Math\Geometry.h"
 #include "World\World.h"
 
+struct ConstraintInit
+{ };
+
 class Constraint
 {
 public:
    Constraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars);
-   virtual void Init(Vector2 ForceExternal) = 0;
+   virtual void Init(const ConstraintInit* init) = 0;
    void DeltaImpulse();
    void ApplyImpulse();
    virtual bool Enough(void) const = 0;

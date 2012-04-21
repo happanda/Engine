@@ -50,24 +50,22 @@ void World::resolve_collision(double deltaT)
       if (it->body_one->mass < vars.UNMOVABLE_MASS
          || it->body_two->mass < vars.UNMOVABLE_MASS)
       {
+         ContactConstraintInit ccInit;
+         FrictionConstraintInit fcInit;
          ContactConstraint cc(&(*it), &vars);
+         FrictionConstraint fc(&(*it), &vars);
          for (size_t num_iter = 0; num_iter < cc.NumIter() && !cc.Enough(); num_iter++)
          {
-            cc.Init(Vector2::ORIGIN);
+            if (num_iter > 0 && cc.impulse <= min_impulse && fc.impulse <= min_impulse)
+               break;
+            cc.Init(&ccInit);
+            fc.Init(&fcInit);
             cc.DeltaImpulse();
-            cc.ApplyImpulse();
-            if (cc.impulse < min_impulse)
-               break;
-         }
-         /*FrictionConstraint fc(&(*it), &vars);
-         for (size_t num_iter = 0; num_iter < fc.NumIter() && !fc.Enough(); num_iter++)
-         {
-            fc.Init(Vector2::ORIGIN);
+            fc.appliedNormalImpulse = cc.impulse;
             fc.DeltaImpulse();
+            cc.ApplyImpulse();
             fc.ApplyImpulse();
-            if (fc.impulse < min_impulse)
-               break;
-         }*/
+         }
       }
    }
 }
@@ -142,9 +140,6 @@ void World::resolve_collision_old(double deltaT)
                else if (Pn > 0 && Pt > vars.FRICTION * Pn)
                   Pt = vars.FRICTION * Pn;
 
-               // total impulse
-               Vector2 P = it->normal * Pn + tang * Pt;
-
                if (abs(Pn) < min_impulse && abs(Pt) < min_impulse)
                   enough = true;
                // correcting impulses
@@ -154,6 +149,9 @@ void World::resolve_collision_old(double deltaT)
                if (sum_impulse_t + Pt < 0)
                   Pt = -sum_impulse_t;
                sum_impulse_t += Pt;
+
+               // total impulse
+               Vector2 P = it->normal * Pn + tang * Pt;
 
                Vector2 deltaV1(0, 0);
                Vector2 deltaV2(0, 0);

@@ -22,7 +22,7 @@ Constraint(collision->body_one, collision->one[0] - collision->body_one->form->p
    impulseDirection = _collision->normal;
 
    Vector2 norm = _collision->normal;
-   vel_rel = norm * (bodyA->velocity - bodyB->velocity
+   vel_rel_n = norm * (bodyA->velocity - bodyB->velocity
       + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
       - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
 
@@ -38,19 +38,14 @@ Constraint(collision->body_one, collision->one[0] - collision->body_one->form->p
    min_lambda = (1 + w_vars->RESTITUTION) / A[0][0] * w_vars->iTimeStep;
 }
 
-Vector2 ContactConstraint::_impulseDirection(void) const
-{
-   return impulseDirection;
-}
-
-void ContactConstraint::Init(Vector2 ForceExternal)
+void ContactConstraint::Init(const ConstraintInit* init)
 {
    Vector2 norm = _collision->normal;
 
-   vel_rel = norm * (bodyA->velocity - bodyB->velocity
+   vel_rel_n = norm * (bodyA->velocity - bodyB->velocity
       + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
       - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
-   Eta[0] = -vel_rel;
+   Eta[0] = -vel_rel_n;
 
    // penetration correction impulse
    double v_bias = 0;
@@ -63,9 +58,9 @@ void ContactConstraint::Init(Vector2 ForceExternal)
 
 double ContactConstraint::_deltaImpulse(void)
 {
-   if (vel_rel < 0)
+   if (vel_rel_n < 0)
    {
-      SolveLambda(A, Eta, Lambda, min_lambda * (-vel_rel), DBL_MAX);
+      SolveLambda(A, Eta, Lambda, min_lambda * (-vel_rel_n), DBL_MAX);
       impulse = Lambda[0] * w_vars->timeStep;
       if (impulse + sum_impulse < 0)
          impulse = -sum_impulse;
@@ -73,7 +68,6 @@ double ContactConstraint::_deltaImpulse(void)
    }
    else
    {
-      SolveLambda(A, Eta, Lambda, 0, DBL_MAX);
       impulse = 0;
    }
    if (Lambda[0] > 10000)
@@ -83,6 +77,11 @@ double ContactConstraint::_deltaImpulse(void)
    return impulse;
 }
 
+Vector2 ContactConstraint::_impulseDirection(void) const
+{
+   return impulseDirection;
+}
+
 size_t ContactConstraint::NumIter(void) const
 {
    return 50;
@@ -90,5 +89,5 @@ size_t ContactConstraint::NumIter(void) const
 
 bool ContactConstraint::Enough(void) const
 {
-   return vel_rel >= 0;
+   return vel_rel_n >= 0;
 }

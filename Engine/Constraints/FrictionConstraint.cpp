@@ -11,18 +11,20 @@ Constraint(collision->body_one, collision->one[0] - collision->body_one->form->p
            collision->body_two, collision->two[0] - collision->body_two->form->point,
            vars), _collision(collision)
 {
+   sum_impulse = 0;
+   appliedNormalImpulse = 0;
    A = std::vector<std::vector<double>>(1);
    A[0] = std::vector<double>(1);
    Eta = std::vector<double>(1);
    Lambda = std::vector<double>(1, 1);
    norm = _collision->normal;
    impulseDirection = norm.perpendicular();
-   tang = -impulseDirection;
+   tang = impulseDirection;
 
    Vector2 vel = bodyA->velocity - bodyB->velocity
       + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
       - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel);
-   vel_rel = norm * vel;
+   vel_rel_n = norm * vel;
    vel_rel_t = tang * vel;
 
    A[0][0] = 0;
@@ -37,28 +39,29 @@ Constraint(collision->body_one, collision->one[0] - collision->body_one->form->p
    min_lambda = w_vars->FRICTION / A[0][0] * w_vars->iTimeStep;
 }
 
-Vector2 FrictionConstraint::_impulseDirection(void) const
-{
-   return impulseDirection;
-}
-
-void FrictionConstraint::Init(Vector2 ForceExternal)
+void FrictionConstraint::Init(const ConstraintInit* init)
 {
    Vector2 vel = bodyA->velocity - bodyB->velocity
       + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
       - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel);
-   vel_rel = norm * vel;
+   vel_rel_n = norm * vel;
    vel_rel_t = tang * vel;
    Eta[0] = -vel_rel_t;
-   Eta[0] = Eta[0] * w_vars->iTimeStep;
+   Eta[0] = Eta[0] * w_vars->iTimeStep * w_vars->FRICTION;
+   appliedNormalImpulse = 0;
 }
 
 double FrictionConstraint::_deltaImpulse(void)
 {
-   if (vel_rel <= 0)
+   if (vel_rel_n < 0)
    {
-      double m_lambda = min_lambda * vel_rel;
-      SolveLambda(A, Eta, Lambda, m_lambda, -m_lambda);
+      if (appliedNormalImpulse > 0)
+         m_lambda = min_lambda * appliedNormalImpulse;
+      else
+         m_lambda = -min_lambda * vel_rel_t;
+      //m_lambda = w_vars->FRICTION * (bodyA->mass + bodyB->mass) * 9.8;
+
+      SolveLambda(A, Eta, Lambda, -m_lambda, m_lambda);
       impulse = Lambda[0] * w_vars->timeStep;
       if (impulse + sum_impulse < 0)
          impulse = -sum_impulse;
@@ -71,6 +74,11 @@ double FrictionConstraint::_deltaImpulse(void)
    return impulse;
 }
 
+Vector2 FrictionConstraint::_impulseDirection(void) const
+{
+   return impulseDirection;
+}
+
 size_t FrictionConstraint::NumIter(void) const
 {
    return 50;
@@ -78,5 +86,5 @@ size_t FrictionConstraint::NumIter(void) const
 
 bool FrictionConstraint::Enough(void) const
 {
-   return vel_rel > 0;
+   return vel_rel_n >= 0;
 }

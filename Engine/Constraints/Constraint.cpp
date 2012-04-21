@@ -23,9 +23,9 @@ void Constraint::ApplyImpulse()
    {
       bodyA->velocity = bodyA->velocity + imp * bodyA->iMass;
       double iinrt1 = bodyA->iInert;
-      Vector3 dir3(imp.v1, imp.v2, 0);
+      Vector3 imp3(imp.v1, imp.v2, 0);
       Vector3 r3(rA.v1, rA.v2, 0);
-      r3 = r3.cross(dir3);
+      r3 = r3.cross(imp3);
       double ro1 = r3.v3;
       bodyA->angle_vel += iinrt1 * ro1;
    }
@@ -33,9 +33,9 @@ void Constraint::ApplyImpulse()
    {
       bodyB->velocity = bodyB->velocity - imp * bodyB->iMass;
       double iinrt2 = bodyB->iInert;
-      Vector3 dir3(imp.v1, imp.v2, 0);
+      Vector3 imp3(imp.v1, imp.v2, 0);
       Vector3 r3(rB.v1, rB.v2, 0);
-      r3 = r3.cross(dir3);
+      r3 = r3.cross(imp3);
       double ro2 = r3.v3;
       bodyB->angle_vel -= iinrt2 * ro2;
    }
