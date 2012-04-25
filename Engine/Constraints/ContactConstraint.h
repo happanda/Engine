@@ -6,12 +6,13 @@
 
 struct ContactConstraintInit : ConstraintInit
 {
+   std::vector<double> force_ext;
 };
 
 class ContactConstraint : public Constraint
 {
 public:
-   ContactConstraint(Collision* collision, world_vars* vars);
+   ContactConstraint(Collision* collision, size_t pnum, world_vars* vars);
    void Init(const ConstraintInit* init);
    Vector2 _impulseDirection(void) const;
    double _deltaImpulse(void);

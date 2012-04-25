@@ -6,9 +6,9 @@
 #include "World\World.h"
 #include "Math\PGSsolver.h"
 
-FrictionConstraint::FrictionConstraint(Collision* collision, world_vars* vars):
-Constraint(collision->body_one, collision->one[0] - collision->body_one->form->point,
-           collision->body_two, collision->two[0] - collision->body_two->form->point,
+FrictionConstraint::FrictionConstraint(Collision* collision, size_t pnum, world_vars* vars):
+Constraint(collision->body_one, collision->one[pnum] - collision->body_one->form->point,
+           collision->body_two, collision->two[pnum] - collision->body_two->form->point,
            vars), _collision(collision)
 {
    sum_impulse = 0;
@@ -63,8 +63,10 @@ double FrictionConstraint::_deltaImpulse(void)
 
       SolveLambda(A, Eta, Lambda, -m_lambda, m_lambda);
       impulse = Lambda[0] * w_vars->timeStep;
-      if (impulse + sum_impulse < 0)
-         impulse = -sum_impulse;
+      if (impulse + sum_impulse < -w_vars->FRICTION * appliedNormalImpulse)
+         impulse = -w_vars->FRICTION * appliedNormalImpulse - sum_impulse;
+      else if (impulse + sum_impulse > w_vars->FRICTION * appliedNormalImpulse)
+         impulse = w_vars->FRICTION * appliedNormalImpulse - sum_impulse;
       sum_impulse += impulse;
    }
    else

@@ -12,7 +12,7 @@ struct FrictionConstraintInit : ConstraintInit
 class FrictionConstraint : public Constraint
 {
 public:
-   FrictionConstraint(Collision* collision, world_vars* vars);
+   FrictionConstraint(Collision* collision, size_t pnum, world_vars* vars);
    void Init(const ConstraintInit* init);
    Vector2 _impulseDirection(void) const;
    double _deltaImpulse(void);

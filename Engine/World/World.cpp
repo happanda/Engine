@@ -45,26 +45,34 @@ void World::resolve_collision(double deltaT)
    const double min_impulse = 0.0000001;
    const double bias_factor = 0.3;
    const double delta_slop = 0.002;
+   ContactConstraintInit ccInit;
+   ccInit.force_ext = std::vector<double>(6, 0);
+   ccInit.force_ext[0] = vars.GRAVITATION.v1;
+   ccInit.force_ext[1] = vars.GRAVITATION.v2;
+   ccInit.force_ext[3] = vars.GRAVITATION.v1;
+   ccInit.force_ext[4] = vars.GRAVITATION.v2;
+   FrictionConstraintInit fcInit;
    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
    {
       if (it->body_one->mass < vars.UNMOVABLE_MASS
          || it->body_two->mass < vars.UNMOVABLE_MASS)
       {
-         ContactConstraintInit ccInit;
-         FrictionConstraintInit fcInit;
-         ContactConstraint cc(&(*it), &vars);
-         FrictionConstraint fc(&(*it), &vars);
-         for (size_t num_iter = 0; num_iter < cc.NumIter() && !cc.Enough(); num_iter++)
+         for (size_t pind = 0; pind < it->one.size(); pind++)
          {
-            if (num_iter > 0 && cc.impulse <= min_impulse && fc.impulse <= min_impulse)
-               break;
-            cc.Init(&ccInit);
-            fc.Init(&fcInit);
-            cc.DeltaImpulse();
-            fc.appliedNormalImpulse = cc.impulse;
-            fc.DeltaImpulse();
-            cc.ApplyImpulse();
-            fc.ApplyImpulse();
+            ContactConstraint cc(&(*it), pind, &vars);
+            FrictionConstraint fc(&(*it), pind, &vars);
+            for (size_t num_iter = 0; num_iter < cc.NumIter() && !cc.Enough(); num_iter++)
+            {
+               if (num_iter > 0 && cc.impulse <= min_impulse && fc.impulse <= min_impulse)
+                  break;
+               cc.Init(&ccInit);
+               fc.Init(&fcInit);
+               cc.DeltaImpulse();
+               fc.appliedNormalImpulse = cc.impulse;
+               fc.DeltaImpulse();
+               cc.ApplyImpulse();
+               fc.ApplyImpulse();
+            }
          }
       }
    }

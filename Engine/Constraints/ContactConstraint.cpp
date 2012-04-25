@@ -9,9 +9,9 @@
 const double ContactConstraint::bias_factor = 0.5;
 const double ContactConstraint::delta_slop = 0.0001;
 
-ContactConstraint::ContactConstraint(Collision* collision, world_vars* vars):
-Constraint(collision->body_one, collision->one[0] - collision->body_one->form->point,
-           collision->body_two, collision->two[0] - collision->body_two->form->point,
+ContactConstraint::ContactConstraint(Collision* collision, size_t pnum, world_vars* vars):
+Constraint(collision->body_one, collision->one[pnum] - collision->body_one->form->point,
+           collision->body_two, collision->two[pnum] - collision->body_two->form->point,
            vars), _collision(collision)
 {
    sum_impulse = 0;
@@ -49,11 +49,18 @@ void ContactConstraint::Init(const ConstraintInit* init)
 
    // penetration correction impulse
    double v_bias = 0;
-   double delta = (bodyA->form->point + rA - bodyB->form->point - rB) * norm;
+   double delta = (-bodyA->form->point - rA + bodyB->form->point + rB) * norm;
    if (delta > delta_slop)
       v_bias = bias_factor * (delta - delta_slop) * w_vars->iTimeStep;
    Eta[0] += v_bias;
    Eta[0] = Eta[0] * w_vars->iTimeStep;
+   const ContactConstraintInit* cinit = static_cast<const ContactConstraintInit*>(init);
+   Eta[0] += Vector2(cinit->force_ext[0] * bodyA->iMass,
+      cinit->force_ext[1] * bodyA->iMass) * norm;
+   Eta[0] += cinit->force_ext[2] * bodyA->iInert * roA;
+   Eta[0] -= Vector2(cinit->force_ext[3] * bodyB->iMass,
+      cinit->force_ext[4] * bodyB->iMass) * norm;
+   Eta[0] -= cinit->force_ext[5] * bodyB->iInert * roB;
 }
 
 double ContactConstraint::_deltaImpulse(void)
@@ -69,10 +76,6 @@ double ContactConstraint::_deltaImpulse(void)
    else
    {
       impulse = 0;
-   }
-   if (Lambda[0] > 10000)
-   {
-      printf("To the moon!!\n");
    }
    return impulse;
 }
