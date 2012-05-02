@@ -284,6 +284,10 @@
 				RelativePath=".\World\World.h"
 				>
 			</File>
+			<File
+				RelativePath=".\World\WorldVars.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Collision"
@@ -338,6 +342,14 @@
 			</File>
 			<File
 				RelativePath=".\Constraints\ContactConstraint.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Constraints\DoFConstraint.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Constraints\DoFConstraint.h"
 				>
 			</File>
 			<File

@@ -4,27 +4,30 @@
 #include "Math\MathRoutines.h"
 
 void SolveLambda(const vector<vector<double>> &matr, const vector<double> &eta,
-      vector<double> &lambda, double lambdaMin, double lambdaMax)
+                 vector<double> &lambda, double lambdaMin, double lambdaMax)
 {
-   assert (lambda.size() == eta.size());
-   assert (lambda.size() == matr.size());
-   size_t n = lambda.size();
-   for (size_t i = 0; i < n; i++)
-   {
-      assert (lambda.size() == matr[i].size());
-      assert (matr[i][i] != 0);
-   }
-   for (size_t i = 0; i < n; i++)
-   {
-      double val = 0;
-      for (size_t j = 0; j < n; j++)
-      {
-         if (j != i)
-         {
-            val += matr[i][j] * lambda[j];
-         }
-      }
-      val = (eta[i] - val) / matr[i][i];
-      lambda[i] = clamp(val, lambdaMin, lambdaMax);
-   }
+    assert (lambda.size() == eta.size());
+    assert (lambda.size() == matr.size());
+    size_t n = lambda.size();
+    for (size_t i = 0; i < n; i++)
+    {
+        assert (lambda.size() == matr[i].size());
+        //assert (matr[i][i] != 0);
+    }
+    for (size_t i = 0; i < n; i++)
+    {
+        double val = 0;
+        if (matr[i][i] > 0)
+        {
+            for (size_t j = 0; j < n; j++)
+            {
+                if (j != i)
+                {
+                    val += matr[i][j] * lambda[j];
+                }
+            }
+            val = (eta[i] - val) / matr[i][i];
+        }
+        lambda[i] = clamp(val, lambdaMin, lambdaMax);
+    }
 }

@@ -7,10 +7,10 @@
 #include "Body\Shape.h"
 #include "Body\Body.h"
 #include "Graphics\Draw.h"
+#include "Constraints\DoFConstraint.h"
 #include "test_GJK.h"
 #include "glut/glut.h"
 #include "anttweakbar\AntTweakBar.h"
-
 
 World world = World();
 int speed = 20;
@@ -255,10 +255,21 @@ void init_bodies()
    delete rect;
    // bounds
 
+   std::vector<Constraint*> constraints;
    for (size_t nb = 0; nb < bodies.size(); nb++)
    {
       world.addBody(bodies[nb]);
    }
+   // some simple axis constraints
+   constraints.push_back(new DoFConstraint(&world.bodies[0], Y_AXIS, &(world.vars)));
+   constraints.push_back(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
+   constraints.push_back(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
+   constraints.push_back(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
+   for (size_t nc = 0; nc < constraints.size(); nc++)
+   {
+      world.addConstraint(constraints[nc]);
+   }
+
 }
 
 void stack_init()

@@ -6,6 +6,7 @@
 #include "Graphics\Draw.h"
 #include "Constraints\ContactConstraint.h"
 #include "Constraints\FrictionConstraint.h"
+#include "Constraints\DoFConstraint.h"
 
 World::World()
 {
@@ -16,6 +17,7 @@ void World::init()
 {
    bodies.clear();
    collisions.clear();
+   constraints.clear();
    vars.timeStep = 0.016;
    vars.iTimeStep = 1 / vars.timeStep;
    vars.UNMOVABLE_MASS = 5000;
@@ -26,9 +28,10 @@ void World::init()
 
 void World::update(double deltaT)
 {
+   apply_forces(deltaT);
    gjk_collide(bodies, collisions);
    resolve_collision(deltaT);
-   apply_forces(deltaT);
+   resolve_constraints(deltaT);
    double energy = 0;
    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
    {
@@ -73,6 +76,30 @@ void World::resolve_collision(double deltaT)
                cc.ApplyImpulse();
                fc.ApplyImpulse();
             }
+         }
+      }
+   }
+}
+
+void World::resolve_constraints(double deltaT)
+{
+   const double min_impulse = 0.0000001;
+   DoFConstraintInit dofInit;
+   dofInit.force_ext = std::vector<double>(6, 0);
+   dofInit.force_ext[0] = vars.GRAVITATION.v1;
+   dofInit.force_ext[1] = vars.GRAVITATION.v2;
+   dofInit.force_ext[3] = vars.GRAVITATION.v1;
+   dofInit.force_ext[4] = vars.GRAVITATION.v2;
+   for (std::vector<Constraint*>::iterator it = constraints.begin(); it != constraints.end(); it++)
+   {
+      Constraint* cc = *it;
+      if (cc->bodyA->mass < vars.UNMOVABLE_MASS)
+      {
+         for (size_t num_iter = 0; num_iter < cc->NumIter() && !cc->Enough(); num_iter++)
+         {
+            cc->Init(&dofInit);
+            cc->DeltaImpulse();
+            cc->ApplyImpulse();
          }
       }
    }

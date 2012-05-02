@@ -4,7 +4,15 @@
 #include <vector>
 #include "Body\Body.h"
 #include "Math\Geometry.h"
-#include "World\World.h"
+#include "World\WorldVars.h"
+
+enum ConstraintType
+{
+   BASE_CONSTRAINT,
+   CONTACT_CONSTRAINT,
+   FRICTION_CONSTRAINT,
+   DOF_CONSTRAINT
+};
 
 struct ConstraintInit
 { };
@@ -29,6 +37,7 @@ public:
 
    static const size_t MAX_ITER = 100;
 protected:
+   double sum_impulse;
    virtual Vector2 _impulseDirection(void) const = 0;
    virtual double _deltaImpulse(void) = 0;
    std::vector<std::vector<double>> Jacobian;

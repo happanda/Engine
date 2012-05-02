@@ -12,14 +12,14 @@ size_t Constraint::NumIter(void) const
 
 void Constraint::DeltaImpulse()
 {
-   impulseDirection = _impulseDirection();
    impulse = _deltaImpulse();
+   impulseDirection = _impulseDirection();
 }
 
 void Constraint::ApplyImpulse()
 {
    Vector2 imp = impulseDirection * impulse;
-   if (bodyA->mass < w_vars->UNMOVABLE_MASS)
+   if (bodyA != NULL && bodyA->mass < w_vars->UNMOVABLE_MASS)
    {
       bodyA->velocity = bodyA->velocity + imp * bodyA->iMass;
       double iinrt1 = bodyA->iInert;
@@ -29,7 +29,7 @@ void Constraint::ApplyImpulse()
       double ro1 = r3.v3;
       bodyA->angle_vel += iinrt1 * ro1;
    }
-   if (bodyB->mass < w_vars->UNMOVABLE_MASS)
+   if (bodyB != NULL && bodyB->mass < w_vars->UNMOVABLE_MASS)
    {
       bodyB->velocity = bodyB->velocity - imp * bodyB->iMass;
       double iinrt2 = bodyB->iInert;

@@ -26,7 +26,6 @@ private:
    double roA;
    double roB;
    double min_lambda;
-   double sum_impulse;
    Collision* _collision;
 };
 
