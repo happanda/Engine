@@ -6,87 +6,77 @@
 #include "World\World.h"
 #include "Math\PGSsolver.h"
 
-FrictionConstraint::FrictionConstraint(Collision* collision, size_t pnum, world_vars* vars):
+FrictionConstraint::FrictionConstraint(const Collision* collision, size_t pnum, world_vars* vars):
 Constraint(collision->body_one, collision->one[pnum] - collision->body_one->form->point,
            collision->body_two, collision->two[pnum] - collision->body_two->form->point,
            vars), _collision(collision)
 {
-   sum_impulse = 0;
-   appliedNormalImpulse = 0;
-   A = std::vector<std::vector<double>>(1);
-   A[0] = std::vector<double>(1);
-   Eta = std::vector<double>(1);
-   Lambda = std::vector<double>(1, 1);
-   norm = _collision->normal;
-   impulseDirection = norm.perpendicular();
-   tang = impulseDirection;
+    AppliedNormalImpulse = 0;
+    A = std::vector<std::vector<double>>(1);
+    A[0] = std::vector<double>(1);
+    Eta = std::vector<double>(1);
+    Lambda = std::vector<double>(1, 1);
+    norm = _collision->normal;
+    tang = norm.perpendicular();
 
-   Vector2 vel = bodyA->velocity - bodyB->velocity
-      + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
-      - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel);
-   vel_rel_n = norm * vel;
-   vel_rel_t = tang * vel;
+    Vector2 vel = bodyA->velocity - bodyB->velocity
+        + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
+        - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel);
+    vel_rel_n = norm * vel;
+    vel_rel_t = tang * vel;
 
-   A[0][0] = 0;
-   if (bodyA->mass < w_vars->UNMOVABLE_MASS)
-   {
-      A[0][0] += bodyA->iMass + tang * cross_cross(rA, tang) * bodyA->iInert;
-   }
-   if (bodyB->mass < w_vars->UNMOVABLE_MASS)
-   {
-      A[0][0] += bodyB->iMass + tang * cross_cross(rB, tang) * bodyB->iInert;
-   }
-   min_lambda = w_vars->FRICTION / A[0][0] * w_vars->iTimeStep;
+    A[0][0] = 0;
+    if (bodyA->mass < w_vars->UNMOVABLE_MASS)
+    {
+        A[0][0] += bodyA->iMass + tang * cross_cross(rA, tang) * bodyA->iInert;
+    }
+    if (bodyB->mass < w_vars->UNMOVABLE_MASS)
+    {
+        A[0][0] += bodyB->iMass + tang * cross_cross(rB, tang) * bodyB->iInert;
+    }
+    min_lambda = w_vars->FRICTION / A[0][0] * w_vars->iTimeStep;
 }
 
-void FrictionConstraint::Init(const ConstraintInit* init)
+void FrictionConstraint::init()
 {
-   Vector2 vel = bodyA->velocity - bodyB->velocity
-      + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
-      - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel);
-   vel_rel_n = norm * vel;
-   vel_rel_t = tang * vel;
-   Eta[0] = -vel_rel_t;
-   Eta[0] = Eta[0] * w_vars->iTimeStep * w_vars->FRICTION;
-   appliedNormalImpulse = 0;
+    Vector2 vel = bodyA->velocity - bodyB->velocity
+        + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
+        - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel);
+    vel_rel_n = norm * vel;
+    vel_rel_t = tang * vel;
+    Eta[0] = -vel_rel_t;
+    Eta[0] = Eta[0] * w_vars->iTimeStep * w_vars->FRICTION;
 }
 
-double FrictionConstraint::_deltaImpulse(void)
+void  FrictionConstraint::_deltaImpulse(Vector2& impulse, double& torque)
 {
-   if (vel_rel_n < 0)
-   {
-      if (appliedNormalImpulse > 0)
-         m_lambda = min_lambda * appliedNormalImpulse;
-      else
-         m_lambda = -min_lambda * vel_rel_t;
-      //m_lambda = w_vars->FRICTION * (bodyA->mass + bodyB->mass) * 9.8;
+    init();
+    double imp = 0;
+    if (vel_rel_n < 0)
+    {
+        if (AppliedNormalImpulse > 0)
+            m_lambda = min_lambda * AppliedNormalImpulse;
+        else
+            m_lambda = -min_lambda * vel_rel_t;
+        //m_lambda = w_vars->FRICTION * (bodyA->mass + bodyB->mass) * 9.8;
 
-      SolveLambda(A, Eta, Lambda, -m_lambda, m_lambda);
-      impulse = Lambda[0] * w_vars->timeStep;
-      if (impulse + sum_impulse < -w_vars->FRICTION * appliedNormalImpulse)
-         impulse = -w_vars->FRICTION * appliedNormalImpulse - sum_impulse;
-      else if (impulse + sum_impulse > w_vars->FRICTION * appliedNormalImpulse)
-         impulse = w_vars->FRICTION * appliedNormalImpulse - sum_impulse;
-      sum_impulse += impulse;
-   }
-   else
-   {
-      impulse = 0;
-   }
-   return impulse;
-}
-
-Vector2 FrictionConstraint::_impulseDirection(void) const
-{
-   return impulseDirection;
+        SolveLambda(A, Eta, Lambda, -m_lambda, m_lambda);
+        imp = Lambda[0] * w_vars->timeStep;
+        if (imp + sum_impulse < -w_vars->FRICTION * AppliedNormalImpulse)
+            imp = -w_vars->FRICTION * AppliedNormalImpulse - sum_impulse;
+        else if (imp + sum_impulse > w_vars->FRICTION * AppliedNormalImpulse)
+            imp = w_vars->FRICTION * AppliedNormalImpulse - sum_impulse;
+        sum_impulse += imp;
+    }
+    impulse = tang * imp;
 }
 
 size_t FrictionConstraint::NumIter(void) const
 {
-   return 50;
+    return 50;
 }
 
 bool FrictionConstraint::Enough(void) const
 {
-   return vel_rel_n >= 0;
+    return vel_rel_n >= 0;
 }

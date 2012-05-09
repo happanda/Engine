@@ -5,31 +5,26 @@
 
 enum DoFType
 {
-   X_AXIS = 0x001,
-   Y_AXIS = 0x010,
-   ANGLE =  0x100,
-   XY_AXIS = 0x011,
-   X_ANGLE = 0x101,
-   Y_ANGLE = 0x110,
-   XY_ANGLE = 0x111
-};
-
-struct DoFConstraintInit : ConstraintInit
-{
-   std::vector<double> force_ext;
+    X_AXIS = 0x001,
+    Y_AXIS = 0x010,
+    ANGLE =  0x100,
+    XY_AXIS = 0x011,
+    X_ANGLE = 0x101,
+    Y_ANGLE = 0x110,
+    XY_ANGLE = 0x111
 };
 
 class DoFConstraint : public Constraint
 {
 public:
-   DoFConstraint(Body* body, DoFType type, world_vars* vars);
-   void Init(const ConstraintInit* init);
-   Vector2 _impulseDirection(void) const;
-   double _deltaImpulse(void);
-   size_t NumIter(void) const;
-   bool Enough(void) const;
+    DoFConstraint(Body* body, DoFType type, world_vars* vars);
+    size_t NumIter(void) const;
+    bool Enough(void) const;
+protected:
+    void _deltaImpulse(Vector2& impulse, double& torque);
 private:
-   DoFType dof_type;
+    void init();
+    DoFType dof_type;
 };
 
 #endif

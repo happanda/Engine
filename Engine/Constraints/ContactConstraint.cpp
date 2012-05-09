@@ -9,88 +9,79 @@
 const double ContactConstraint::bias_factor = 0.5;
 const double ContactConstraint::delta_slop = 0.0001;
 
-ContactConstraint::ContactConstraint(Collision* collision, size_t pnum, world_vars* vars):
+ContactConstraint::ContactConstraint(const Collision* collision, size_t pnum, world_vars* vars):
 Constraint(collision->body_one, collision->one[pnum] - collision->body_one->form->point,
            collision->body_two, collision->two[pnum] - collision->body_two->form->point,
            vars), _collision(collision)
 {
-   sum_impulse = 0;
-   A = std::vector<std::vector<double>>(1);
-   A[0] = std::vector<double>(1);
-   Eta = std::vector<double>(1);
-   Lambda = std::vector<double>(1, 1);
-   impulseDirection = _collision->normal;
+    A = std::vector<std::vector<double>>(1);
+    A[0] = std::vector<double>(1);
+    Eta = std::vector<double>(1);
+    Lambda = std::vector<double>(1, 1);
+    //Impulse = _collision->normal;
 
-   Vector2 norm = _collision->normal;
-   vel_rel_n = norm * (bodyA->velocity - bodyB->velocity
-      + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
-      - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
+    Vector2 norm = _collision->normal;
+    vel_rel_n = norm * (bodyA->velocity - bodyB->velocity
+        + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
+        - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
 
-   A[0][0] = 0;
-   if (bodyA->mass < w_vars->UNMOVABLE_MASS)
-   {
-      A[0][0] += bodyA->iMass + norm * cross_cross(rA, norm) * bodyA->iInert;
-   }
-   if (bodyB->mass < w_vars->UNMOVABLE_MASS)
-   {
-      A[0][0] += bodyB->iMass + norm * cross_cross(rB, norm) * bodyB->iInert;
-   }
-   min_lambda = (1 + w_vars->RESTITUTION) / A[0][0] * w_vars->iTimeStep;
+    A[0][0] = 0;
+    if (bodyA->mass < w_vars->UNMOVABLE_MASS)
+    {
+        A[0][0] += bodyA->iMass + norm * cross_cross(rA, norm) * bodyA->iInert;
+    }
+    if (bodyB->mass < w_vars->UNMOVABLE_MASS)
+    {
+        A[0][0] += bodyB->iMass + norm * cross_cross(rB, norm) * bodyB->iInert;
+    }
+    min_lambda = (1 + w_vars->RESTITUTION) / A[0][0] * w_vars->iTimeStep;
 }
 
-void ContactConstraint::Init(const ConstraintInit* init)
+void ContactConstraint::init()
 {
-   Vector2 norm = _collision->normal;
+    Vector2 norm = _collision->normal;
 
-   vel_rel_n = norm * (bodyA->velocity - bodyB->velocity
-      + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
-      - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
-   Eta[0] = -vel_rel_n;
+    vel_rel_n = norm * (bodyA->velocity - bodyB->velocity
+        + Vector2(-rA.v2 * bodyA->angle_vel, rA.v1 * bodyA->angle_vel)
+        - Vector2(-rB.v2 * bodyB->angle_vel, rB.v1 * bodyB->angle_vel));
+    Eta[0] = -vel_rel_n;
 
-   // penetration correction impulse
-   double v_bias = 0;
-   double delta = (-bodyA->form->point - rA + bodyB->form->point + rB) * norm;
-   if (delta > delta_slop)
-      v_bias = bias_factor * (delta - delta_slop) * w_vars->iTimeStep;
-   Eta[0] += v_bias;
-   Eta[0] = Eta[0] * w_vars->iTimeStep;
-   const ContactConstraintInit* cinit = static_cast<const ContactConstraintInit*>(init);
-   Eta[0] += Vector2(cinit->force_ext[0] * bodyA->iMass,
-      cinit->force_ext[1] * bodyA->iMass) * norm;
-   Eta[0] += cinit->force_ext[2] * bodyA->iInert * roA;
-   Eta[0] -= Vector2(cinit->force_ext[3] * bodyB->iMass,
-      cinit->force_ext[4] * bodyB->iMass) * norm;
-   Eta[0] -= cinit->force_ext[5] * bodyB->iInert * roB;
+    // penetration correction impulse
+    double v_bias = 0;
+    double delta = (-bodyA->form->point - rA + bodyB->form->point + rB) * norm;
+    if (delta > delta_slop)
+        v_bias = bias_factor * (delta - delta_slop) * w_vars->iTimeStep;
+    Eta[0] += v_bias;
+    Eta[0] = Eta[0] * w_vars->iTimeStep;
+    Eta[0] += Vector2(ForceExt[0] * bodyA->iMass,
+        ForceExt[1] * bodyA->iMass) * norm;
+    Eta[0] += ForceExt[2] * bodyA->iInert * roA;
+    Eta[0] -= Vector2(ForceExt[3] * bodyB->iMass,
+        ForceExt[4] * bodyB->iMass) * norm;
+    Eta[0] -= ForceExt[5] * bodyB->iInert * roB;
 }
 
-double ContactConstraint::_deltaImpulse(void)
+void ContactConstraint::_deltaImpulse(Vector2& impulse, double& torque)
 {
-   if (vel_rel_n < 0)
-   {
-      SolveLambda(A, Eta, Lambda, min_lambda * (-vel_rel_n), DBL_MAX);
-      impulse = Lambda[0] * w_vars->timeStep;
-      if (impulse + sum_impulse < 0)
-         impulse = -sum_impulse;
-      sum_impulse += impulse;
-   }
-   else
-   {
-      impulse = 0;
-   }
-   return impulse;
-}
-
-Vector2 ContactConstraint::_impulseDirection(void) const
-{
-   return impulseDirection;
+    init();
+    double imp = 0;
+    if (vel_rel_n < 0)
+    {
+        SolveLambda(A, Eta, Lambda, min_lambda * (-vel_rel_n), DBL_MAX);
+        double imp = Lambda[0] * w_vars->timeStep;
+        if (imp + sum_impulse < 0)
+            imp = -sum_impulse;
+        sum_impulse += imp;
+    }
+    impulse = _collision->normal * imp;
 }
 
 size_t ContactConstraint::NumIter(void) const
 {
-   return 50;
+    return 50;
 }
 
 bool ContactConstraint::Enough(void) const
 {
-   return vel_rel_n >= 0;
+    return vel_rel_n >= 0 || Constraint::Enough();
 }

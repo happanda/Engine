@@ -8,42 +8,52 @@
 
 enum ConstraintType
 {
-   BASE_CONSTRAINT,
-   CONTACT_CONSTRAINT,
-   FRICTION_CONSTRAINT,
-   DOF_CONSTRAINT
+    BASE_CONSTRAINT,
+    CONTACT_CONSTRAINT,
+    FRICTION_CONSTRAINT,
+    DOF_CONSTRAINT
 };
 
 struct ConstraintInit
-{ };
+{
+    double force_ext[6];
+};
 
 class Constraint
 {
 public:
-   Constraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars);
-   virtual void Init(const ConstraintInit* init) = 0;
-   void DeltaImpulse();
-   void ApplyImpulse();
-   virtual bool Enough(void) const = 0;
-   size_t NumIter(void) const;
+    Constraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars);
+    Constraint(const Constraint& constr);
+    const Constraint& operator=(const Constraint& body);
 
-   Body* bodyA;
-   Body* bodyB;
-   double impulse;
-   Vector2 impulseDirection;
-   const Vector2 rA;
-   const Vector2 rB;
-   world_vars* w_vars;
+    void DeltaImpulse();
+    void ApplyImpulse();
+    bool Enough(void) const;
+    size_t NumIter(void) const;
 
-   static const size_t MAX_ITER = 100;
+    Body* bodyA;
+    Body* bodyB;
+    const Vector2 rA;
+    const Vector2 rB;
+
+    void SetForceExt(double* force);
+    double ForceExt[6];
+    Vector2 Impulse;
+    double Torque;
+    const world_vars* w_vars;
+
+    ConstraintType Type;
+    static const size_t MAX_ITER = 50;
 protected:
-   double sum_impulse;
-   virtual Vector2 _impulseDirection(void) const = 0;
-   virtual double _deltaImpulse(void) = 0;
-   std::vector<std::vector<double>> Jacobian;
-   std::vector<std::vector<double>> A;
-   std::vector<double> Eta;
-   std::vector<double> Lambda;
+    size_t iterCount;
+    double sum_impulse;
+
+    virtual void _deltaImpulse(Vector2& impulse, double& torque) = 0;
+
+    std::vector<std::vector<double>> Jacobian;
+    std::vector<std::vector<double>> A;
+    std::vector<double> Eta;
+    std::vector<double> Lambda;
 };
 
 #endif
