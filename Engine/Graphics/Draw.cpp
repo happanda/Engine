@@ -127,7 +127,6 @@ void draw_constraints(const std::vector<Constraint*>& constraints)
             {
                 GLfloat twoPi = 2.0f * 3.14159f;
                 glBegin(GL_LINE_LOOP);
-                glVertex2f((*it)->bodyA->form->point.v1, (*it)->bodyA->form->point.v2);
                 for (int numsec = 0; numsec <= CIRCLE_SEGMENTS; numsec++)
                 {
                     glVertex2f((*it)->bodyA->form->point.v1 + eps_rad

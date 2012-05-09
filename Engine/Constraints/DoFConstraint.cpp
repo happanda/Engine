@@ -32,7 +32,7 @@ void DoFConstraint::init()
     if ((dof_type & Y_AXIS) != 0)
         Eta[1] = -bodyA->velocity.v2;
     if ((dof_type & ANGLE) != 0)
-        Eta[3] = -bodyA->angle_vel;
+        Eta[2] = -bodyA->angle_vel;
 }
 
 void DoFConstraint::_deltaImpulse(Vector2& impulse, double& torque)

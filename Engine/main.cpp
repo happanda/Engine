@@ -264,7 +264,7 @@ void init_bodies()
       world.addBody(bodies[nb]);
    }
    // some simple axis constraints
-   constraints.push_back(new DoFConstraint(&world.bodies[0], Y_AXIS, &(world.vars)));
+   constraints.push_back(new DoFConstraint(&world.bodies[0], Y_ANGLE, &(world.vars)));
    constraints.push_back(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
    constraints.push_back(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
    constraints.push_back(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
