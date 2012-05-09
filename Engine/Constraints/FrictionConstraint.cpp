@@ -11,6 +11,7 @@ Constraint(collision->body_one, collision->one[pnum] - collision->body_one->form
            collision->body_two, collision->two[pnum] - collision->body_two->form->point,
            vars), _collision(collision)
 {
+    Type = FRICTION_CONSTRAINT;
     AppliedNormalImpulse = 0;
     A = std::vector<std::vector<double>>(1);
     A[0] = std::vector<double>(1);

@@ -5,6 +5,7 @@
 DoFConstraint::DoFConstraint(Body* body, DoFType type, world_vars* vars):
 Constraint(body, Vector2::ORIGIN, NULL, Vector2::ORIGIN, vars), dof_type(type)
 {
+    Type = DOF_CONSTRAINT;
     A = std::vector<std::vector<double>>(3);
     A[0] = std::vector<double>(3);
     A[1] = std::vector<double>(3);

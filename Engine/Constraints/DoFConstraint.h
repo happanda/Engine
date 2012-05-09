@@ -20,11 +20,11 @@ public:
     DoFConstraint(Body* body, DoFType type, world_vars* vars);
     size_t NumIter(void) const;
     bool Enough(void) const;
+    DoFType dof_type;
 protected:
     void _deltaImpulse(Vector2& impulse, double& torque);
 private:
     void init();
-    DoFType dof_type;
 };
 
 #endif

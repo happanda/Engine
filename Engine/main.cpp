@@ -32,7 +32,10 @@ void step()
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       draw_bodies(world.bodies);
       if (draw_colls)
+      {
          draw_collisions(world.collisions);
+         draw_constraints(world.constraints);
+      }
       world.update(world.vars.timeStep);
       prevCl = cl;
       if (draw_tw)
