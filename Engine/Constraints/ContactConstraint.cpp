@@ -68,7 +68,7 @@ void ContactConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     if (vel_rel_n < 0)
     {
         SolveLambda(A, Eta, Lambda, min_lambda * (-vel_rel_n), DBL_MAX);
-        double imp = Lambda[0] * w_vars->timeStep;
+        imp = Lambda[0] * w_vars->timeStep;
         if (imp + sum_impulse < 0)
             imp = -sum_impulse;
         sum_impulse += imp;
