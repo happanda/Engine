@@ -1,5 +1,8 @@
 #include "Draw.h"
 
+double zoom_distance = 20;
+double camera_xpos = 0;
+double camera_ypos = 0;
 GLfloat light_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
 GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
 
@@ -17,8 +20,8 @@ void reshape_window(int width, int height)
     gluPerspective(100, (double)width/height, 1, 50);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 10.0, /* eye is at (0,0,5) */
-        0.0, 0.0, 0.0, /* center is at (0,0,0) */
+    gluLookAt(camera_xpos, camera_ypos, zoom_distance, /* eye is at (0,0,10) */
+        camera_xpos, camera_ypos, 0.0, /* center is at (0,0,0) */
         0.0, 1.0, 0.0); /* up is in +Y direction */
     glTranslatef(0, 0.0, -1.0);
 }
