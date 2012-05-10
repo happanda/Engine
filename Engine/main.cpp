@@ -75,7 +75,7 @@ void keyboard(unsigned char key, int x, int y)
         if (world.bodies.at(r).mass < world.vars.UNMOVABLE_MASS)
             world.bodies.at(r).velocity = world.bodies.at(r).velocity + Vector2(0, 12);
     }
-    if (key == '+')
+    /*if (key == '+')
     {
         zoom_distance -= 2;
         reshape(window_width, window_height);
@@ -84,7 +84,7 @@ void keyboard(unsigned char key, int x, int y)
     {
         zoom_distance += 2;
         reshape(window_width, window_height);
-    }
+    }*/
     if (draw_tw)
         TwEventKeyboardGLUT(key, x, y);
     glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
@@ -93,19 +93,19 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int btn, int state, int x, int y)
 {
-    if (btn == GLUT_LEFT_BUTTON)
+    /*if (btn == GLUT_LEFT_BUTTON)
     {
         cursor_xpos = x;
         cursor_ypos = y;
-    }
+    }*/
     TwEventMouseButtonGLUT(btn, state, x, y);
 }
 
 void motion(int x, int y)
 {
-    camera_xpos = (x - cursor_xpos);
+    /*camera_xpos = (x - cursor_xpos);
     camera_ypos = (y - cursor_ypos);
-    reshape(window_width, window_height);
+    reshape(window_width, window_height);*/
     TwEventMouseMotionGLUT(x, y);
 }
 
