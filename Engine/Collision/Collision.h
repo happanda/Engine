@@ -21,6 +21,6 @@ void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions);
 
 bool bbox_check_collision(Body* bodyA, Body* bodyB);
 
-Collision sat_collide(Body* bodyA, Body* bodyB);
+bool check_point_inside(const Vector2 point, const Body* body, Vector2& localCoord);
 
 #endif

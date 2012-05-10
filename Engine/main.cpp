@@ -93,11 +93,18 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int btn, int state, int x, int y)
 {
-    /*if (btn == GLUT_LEFT_BUTTON)
+    if (btn == GLUT_LEFT_BUTTON)
     {
-        cursor_xpos = x;
-        cursor_ypos = y;
-    }*/
+        Vector2 localCoord;
+        const Vector2 p(x - window_width / 2, y - window_height / 2);
+        for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); it++)
+        {
+            if (check_point_inside(p, &(*it), localCoord))
+                printf("Inside body!!\n");
+        }
+        /*cursor_xpos = x;
+        cursor_ypos = y;*/
+    }
     TwEventMouseButtonGLUT(btn, state, x, y);
 }
 

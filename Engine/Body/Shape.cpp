@@ -1,6 +1,7 @@
 
 #include "Shape.h"
 
+// counter-clockwise left bottom, right bottom, etc.
 void rectangle::get_points(Vector2& p1, Vector2& p2, Vector2& p3, Vector2& p4, double indent) const
 {
    Vector2 v(h, w);
