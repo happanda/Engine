@@ -12,7 +12,7 @@
 #include "glut/glut.h"
 #include "anttweakbar\AntTweakBar.h"
 
-World world = World();
+World world;
 int speed = 20;
 bool pause = false;
 bool draw_cos = false;
@@ -21,6 +21,8 @@ int window_width;
 int window_height;
 
 void init_bodies();
+void init_many_rectangles();
+void init_many_circles();
 void glut_init();
 void tw_init();
 void stack_init();
@@ -28,6 +30,10 @@ void stack_init();
 extern double zoom_distance;
 extern double camera_xpos;
 extern double camera_ypos;
+extern double viewfield_minx;
+extern double viewfield_miny;
+extern double viewfield_maxx;
+extern double viewfield_maxy;
 double cursor_xpos;
 double cursor_ypos;
 
@@ -77,13 +83,13 @@ void keyboard(unsigned char key, int x, int y)
     }
     /*if (key == '+')
     {
-        zoom_distance -= 2;
-        reshape(window_width, window_height);
+    zoom_distance -= 2;
+    reshape(window_width, window_height);
     }
     if (key == '-')
     {
-        zoom_distance += 2;
-        reshape(window_width, window_height);
+    zoom_distance += 2;
+    reshape(window_width, window_height);
     }*/
     if (draw_tw)
         TwEventKeyboardGLUT(key, x, y);
@@ -93,17 +99,17 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int btn, int state, int x, int y)
 {
-    if (btn == GLUT_LEFT_BUTTON)
+    if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
         Vector2 localCoord;
-        const Vector2 p(x - window_width / 2, y - window_height / 2);
+        cursor_xpos = viewfield_minx + (viewfield_maxx - viewfield_minx) * x / window_width;
+        cursor_ypos = viewfield_miny + (viewfield_maxy - viewfield_miny) * y / window_height;
+        const Vector2 p(cursor_xpos, cursor_ypos);
         for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); it++)
         {
             if (check_point_inside(p, &(*it), localCoord))
                 printf("Inside body!!\n");
         }
-        /*cursor_xpos = x;
-        cursor_ypos = y;*/
     }
     TwEventMouseButtonGLUT(btn, state, x, y);
 }
@@ -126,20 +132,22 @@ void choice_selected(int value)
     if (value == 1) { glut_init(); init_bodies(); tw_init(); draw_tw = true; }
     if (value == 2) { test_gjk_init(); draw_tw = false; }
     if (value == 3) { glut_init(); stack_init(); tw_init(); draw_tw = true; }
+    if (value == 4) { glut_init(); init_many_rectangles(); tw_init(); draw_tw = true; }
+    if (value == 5) { glut_init(); init_many_circles(); tw_init(); draw_tw = true; }
 }
 
 void specialKey(int key, int x, int y)
 {
     if (key == GLUT_KEY_UP)
     {
-        world.vars.timeStep += 0.005;
+        world.vars.timeStep += 0.003;
     }
     if (key == GLUT_KEY_DOWN)
     {
-        world.vars.timeStep -= 0.005;
+        if (abs(world.vars.timeStep) > 0.006)
+            world.vars.timeStep -= 0.003;
     }
-    if (abs(world.vars.timeStep) > DBL_EPSILON)
-        world.vars.iTimeStep = 1 / world.vars.timeStep;
+    world.vars.iTimeStep = 1 / world.vars.timeStep;
 }
 
 int main(int argc, char** argv)
@@ -174,6 +182,8 @@ void glut_init()
     glutAddMenuEntry("Main simulation", 1);
     glutAddMenuEntry("Test GJK", 2);
     glutAddMenuEntry("Stack boxes", 3);
+    glutAddMenuEntry("Many rectangles", 4);
+    glutAddMenuEntry("Many circles", 5);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
 }
 
@@ -200,114 +210,93 @@ void init_bodies()
     //wvars.RESTITUTION = 1;
     world.init();
     world.vars = wvars;
-
     double angle_vel = 0;
-    std::vector<Body> bodies;
 
-    Body body = Body(&(rectangle()), 0, 0, 0, 0);
-    rectangle* rect;
-    circle* circ;
-    //surface* surf;
+    world.addBody(Body(new rectangle(0, 0, 2, 4, 4), 16, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 5, -1, 2, 2), 4, 0, -2, 0));
+    world.addBody(Body(new rectangle(-5, 0, 0, 2, 2), 4, 1, 0, angle_vel));
+    world.addBody(Body(new rectangle(0, -5, 0, 2, 2), 4, 0, 1, 0));
+    world.addBody(Body(new rectangle(5, 0, 0, 2, 2), 4, -1, 0, 0));
+    world.addBody(Body(new rectangle(10, 5, 0, 3, 1), 3, -3, -3, 0));
+    world.addBody(Body(new rectangle(-9, -6, 0.2, 1, 10), 10, 2, 0, 0));
+    world.addBody(Body(new circle(-3, 4, 0, 2), 2, 0, -4, 0));
+    world.addBody(Body(new circle(4, 7, 0, 3), 8, -2, -2, 0));
 
-    //int s = 12;
-    //double sp = (double)RAND_MAX / 12;
-    //for (int i = -s; i < s; i += 4)
-    //{
-    //   for (int j = -s + 2; j < s; j += 4)
-    //   {
-    //      double r = rand() % 2 + 1;
-    //      circ = new circle(i, j, (double)rand(), 1);
-    //      body = Body(circ, 3.14, (double)rand() / sp - (double)rand() / sp,
-    //         (double)rand() / sp - (double)rand() / sp, 0);
-    //      delete circ;
-    //      /*rect = new rectangle(i, j, (double)rand() / sp, r, 3 - r);
-    //      body = Body(rect, 1, (double)rand() / sp - (double)rand() / sp,
-    //         (double)rand() / sp - (double)rand() / sp, 0);*/
-    //      bodies.push_back(body);
-    //      //delete rect;
-    //   }
-    //}
-    rect = new rectangle(0, 0, 2, 4, 4);
-    body = Body(rect, 16, 0, 0, 0);
-    bodies.push_back(body);
-    delete rect;
-
-    rect = new rectangle(0, 5, -1, 2, 2);
-    body = Body(rect, 4, 0, -2, 0);
-    bodies.push_back(body);
-    delete rect;
-
-    rect = new rectangle(-5, 0, 0, 2, 2);
-    body = Body(rect, 4, 1, 0, angle_vel);
-    bodies.push_back(body);
-    delete rect;
-
-    rect = new rectangle(0, -5, 0, 2, 2);
-    body = Body(rect, 4, 0, 1, 0);
-    bodies.push_back(body);
-    delete rect;
-
-    rect = new rectangle(5, 0, 0, 2, 2);
-    body = Body(rect, 4, -1, 0, 0);
-    bodies.push_back(body);
-    delete rect;
-
-    rect = new rectangle(10, 5, 0, 3, 1);
-    body = Body(rect, 3, -3, -3, 0);
-    bodies.push_back(body);
-    delete rect;
-
-    rect = new rectangle(-9, -6, 0.2, 1, 10);
-    body = Body(rect, 10, 2, 0, 0);
-    bodies.push_back(body);
-    delete rect;
-
-    circ = new circle(-3, 4, 0, 2);
-    body = Body(circ, 2, 0, -4, 0);
-    bodies.push_back(body);
-    delete circ;
-
-    circ = new circle(4, 7, 0, 3);
-    body = Body(circ, 8, -2, -2, 0);
-    bodies.push_back(body);
-    delete circ;
-
-    //bodies.erase((bodies.begin() + 1), bodies.end());
     // bounds
     double bigmass = 100000;
-    /*rect = new rectangle(-40, 0, 0, 50, 25);
-    body = Body(rect, bigmass, 0, 0, 0);
-    bodies.push_back(body);
-    delete rect;
-    rect = new rectangle(40, 0, 0, 50, 25);
-    body = Body(rect, bigmass, 0, 0, 0);
-    bodies.push_back(body);
-    delete rect;
-    rect = new rectangle(0, 14, 0, 200, 3);
-    body = Body(rect, bigmass, 0, 0, 0);
-    bodies.push_back(body);
-    delete rect;*/
-    rect = new rectangle(0, -14, 0, 200, 3);
-    body = Body(rect, bigmass, 0, 0, 0);
-    bodies.push_back(body);
-    delete rect;
+    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
     // bounds
 
-    std::vector<Constraint*> constraints;
-    for (size_t nb = 0; nb < bodies.size(); nb++)
-    {
-        world.addBody(bodies[nb]);
-    }
     // some simple axis constraints
-    constraints.push_back(new DoFConstraint(&world.bodies[0], Y_ANGLE, &(world.vars)));
-    constraints.push_back(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
-    constraints.push_back(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
-    constraints.push_back(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
-    for (size_t nc = 0; nc < constraints.size(); nc++)
+    world.addConstraint(new DoFConstraint(&world.bodies[0], Y_ANGLE, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
+}
+
+void init_many_rectangles()
+{
+    world_vars wvars = world.vars;
+    wvars.GRAVITATION.v2 = 0;
+    //wvars.RESTITUTION = 1;
+    world.init();
+    world.vars = wvars;
+    double angle_vel = 0;
+
+    int s = 12;
+    double sp = (double)RAND_MAX / 12;
+    for (int i = -s; i < s; i += 4)
     {
-        world.addConstraint(constraints[nc]);
+        for (int j = -s + 2; j < s; j += 4)
+        {
+            double r = rand() % 2 + 1;
+            world.addBody(Body(new rectangle(i, j, (double)rand() / sp, r, 3 - r),
+                1, (double)rand() / sp - (double)rand() / sp,
+            (double)rand() / sp - (double)rand() / sp, 0));
+        }
     }
 
+    // bounds
+    double bigmass = 100000;
+    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+    // bounds
+}
+
+void init_many_circles()
+{
+    world_vars wvars = world.vars;
+    wvars.GRAVITATION.v2 = 0;
+    //wvars.RESTITUTION = 1;
+    world.init();
+    world.vars = wvars;
+    double angle_vel = 0;
+
+    int s = 12;
+    double sp = (double)RAND_MAX / 12;
+    for (int i = -s; i < s; i += 4)
+    {
+        for (int j = -s + 2; j < s; j += 4)
+        {
+            double r = rand() % 2 + 1;
+            world.addBody(Body(new circle(i, j, (double)rand(), 1), 3.14,
+                (double)rand() / sp - (double)rand() / sp,
+                (double)rand() / sp - (double)rand() / sp, 0));
+        }
+    }
+
+    // bounds
+    double bigmass = 100000;
+    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+    // bounds
 }
 
 void stack_init()

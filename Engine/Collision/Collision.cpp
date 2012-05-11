@@ -58,4 +58,5 @@ bool check_point_inside(const Vector2 point, const Body* body, Vector2& localCoo
             return false;
         return true;
     }
+    return false;
 }

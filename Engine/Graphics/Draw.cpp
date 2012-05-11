@@ -1,8 +1,16 @@
 #include "Draw.h"
+#define _USE_MATH_DEFINES
+#include "math.h"
 
 double zoom_distance = 20;
 double camera_xpos = 0;
 double camera_ypos = 0;
+double viewfield_minx = 0;
+double viewfield_miny = 0;
+double viewfield_maxx = 0;
+double viewfield_maxy = 0;
+double half_fov = 50;
+
 GLfloat light_diffuse[] = { 1.0, 0.0, 0.0, 1.0 };
 GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
 
@@ -14,10 +22,19 @@ void init_color()
 
 void reshape_window(int width, int height)
 {
+    double half_y = zoom_distance * tan(half_fov);
+    double half_x = half_y * width / height;
+    half_x *= zoom_distance;
+    viewfield_maxx = half_x + camera_xpos;
+    viewfield_minx = -half_x - camera_xpos;
+    
+    viewfield_maxy = -half_y - camera_ypos;
+    viewfield_miny = half_y + camera_ypos;
+
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(100, (double)width/height, 1, 50);
+    gluPerspective(half_fov * 2, (double)width/height, 1, 50);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(camera_xpos, camera_ypos, zoom_distance, /* eye is at (0,0,10) */
@@ -146,7 +163,7 @@ void draw_constraints(const std::vector<Constraint*>& constraints)
 
 void draw_point(Vector2 point)
 {
-    double small_radius = 0.1;
+    double small_radius = 0.05;
     int segments = 20;
     GLfloat twoPi = 2.0f * 3.14159f;
     glBegin(GL_POINTS);

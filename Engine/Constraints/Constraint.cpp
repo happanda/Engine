@@ -3,7 +3,7 @@
 Constraint::Constraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars):
     bodyA(bodyA), bodyB(bodyB), rA(rA), rB(rB), w_vars(vars)
 {
-    Type = ConstraintType::BASE_CONSTRAINT;
+    Type = BASE_CONSTRAINT;
     iterCount = 0;
     sum_impulse = 0;
     Impulse = Vector2::ORIGIN;

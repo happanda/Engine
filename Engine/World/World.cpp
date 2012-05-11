@@ -214,3 +214,13 @@ void World::apply_forces(double deltaT)
             it->velocity = it->velocity + vars.GRAVITATION * deltaT;
     }
 }
+
+void World::addBody(Body body)
+{
+    bodies.push_back(body);
+}
+
+void World::addConstraint(Constraint* constraint)
+{
+    constraints.push_back(constraint);
+}

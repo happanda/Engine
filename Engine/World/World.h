@@ -12,8 +12,8 @@ class World
 public:
    World();
    void init();
-   void addBody(Body body) { bodies.push_back(body); }
-   void addConstraint(Constraint* constraint) { constraints.push_back(constraint); }
+   void addBody(Body body);
+   void addConstraint(Constraint* constraint);
    void update(double deltaT);
    void apply_forces(double deltaT);
    void resolve_collision(double deltaT);
