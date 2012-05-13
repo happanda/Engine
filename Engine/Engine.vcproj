@@ -361,6 +361,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Force"
+			>
+			<File
+				RelativePath=".\Force\Force.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Force\Force.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\main.cpp"
 			>

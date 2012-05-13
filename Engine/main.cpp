@@ -13,6 +13,11 @@
 #include "anttweakbar\AntTweakBar.h"
 
 World world;
+Force* drag_force = 0;
+double drag_force_ratio = 50;
+double motion_x = 0;
+double motion_y = 0;
+
 int speed = 20;
 bool pause = false;
 bool draw_cos = false;
@@ -32,8 +37,15 @@ extern double viewfield_minx;
 extern double viewfield_miny;
 extern double viewfield_maxx;
 extern double viewfield_maxy;
-double cursor_xpos;
-double cursor_ypos;
+
+void screen_coords2world(int x, int y, double& wx, double& wy)
+{
+    int w = glutGet(GLUT_WINDOW_WIDTH);
+    int h = glutGet(GLUT_WINDOW_HEIGHT);
+    y = h - y;
+    wx = viewfield_minx + (viewfield_maxx - viewfield_minx) * ((double)x / w);
+    wy = viewfield_miny + (viewfield_maxy - viewfield_miny) * ((double)y / h);
+}
 
 clock_t prevCl = 0;
 void step()
@@ -48,6 +60,17 @@ void step()
             draw_collisions(world.collisions);
             draw_constraints(world.constraints);
         }
+
+        if (drag_force != 0)
+        {
+            double wx, wy;
+            screen_coords2world(motion_x, motion_y, wx, wy);
+            Vector2 head(wx, wy), tail(drag_force->Body->form->point + drag_force->LocalPoint);
+            Vector2 vect = head - tail;
+            drag_force->Magnitude[0] = drag_force_ratio * vect.v1;
+            drag_force->Magnitude[1] = drag_force_ratio * vect.v2;
+        }
+
         world.update(world.vars.timeStep);
         prevCl = cl;
         if (draw_tw)
@@ -88,39 +111,102 @@ void keyboard(unsigned char key, int x, int y)
             zoom_distance += 1;
         reshape(w, h);
     }
+    if (key == '1') { glut_init(); init_bodies(); tw_init(); draw_tw = true; }
+    //if (key == '0') { test_gjk_init(); draw_tw = false; }
+    if (key == '2') { glut_init(); stack_init(); tw_init(); draw_tw = true; }
+    if (key == '3') { glut_init(); init_many_rectangles(); tw_init(); draw_tw = true; }
+    if (key == '4') { glut_init(); init_many_circles(); tw_init(); draw_tw = true; }
     if (draw_tw)
         TwEventKeyboardGLUT(key, x, y);
     glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
     glutPostRedisplay();
 }
 
+Body* click_inside(int x, int y, Vector2& local)
+{
+    double cursor_xpos;
+    double cursor_ypos;
+    screen_coords2world(x, y, cursor_xpos, cursor_ypos);
+    Vector2 localCoord;
+    const Vector2 p(cursor_xpos, cursor_ypos);
+    for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); it++)
+    {
+        if (check_point_inside(p, &(*it), localCoord))
+        {
+            local = localCoord;
+            return &(*it);
+        }
+    }
+    return 0;
+}
+
 void mouse(int btn, int state, int x, int y)
 {
+    motion_x = x;
+    motion_y = y;
+    TwEventMouseButtonGLUT(btn, state, x, y);
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);
     if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
         Vector2 localCoord;
-        y = h - y;
-        cursor_xpos = viewfield_minx + (viewfield_maxx - viewfield_minx) * ((double)x / w);
-        cursor_ypos = viewfield_miny + (viewfield_maxy - viewfield_miny) * ((double)y / h);
-        const Vector2 p(cursor_xpos, cursor_ypos);
-        for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); it++)
+        Body* body = click_inside(x, y, localCoord);
+        if (body != 0)
         {
-            if (check_point_inside(p, &(*it), localCoord))
-                printf("Inside body!!\n");
+            Force force;
+            force.Body = body;
+            force.LocalPoint = localCoord;
+            world.addForce(force);
+            drag_force = &world.forces.at(world.forces.size() - 1);
+            printf("Inside body!!\n");
         }
     }
-    TwEventMouseButtonGLUT(btn, state, x, y);
+    /*if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        Vector2 localCoord;
+        Body* body = click_inside(x, y, localCoord);
+        if (body != 0)
+        {
+            Force force;
+            force.Body = body;
+            force.LocalPoint = localCoord;
+            force.Magnitude[2] = 5;
+            world.addForce(force);
+            printf("Inside body!!\n");
+        }
+    }
+    if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+    {
+        Vector2 localCoord;
+        Body* body = click_inside(x, y, localCoord);
+        if (body != 0)
+        {
+            Force force;
+            force.Body = body;
+            force.LocalPoint = localCoord;
+            force.Magnitude[2] = -5;
+            world.addForce(force);
+            printf("Inside body!!\n");
+        }
+    }*/
+    if (state == GLUT_UP)
+    {
+        drag_force = 0;
+        world.forces.clear();
+    }
 }
 
 void motion(int x, int y)
 {
+    motion_x = x;
+    motion_y = y;
     TwEventMouseMotionGLUT(x, y);
 }
 
 void passiveMotion(int x, int y)
 {
+    motion_x = x;
+    motion_x = y;
     TwEventMouseMotionGLUT(x, y);
 }
 
@@ -174,13 +260,13 @@ void glut_init()
     glutSpecialFunc(specialKey);
     glutReshapeFunc(reshape);
 
-    glutCreateMenu(choice_selected);
+    /*glutCreateMenu(choice_selected);
     glutAddMenuEntry("Main simulation", 1);
     glutAddMenuEntry("Test GJK", 2);
     glutAddMenuEntry("Stack boxes", 3);
     glutAddMenuEntry("Many rectangles", 4);
     glutAddMenuEntry("Many circles", 5);
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
+    glutAttachMenu(GLUT_RIGHT_BUTTON);*/
 }
 
 void tw_init()

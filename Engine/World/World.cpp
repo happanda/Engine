@@ -24,6 +24,7 @@ void World::init()
     vars.RESTITUTION = 0.5;
     vars.FRICTION = 0.4;
     vars.GRAVITATION = Vector2(0, -9.8);
+    force_id = 0;
 }
 
 void World::update(double deltaT)
@@ -213,6 +214,11 @@ void World::apply_forces(double deltaT)
         if (it->mass < vars.UNMOVABLE_MASS)
             it->velocity = it->velocity + vars.GRAVITATION * deltaT;
     }
+    for (std::vector<Force>::iterator it = forces.begin(); it != forces.end(); it++)
+    {
+        if (it->Body->mass < vars.UNMOVABLE_MASS)
+            it->Apply();
+    }
 }
 
 void World::addBody(Body body)
@@ -223,4 +229,23 @@ void World::addBody(Body body)
 void World::addConstraint(Constraint* constraint)
 {
     constraints.push_back(constraint);
+}
+
+void World::addForce(Force force)
+{
+    force.TimeStep = &(vars.timeStep);
+    force.id = force_id++;
+    forces.push_back(force);
+}
+
+void World::removeForce(int force_id)
+{
+    for (size_t i = 0; i < forces.size(); i++)
+    {
+        if (forces[i].id == force_id)
+        {
+            forces.erase(forces.begin() + i);
+            return;
+        }
+    }
 }
