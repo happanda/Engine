@@ -14,7 +14,8 @@
 
 World world;
 Force* drag_force = 0;
-double drag_force_ratio = 50;
+double drag_force_spring_coef = 20;
+double drag_force_damper_coef = 10;
 double motion_x = 0;
 double motion_y = 0;
 
@@ -67,8 +68,12 @@ void step()
             screen_coords2world(motion_x, motion_y, wx, wy);
             Vector2 head(wx, wy), tail(drag_force->Body->form->point + drag_force->LocalPoint);
             Vector2 vect = head - tail;
-            drag_force->Magnitude[0] = drag_force_ratio * vect.v1;
-            drag_force->Magnitude[1] = drag_force_ratio * vect.v2;
+            drag_force->Magnitude[0] = drag_force_spring_coef * vect.v1 * drag_force->Body->mass
+                - drag_force_damper_coef * drag_force->Body->velocity.v1;
+            drag_force->Magnitude[1] = drag_force_spring_coef * vect.v2 * drag_force->Body->mass
+                - drag_force_damper_coef * drag_force->Body->velocity.v2;
+            glColor3f(0.0f, 1.0f, 0.0f);
+            draw_segment(Segment(head, tail));
         }
 
         world.update(world.vars.timeStep);
