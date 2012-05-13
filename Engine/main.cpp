@@ -51,6 +51,7 @@ void screen_coords2world(int x, int y, double& wx, double& wy)
 clock_t prevCl = 0;
 void step()
 {
+    //"1-4: demos, p - pause, y - kick body, ' - draw contacts/constraints"
     clock_t cl = clock();
     if (cl > prevCl + (double)CLOCKS_PER_SEC * speed / 1000 && !pause)
     {
@@ -264,6 +265,10 @@ void glut_init()
     glutPassiveMotionFunc(passiveMotion);
     glutSpecialFunc(specialKey);
     glutReshapeFunc(reshape);
+
+    /*glRasterPos2i(100, 120);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);*/
+    //glutBitmapString(GLUT_BITMAP_HELVETICA_18, );
 
     /*glutCreateMenu(choice_selected);
     glutAddMenuEntry("Main simulation", 1);
