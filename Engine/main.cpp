@@ -17,8 +17,6 @@ int speed = 20;
 bool pause = false;
 bool draw_cos = false;
 bool draw_tw = true;
-int window_width;
-int window_height;
 
 void init_bodies();
 void init_many_rectangles();
@@ -60,9 +58,8 @@ void step()
 
 void reshape(int width, int height)
 {
-    window_width = width;
-    window_height = height;
     reshape_window(width, height);
+    //glutReshapeWindow(width, height);
     if (draw_tw)
         TwWindowSize(width, height);
 }
@@ -81,16 +78,16 @@ void keyboard(unsigned char key, int x, int y)
         if (world.bodies.at(r).mass < world.vars.UNMOVABLE_MASS)
             world.bodies.at(r).velocity = world.bodies.at(r).velocity + Vector2(0, 12);
     }
-    /*if (key == '+')
+    if (key == '+' || key == '-')
     {
-    zoom_distance -= 2;
-    reshape(window_width, window_height);
+        int w = glutGet(GLUT_WINDOW_WIDTH);
+        int h = glutGet(GLUT_WINDOW_HEIGHT);
+        if (key == '+')
+            zoom_distance -= 1;
+        if (key == '-')
+            zoom_distance += 1;
+        reshape(w, h);
     }
-    if (key == '-')
-    {
-    zoom_distance += 2;
-    reshape(window_width, window_height);
-    }*/
     if (draw_tw)
         TwEventKeyboardGLUT(key, x, y);
     glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
@@ -99,11 +96,14 @@ void keyboard(unsigned char key, int x, int y)
 
 void mouse(int btn, int state, int x, int y)
 {
+    int w = glutGet(GLUT_WINDOW_WIDTH);
+    int h = glutGet(GLUT_WINDOW_HEIGHT);
     if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
         Vector2 localCoord;
-        cursor_xpos = viewfield_minx + (viewfield_maxx - viewfield_minx) * x / window_width;
-        cursor_ypos = viewfield_miny + (viewfield_maxy - viewfield_miny) * y / window_height;
+        y = h - y;
+        cursor_xpos = viewfield_minx + (viewfield_maxx - viewfield_minx) * ((double)x / w);
+        cursor_ypos = viewfield_miny + (viewfield_maxy - viewfield_miny) * ((double)y / h);
         const Vector2 p(cursor_xpos, cursor_ypos);
         for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); it++)
         {
@@ -116,9 +116,6 @@ void mouse(int btn, int state, int x, int y)
 
 void motion(int x, int y)
 {
-    /*camera_xpos = (x - cursor_xpos);
-    camera_ypos = (y - cursor_ypos);
-    reshape(window_width, window_height);*/
     TwEventMouseMotionGLUT(x, y);
 }
 
@@ -163,7 +160,6 @@ int main(int argc, char** argv)
 
     init_bodies();
     pause = false;
-
     glutMainLoop();
 }
 

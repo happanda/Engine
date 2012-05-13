@@ -22,25 +22,23 @@ void init_color()
 
 void reshape_window(int width, int height)
 {
-    double half_y = zoom_distance * tan(half_fov);
-    double half_x = half_y * width / height;
-    half_x *= zoom_distance;
+    double half_y = zoom_distance * tan(half_fov * M_PI / 180);
+    viewfield_maxy = half_y + camera_ypos;
+    viewfield_miny = - half_y + camera_ypos;
+
+    double half_x = (half_y * width) / height;
     viewfield_maxx = half_x + camera_xpos;
-    viewfield_minx = -half_x - camera_xpos;
-    
-    viewfield_maxy = -half_y - camera_ypos;
-    viewfield_miny = half_y + camera_ypos;
+    viewfield_minx = -half_x + camera_xpos;
 
     glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(half_fov * 2, (double)width/height, 1, 50);
+    gluPerspective(half_fov * 2, (double)width/height, 0, 500);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(camera_xpos, camera_ypos, zoom_distance, /* eye is at (0,0,10) */
-        camera_xpos, camera_ypos, 0.0, /* center is at (0,0,0) */
+    gluLookAt(camera_xpos, camera_ypos, zoom_distance, /* where eye is */
+        camera_xpos, camera_ypos, 0.0, /* where it looks at */
         0.0, 1.0, 0.0); /* up is in +Y direction */
-    glTranslatef(0, 0.0, -1.0);
 }
 
 void draw_bodies(const std::vector<Body>& bodies)
