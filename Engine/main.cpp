@@ -16,6 +16,8 @@ World world;
 Force* drag_force = 0;
 double drag_force_spring_coef = 20;
 double drag_force_damper_coef = 10;
+Body* kickBody = 0;
+
 double motion_x = 0;
 double motion_y = 0;
 
@@ -24,7 +26,9 @@ bool pause = false;
 bool draw_cos = false;
 bool draw_tw = true;
 
-void init_bodies();
+void init_bodies1();
+void init_bodies2();
+void init_angry_circles();
 void init_many_rectangles();
 void init_many_circles();
 void glut_init();
@@ -76,6 +80,13 @@ void step()
             glColor3f(0.0f, 1.0f, 0.0f);
             draw_segment(Segment(head, tail));
         }
+        if (kickBody != 0)
+        {
+            double wx, wy;
+            screen_coords2world(motion_x, motion_y, wx, wy);
+            glColor3f(0.0f, 0.0f, 1.0f);
+            draw_segment(Segment(Vector2(wx, wy), kickBody->form->point));
+        }
 
         world.update(world.vars.timeStep);
         prevCl = cl;
@@ -117,11 +128,12 @@ void keyboard(unsigned char key, int x, int y)
             zoom_distance += 1;
         reshape(w, h);
     }
-    if (key == '1') { glut_init(); init_bodies(); tw_init(); draw_tw = true; }
+    if (key == '1') { glut_init(); init_bodies1(); tw_init(); draw_tw = true; }
     //if (key == '0') { test_gjk_init(); draw_tw = false; }
-    if (key == '2') { glut_init(); stack_init(); tw_init(); draw_tw = true; }
+    if (key == '2') { glut_init(); init_bodies2(); tw_init(); draw_tw = true; }
     if (key == '3') { glut_init(); init_many_rectangles(); tw_init(); draw_tw = true; }
     if (key == '4') { glut_init(); init_many_circles(); tw_init(); draw_tw = true; }
+    if (key == '5') { glut_init(); init_angry_circles(); tw_init(); draw_tw = true; }
     if (draw_tw)
         TwEventKeyboardGLUT(key, x, y);
     glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
@@ -167,6 +179,11 @@ void mouse(int btn, int state, int x, int y)
             printf("Inside body!!\n");
         }
     }
+    if (btn == GLUT_RIGHT_BUTTON && state == GLUT_DOWN)
+    {
+        Vector2 localCoord;
+        kickBody = click_inside(x, y, localCoord);
+    }
     /*if (btn == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
         Vector2 localCoord;
@@ -195,7 +212,23 @@ void mouse(int btn, int state, int x, int y)
             printf("Inside body!!\n");
         }
     }*/
-    if (state == GLUT_UP)
+    if (btn == GLUT_RIGHT_BUTTON && state == GLUT_UP)
+    {
+        if (kickBody != 0)
+        {
+            double wx, wy;
+            screen_coords2world(motion_x, motion_y, wx, wy);
+            Vector2 kickImpulse = (Vector2(wx, wy) - kickBody->form->point) * 5;
+            if (kickImpulse.norm2sq() > 35)
+            {
+                kickImpulse.normalize2();
+                kickImpulse = kickImpulse * 35;
+            }
+            kickBody->velocity = kickBody->velocity + kickImpulse;
+            kickBody = 0;
+        }
+    }
+    if (btn == GLUT_LEFT_BUTTON && state == GLUT_UP)
     {
         drag_force = 0;
         world.forces.clear();
@@ -218,7 +251,7 @@ void passiveMotion(int x, int y)
 
 void choice_selected(int value)
 {
-    if (value == 1) { glut_init(); init_bodies(); tw_init(); draw_tw = true; }
+    if (value == 1) { glut_init(); init_bodies1(); tw_init(); draw_tw = true; }
     if (value == 2) { test_gjk_init(); draw_tw = false; }
     if (value == 3) { glut_init(); stack_init(); tw_init(); draw_tw = true; }
     if (value == 4) { glut_init(); init_many_rectangles(); tw_init(); draw_tw = true; }
@@ -250,7 +283,7 @@ int main(int argc, char** argv)
     tw_init();
     init_color();
 
-    init_bodies();
+    init_bodies1();
     pause = false;
     glutMainLoop();
 }
@@ -295,38 +328,119 @@ void tw_init()
         " min=-100 max=100 step=0.5 help='Coefficient of restitution, default -9.8.' ");
 }
 
-void init_bodies()
+void init_bodies1()
 {
     world_vars wvars = world.vars;
     wvars.GRAVITATION.v2 = -9.8;
+    wvars.RESTITUTION = 0.8;
     //wvars.RESTITUTION = 1;
     world.init();
     world.vars = wvars;
     double angle_vel = 0;
 
-    world.addBody(Body(new rectangle(0, 0, 2, 4, 4), 16, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 5, -1, 2, 2), 4, 0, -2, 0));
-    world.addBody(Body(new rectangle(-5, 0, 0, 2, 2), 4, 1, 0, angle_vel));
-    world.addBody(Body(new rectangle(0, -5, 0, 2, 2), 4, 0, 1, 0));
-    world.addBody(Body(new rectangle(5, 0, 0, 2, 2), 4, -1, 0, 0));
-    world.addBody(Body(new rectangle(10, 5, 0, 3, 1), 3, -3, -3, 0));
-    world.addBody(Body(new rectangle(-9, -6, 0.2, 1, 10), 10, 2, 0, 0));
-    world.addBody(Body(new circle(-3, 4, 0, 2), 2, 0, -4, 0));
-    world.addBody(Body(new circle(4, 7, 0, 3), 8, -2, -2, 0));
+    double vel = 4;
+    world.addBody(Body(new circle(-5, 0, 0, 2), 2, -vel, 0, 0));
+    world.addBody(Body(new circle(5, 0, 0, 2), 2, vel, 0, 0));
+
+    world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
+    world.addBody(Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
+    world.addBody(Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
+    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));
 
     // bounds
-    double bigmass = 100000;
-    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+    double bigmass = wvars.UNMOVABLE_MASS;
+    world.addBody(Body(new rectangle(0, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(20, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(-20, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 18, 0, 2000, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -14, 0, 2000, 3), bigmass, 0, 0, 0));
     // bounds
 
     // some simple axis constraints
-    world.addConstraint(new DoFConstraint(&world.bodies[0], Y_ANGLE, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[0], Y_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[1], Y_AXIS, &(world.vars)));
+}
+
+void init_bodies2()
+{
+    world_vars wvars = world.vars;
+    wvars.GRAVITATION.v2 = -9.8;
+    wvars.RESTITUTION = 0.5;
+    //wvars.RESTITUTION = 1;
+    world.init();
+    world.vars = wvars;
+    double angle_vel = 0;
+
+    double vel = 4;
+    world.addBody(Body(new circle(-5, 0, 0, 2), 2, -vel, 0, 0));
+    world.addBody(Body(new circle(5, 0, 0, 2), 2, vel, 0, 0));
+
+    world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
+    world.addBody(Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
+    world.addBody(Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
+    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));
+
+    // bounds
+    double bigmass = wvars.UNMOVABLE_MASS;
+    world.addBody(Body(new rectangle(0, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(20, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(-20, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 18, 0, 2000, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -14, 0, 2000, 3), bigmass, 0, 0, 0));
+    // bounds
+
+    // some simple axis constraints
+    world.addConstraint(new DoFConstraint(&world.bodies[0], Y_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[1], Y_AXIS, &(world.vars)));
+}
+
+void init_angry_circles()
+{
+    world_vars wvars = world.vars;
+    wvars.GRAVITATION.v2 = -9.8;
+    //wvars.FRICTION = 0.7;
+    wvars.RESTITUTION = 0.3;
+    //wvars.RESTITUTION = 1;
+    world.init();
+    world.vars = wvars;
+
+    // bounds
+    double bigmass = 100000;
+    //world.addBody(Body(new rectangle(0, 14, 0, 2000, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -16, 0, 5000, 4), bigmass, 0, 0, 0));
+    // bounds
+
+    double mx = 25;
+    // castle
+    world.addBody(Body(new rectangle(mx, -13, 0, 12, 2), 24, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx, -10.5, 0, 2, 3), 6, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx - 5, -10.5, 0, 2, 3), 6, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx + 5, -10.5, 0, 2, 3), 6, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx, -8.5, 0, 6, 1), 6, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx - 4.5, -8, 0, 3, 2), 6, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx + 4.5, -8, 0, 3, 2), 6, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx - 4, -6, 0, 2, 2), 4, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx + 4, -6, 0, 2, 2), 4, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx, -4.5, 0, 9, 1), 9, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx, -3.5, 0, 1, 1), 1, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx - 4, -3.5, 0, 1, 1), 1, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx + 4, -3.5, 0, 1, 1), 1, 0, 0, 0));
+    
+    // defenders
+    world.addBody(Body(new circle(mx - 2.5, -11.5, 0, 0.5), 0.5, 0, 0, 0));
+    world.addBody(Body(new circle(mx + 2.5, -11.5, 0, 0.5), 0.5, 0, 0, 0));
+    world.addBody(Body(new circle(mx, -7, 0, 1), 1, 0, 0, 0));
+
+    mx = -21;
+    // attackers
+    world.addBody(Body(new circle(mx, -13.5, 0, 0.5), 1, 0, 0, 0));
+    world.addBody(Body(new circle(mx - 2, -13, 0, 1), 2, 0, 0, 0));
+    world.addBody(Body(new circle(mx - 5, -12.5, 0, 1.5), 4, 0, 0, 0));
+
+    mx = -15;
+    // canon
+    world.addBody(Body(new rectangle(mx - 4.5, -12, 0, 2, 4), wvars.UNMOVABLE_MASS, 0, 0, 0));
+    world.addBody(Body(new rectangle(mx, -12.6, 0.25, 7, 1), wvars.UNMOVABLE_MASS, 0, 0, 0));
 }
 
 void init_many_rectangles()
@@ -358,6 +472,14 @@ void init_many_rectangles()
     world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
     world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
     // bounds
+    for (size_t i = 0; i < world.bodies.size(); i++)
+    {
+        int r = rand() % 10;
+        if (r == 0 || r == 1)
+            world.addConstraint(new DoFConstraint(&world.bodies[i], XY_AXIS, &(world.vars)));
+        if (r == 2 || r == 3)
+            world.addConstraint(new DoFConstraint(&world.bodies[i], ANGLE, &(world.vars)));
+    }
 }
 
 void init_many_circles()
