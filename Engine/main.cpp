@@ -224,7 +224,8 @@ void mouse(int btn, int state, int x, int y)
                 kickImpulse.normalize2();
                 kickImpulse = kickImpulse * 35;
             }
-            kickBody->velocity = kickBody->velocity + kickImpulse;
+            if (kickBody->mass < world.vars.UNMOVABLE_MASS)
+                kickBody->velocity = kickBody->velocity + kickImpulse;
             kickBody = 0;
         }
     }
@@ -331,34 +332,50 @@ void tw_init()
 void init_bodies1()
 {
     world_vars wvars = world.vars;
-    wvars.GRAVITATION.v2 = -9.8;
-    wvars.RESTITUTION = 0.8;
+    wvars.GRAVITATION.v2 = -20;
+    wvars.RESTITUTION = 0.9;
+    wvars.FRICTION = 0.4;
     //wvars.RESTITUTION = 1;
     world.init();
     world.vars = wvars;
     double angle_vel = 0;
 
     double vel = 4;
-    world.addBody(Body(new circle(-5, 0, 0, 2), 2, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 0, 0, 2), 2, vel, 0, 0));
+    world.addBody(Body(new circle(-7, 60, 0, 2), 6, 0, 0, 0));
+    world.addBody(Body(new circle(7, -10.8, 0, 1), 2, 0, 0, 0));
+    world.addBody(Body(new circle(7, -8.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(Body(new circle(7, -6.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(Body(new circle(7, -4.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(Body(new circle(7, -2.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(Body(new circle(7, -0.8, 0, 1), 1, 0, 0, 0));
 
-    world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
+    world.addBody(Body(new rectangle(0, -10, -0.28666, 16, 0.5), 8, 0, 0, 0));
+
+    /*world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
     world.addBody(Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
     world.addBody(Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));
+    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));*/
 
     // bounds
     double bigmass = wvars.UNMOVABLE_MASS;
-    world.addBody(Body(new rectangle(0, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    /*world.addBody(Body(new rectangle(0, 2, 0, 2, 29), bigmass, 0, 0, 0));
     world.addBody(Body(new rectangle(20, 2, 0, 2, 29), bigmass, 0, 0, 0));
     world.addBody(Body(new rectangle(-20, 2, 0, 2, 29), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 18, 0, 2000, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 18, 0, 2000, 3), bigmass, 0, 0, 0));*/
     world.addBody(Body(new rectangle(0, -14, 0, 2000, 3), bigmass, 0, 0, 0));
     // bounds
 
     // some simple axis constraints
-    world.addConstraint(new DoFConstraint(&world.bodies[0], Y_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[1], Y_AXIS, &(world.vars)));
+    int ind = 0;
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+
+    world.addConstraint(new DoFConstraint(&world.bodies[ind++], XY_AXIS, &(world.vars)));
 }
 
 void init_bodies2()
@@ -366,41 +383,56 @@ void init_bodies2()
     world_vars wvars = world.vars;
     wvars.GRAVITATION.v2 = -9.8;
     wvars.RESTITUTION = 0.5;
-    //wvars.RESTITUTION = 1;
+    wvars.FRICTION = 0.4;
     world.init();
     world.vars = wvars;
     double angle_vel = 0;
 
     double vel = 4;
-    world.addBody(Body(new circle(-5, 0, 0, 2), 2, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 0, 0, 2), 2, vel, 0, 0));
+    world.addBody(Body(new rectangle(0, 11, 0, 7.8, 0.5), 50, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 3, 0, 7.8, 0.5), 50, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -5, 0, 7.8, 0.5), 50, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -13, 0, 7.8, 0.5), 50, 0, 0, 0));
 
-    world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
+    int minx = -3, maxx = 3;
+    double y = 15;
+    int s = 80;
+    double sp = (double)RAND_MAX / 12;
+    for (int i = 0; i < s; i++)
+    {
+        double rx = rand() % (maxx - minx) + minx;
+        world.addBody(Body(new circle(rx, y, (double)rand(), 0.5),
+            1, 0, 0, 0));
+        y += 3;
+    }
+
+    /*world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
     world.addBody(Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
     world.addBody(Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));
+    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));*/
 
     // bounds
     double bigmass = wvars.UNMOVABLE_MASS;
-    world.addBody(Body(new rectangle(0, 2, 0, 2, 29), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(20, 2, 0, 2, 29), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(-20, 2, 0, 2, 29), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 18, 0, 2000, 3), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -14, 0, 2000, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(-5, 0, 0, 2, 200), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(5, 0, 0, 2, 200), bigmass, 0, 0, 0));
+    //world.addBody(Body(new rectangle(0, 18, 0, 12, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -101, 0, 12, 3), bigmass, 0, 0, 0));
     // bounds
 
     // some simple axis constraints
-    world.addConstraint(new DoFConstraint(&world.bodies[0], Y_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[1], Y_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[0], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[1], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
+    //world.addConstraint(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
 }
 
 void init_angry_circles()
 {
     world_vars wvars = world.vars;
     wvars.GRAVITATION.v2 = -9.8;
-    //wvars.FRICTION = 0.7;
     wvars.RESTITUTION = 0.3;
-    //wvars.RESTITUTION = 1;
+    wvars.FRICTION = 0.6;
     world.init();
     world.vars = wvars;
 
@@ -447,7 +479,8 @@ void init_many_rectangles()
 {
     world_vars wvars = world.vars;
     wvars.GRAVITATION.v2 = 0;
-    //wvars.RESTITUTION = 1;
+    wvars.RESTITUTION = 0.5;
+    wvars.FRICTION = 0.4;
     world.init();
     world.vars = wvars;
     double angle_vel = 0;
@@ -486,7 +519,8 @@ void init_many_circles()
 {
     world_vars wvars = world.vars;
     wvars.GRAVITATION.v2 = 0;
-    //wvars.RESTITUTION = 1;
+    wvars.RESTITUTION = 0.8;
+    wvars.FRICTION = 0.1;
     world.init();
     world.vars = wvars;
     double angle_vel = 0;
