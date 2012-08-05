@@ -18,6 +18,10 @@ void World::init()
     bodies.clear();
     collisions.clear();
     constraints.clear();
+    // arbitrary numbers
+    bodies.reserve(100);
+    collisions.reserve(1000);
+    constraints.reserve(100);
     vars.timeStep = 0.016;
     vars.iTimeStep = 1 / vars.timeStep;
     vars.UNMOVABLE_MASS = 5000;
@@ -29,15 +33,20 @@ void World::init()
 
 void World::update(double deltaT)
 {
-    force_ext[0] = vars.GRAVITATION.v1; force_ext[1] = vars.GRAVITATION.v2; force_ext[2] = 0;
-    force_ext[3] = vars.GRAVITATION.v1; force_ext[4] = vars.GRAVITATION.v2; force_ext[5] = 0;
+    force_ext[0] = vars.GRAVITATION.v1;
+    force_ext[1] = vars.GRAVITATION.v2;
+    force_ext[2] = 0;
+
+    force_ext[3] = vars.GRAVITATION.v1;
+    force_ext[4] = vars.GRAVITATION.v2;
+    force_ext[5] = 0;
 
     apply_forces(deltaT);
     gjk_collide(bodies, collisions);
     resolve_collision(deltaT);
     resolve_constraints(deltaT);
     double energy = 0;
-    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
+    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
         it->form->rotate(it->angle_vel * deltaT);
         it->form->point = it->form->point + it->velocity * deltaT;
@@ -49,6 +58,7 @@ void World::update(double deltaT)
 
 void World::resolve_collision(double deltaT)
 {
+    // adjusted parameters affecting interpenetration
     const double min_impulse = 0.0000001;
     const double bias_factor = 0.3;
     const double delta_slop = 0.002;

@@ -220,44 +220,6 @@ void epa_get_features(shape& shapeA, shape& shapeB,
    }
 }
 
-void gjk_get_features(const Simplex& simplex,
-                       Collision& collision)
-{
-   switch(simplex.feature)
-   {
-      case SIMPLEX_A_POINT:
-         //printf("SIMPLEX_A_POINT\n");
-         collision.one.push_back(simplex.A[0]);
-         collision.two.push_back(simplex.B[0]);
-         collision.normal = collision.one.at(0) - collision.two.at(0);
-         break;
-      case SIMPLEX_B_POINT:
-         //printf("SIMPLEX_B_POINT\n");
-         collision.one.push_back(simplex.A[1]);
-         collision.two.push_back(simplex.B[1]);
-         collision.normal = collision.one.at(0) - collision.two.at(0);
-         break;
-      case SIMPLEX_C_POINT:
-         //printf("SIMPLEX_C_POINT\n");
-         collision.one.push_back(simplex.A[2]);
-         collision.two.push_back(simplex.B[2]);
-         collision.normal = collision.one.at(0) - collision.two.at(0);
-         break;
-      case SIMPLEX_AB_EDGE:
-         //printf("SIMPLEX_AB_POINT\n");
-         gjk_get_edge_features(simplex, collision, 0, 1);
-         break;
-      case SIMPLEX_BC_EDGE:
-         //printf("SIMPLEX_BC_POINT\n");
-         gjk_get_edge_features(simplex, collision, 1, 2);
-         break;
-      case SIMPLEX_CA_EDGE:
-         //printf("SIMPLEX_CA_POINT\n");
-         gjk_get_edge_features(simplex, collision, 2, 0);
-         break;
-   }
-   collision.normal.normalize2();
-}
 
 void Simplex::push(Vector2 a, Vector2 b, Vector2 p)
 {

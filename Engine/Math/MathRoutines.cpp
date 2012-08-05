@@ -26,7 +26,7 @@
 //}
 
 // computes a vector V, such that (V * codirect > 0)
-Vector2 perpendicular(Vector2 vect, Vector2 codirect)
+Vector2 perpendicular(const Vector2& vect, const Vector2& codirect)
 {
    Vector2 perp = vect.perpendicular();
    if (perp * codirect < 0)
@@ -34,7 +34,7 @@ Vector2 perpendicular(Vector2 vect, Vector2 codirect)
    return perp;
 }
 
-bool isOn(Vector2 point, Vector2 a, Vector2 b)
+bool isOn(const Vector2& point, const Vector2& a, const Vector2& b)
 {
    if (point.v1 < a.v1 && point.v1 < b.v1)
       return false;
@@ -46,13 +46,14 @@ bool isOn(Vector2 point, Vector2 a, Vector2 b)
    return true;
 }
 
-double project(Vector2 vect, Vector2 line)
+double project(const Vector2& vect, const Vector2& line)
 {
-   line.normalize2();
-   return (vect * line);
+   Vector2 linecopy = line;
+   linecopy.normalize2();
+   return (vect * linecopy);
 }
 
-Vector2 closest_point(Vector2 point, Segment segment)
+Vector2 closest_point(const Vector2& point, const Segment& segment)
 {
    Vector2 AB = segment.tail - segment.head;
    Vector2 AP = point - segment.head;
@@ -68,13 +69,13 @@ Vector2 closest_point(Vector2 point, Segment segment)
    return segment.head + AB * (AP * AB);
 }
 
-double distance(Vector2 point, Segment segment)
+double distance(const Vector2& point, const Segment& segment)
 {
    Vector2 proj = closest_point(point, segment);
    return (proj - point).norm2();
 }
 
-Vector2 cross_cross(Vector2 vect1, Vector2 vect2)
+Vector2 cross_cross(const Vector2& vect1, const Vector2& vect2)
 {
    Vector3 v3d1(vect1.v1, vect1.v2, 0);
    Vector3 v3d2(vect2.v1, vect2.v2, 0);

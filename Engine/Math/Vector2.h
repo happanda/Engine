@@ -11,13 +11,13 @@ public:
    Vector2(const Vector2& vect) : v1(vect.v1), v2(vect.v2) { }
    double v1, v2;
 
-   inline double norm2sq() const { return v1 * v1 + v2 * v2; }
-   inline double norm2() const { return sqrt(norm2sq()); }
+   double norm2sq() const { return v1 * v1 + v2 * v2; }
+   double norm2() const { return sqrt(norm2sq()); }
    void rot(double angle);
    void normalize2();
    void invX() { v1 = -v1; }
    void invY() { v2 = -v2; }
-   Vector2 perpendicular() { return Vector2(v2, -v1); }
+   Vector2 perpendicular() const { return Vector2(v2, -v1); }
    const Vector2& operator=(const Vector2& vect);
    static const Vector2 ORIGIN;
 };

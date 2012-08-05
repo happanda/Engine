@@ -35,7 +35,7 @@ velocity(body.velocity), angle_vel(body.angle_vel), inert(body.inert), iInert(bo
    }
    if (body.form->type == sh_circle)
    {
-      const circle* circ = static_cast<const circle*>(body.form);
+      circle* circ = static_cast<circle*>(body.form);
       form = new circle(body.form->point.v1, body.form->point.v2, body.form->alpha,
          circ->radius);
       inert = mass * (3.14 * circ->radius * circ->radius

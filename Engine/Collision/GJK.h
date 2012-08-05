@@ -50,7 +50,4 @@ void epa_get_features(shape& shapeA, shape& shapeB,
                       Vector2 (*support)(Vector2 direction, shape& sh),
                       Simplex& simplex, Collision& collision);
 
-void gjk_get_features(const Simplex& simplex,
-                    Collision& collision);
-
 #endif

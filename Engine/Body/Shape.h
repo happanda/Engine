@@ -32,6 +32,7 @@ public:
    shape(): point(Vector2(0, 0)), alpha(0) { }
    shape(shape_type sh, double point_x, double point_y,
       double alpha): type(sh), point(Vector2(point_x, point_y)), alpha(alpha) { }
+   virtual ~shape() { }
    virtual bbox bounding_box() = 0;
 };
 
