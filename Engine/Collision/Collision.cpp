@@ -6,6 +6,29 @@
 Collision::Collision(Body* bodyA, Body* bodyB): BodyA(bodyA), BodyB(bodyB)
 {
 }
+Collision::Collision(const Collision& other): BodyA(other.BodyA), BodyB(other.BodyB)
+{
+   for (size_t i = 0; i < other.m_sizeA; ++i)
+      pointsA[i] = other.pointsA[i];
+   m_sizeA = other.m_sizeA;
+   for (size_t i = 0; i < other.m_sizeB; ++i)
+      pointsB[i] = other.pointsB[i];
+   m_sizeB = other.m_sizeB;
+   normal = other.normal;
+}
+const Collision& Collision::operator=(const Collision& other)
+{
+   BodyA = other.BodyA;
+   BodyB = other.BodyB;
+   for (size_t i = 0; i < other.m_sizeA; ++i)
+      pointsA[i] = other.pointsA[i];
+   m_sizeA = other.m_sizeA;
+   for (size_t i = 0; i < other.m_sizeB; ++i)
+      pointsB[i] = other.pointsB[i];
+   m_sizeB = other.m_sizeB;
+   normal = other.normal;
+   return *this;
+}
 void Collision::setApoints(Vector2* points, size_t size)
 {
    size_t i = 0;
