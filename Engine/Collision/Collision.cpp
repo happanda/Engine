@@ -59,7 +59,7 @@ void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
     {
         for (std::vector<Body>::iterator jt = it; jt != bodies.end(); ++jt)
         {
-            if (it != jt && bbox_check_collision(&(*it), &(*jt)))
+            if (it != jt && bbox_check_collision(*it, *jt))
             {
                 Collision coll(&(*it), &(*jt));
                 if (gjk_check_collision(*(it->form), *(jt->form), &gjk_support, coll))
@@ -71,10 +71,10 @@ void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
     }
 }
 
-bool bbox_check_collision(Body* bodyA, Body* bodyB)
+bool bbox_check_collision(const Body& bodyA, const Body& bodyB)
 {
-    bbox bboxA = bodyA->form->bounding_box();
-    bbox bboxB = bodyB->form->bounding_box();
+    bbox bboxA = bodyA.form->bounding_box();
+    bbox bboxB = bodyB.form->bounding_box();
     if (bboxA.right < bboxB.left || bboxB.right < bboxA.left
         || bboxA.top < bboxB.bottom || bboxB.top < bboxA.bottom)
         return false;

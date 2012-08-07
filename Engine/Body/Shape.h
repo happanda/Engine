@@ -16,9 +16,8 @@ struct bbox
    double right;
    double top;
    double bottom;
-   bbox (): left(0), right(0), top(0), bottom(0) { }
-   bbox (double left, double right, double top, double bottom):
-      left(left), right(right), top(top), bottom(bottom) { }
+   bbox ();
+   bbox (double left, double right, double top, double bottom);
 };
 
 struct shape
@@ -27,13 +26,11 @@ public:
    Vector2 point;// center of mass
    double alpha;// rotation angle
    shape_type type;
-   void rotate(double angle)
-   { alpha += angle; }
-   shape(): point(Vector2(0, 0)), alpha(0) { }
-   shape(shape_type sh, double point_x, double point_y,
-      double alpha): type(sh), point(Vector2(point_x, point_y)), alpha(alpha) { }
-   virtual ~shape() { }
-   virtual bbox bounding_box() = 0;
+   void rotate(double angle);
+   shape();
+   shape(shape_type sh, double point_x, double point_y, double alpha);
+   virtual ~shape();
+   virtual bbox bounding_box() const = 0;
 };
 
 struct rectangle : public shape
@@ -42,29 +39,25 @@ private:
    double half_diag;
 public:
    double h, w;// sides lengths
-   rectangle(): shape(), h(1), w(1), half_diag(sqrt(2.0) / 2) { }
-   rectangle(double point_x, double point_y, double alpha,
-      double height, double width): shape(sh_rectangle, point_x, point_y, alpha),
-      h(height), w(width), half_diag(sqrt(height * height + width * width) / 2) { }
+   rectangle();
+   rectangle(double point_x, double point_y, double alpha, double height, double width);
+   ~rectangle();
    void get_points(Vector2& p1, Vector2& p2, Vector2& p3, Vector2& p4, double indent) const;
-   bbox bounding_box();
+   bbox bounding_box() const;
 };
 
 struct circle : public shape
 {
 public:
-   circle() { type = sh_circle; }
-   circle(double point_x, double point_y, double alpha, double radius):
-      shape(sh_circle, point_x, point_y, alpha), radius(radius) { }
+   circle();
+   circle(double point_x, double point_y, double alpha, double radius);
+   ~circle();
    double radius;
-   bbox bounding_box();
+   bbox bounding_box() const;
 };
 
 struct surface : public shape
 {
-public:
-   surface() { type = sh_surface; }
-   bbox bounding_box() { }
 };
 
 #endif
