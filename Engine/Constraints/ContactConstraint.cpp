@@ -10,8 +10,8 @@ const double ContactConstraint::bias_factor = 0.5;
 const double ContactConstraint::delta_slop = 0.0001;
 
 ContactConstraint::ContactConstraint(const Collision* collision, size_t pnum, world_vars* vars):
-Constraint(collision->body_one, collision->one[pnum] - collision->body_one->form->point,
-           collision->body_two, collision->two[pnum] - collision->body_two->form->point,
+Constraint(collision->BodyA, collision->pointsA[pnum] - collision->BodyA->form->point,
+           collision->BodyB, collision->pointsB[pnum] - collision->BodyB->form->point,
            vars), _collision(collision)
 {
     Type = CONTACT_CONSTRAINT;

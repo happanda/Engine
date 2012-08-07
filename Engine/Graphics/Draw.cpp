@@ -99,24 +99,22 @@ void draw_collisions(const std::vector<Collision>& collisions)
     {
         glColor3f(0.0f, 1.0f, 0.0f);
         glBegin(GL_LINE_LOOP);
-        for (std::vector<Vector2>::const_iterator pt = it->one.begin();
-            pt != it->one.end(); pt++)
+        for (size_t pt = 0; pt < it->sizeA(); ++it)
         {
-            draw_point(*pt);
-            glVertex2f(pt->v1, pt->v2);
+           draw_point(it->pointsA[pt]);
+           glVertex2f(it->pointsA[pt].v1, it->pointsA[pt].v2);
         }
         glEnd();
         glColor3f(0.0f, 0.0f, 1.0f);
         glBegin(GL_LINE_LOOP);
         Vector2 avr(0,0);
-        for (std::vector<Vector2>::const_iterator pt = it->two.begin();
-            pt != it->two.end(); pt++)
+        for (size_t pt = 0; pt < it->sizeB(); ++it)
         {
-            draw_point(*pt);
-            avr = avr + (*pt);
-            glVertex2f(pt->v1, pt->v2);
+            draw_point(it->pointsB[pt]);
+            avr = avr + it->pointsB[pt];
+            glVertex2f(it->pointsB[pt].v1, it->pointsB[pt].v2);
         }
-        avr = avr * ((double)1 / (double)it->two.size());
+        avr = avr * ((double)1 / (double)it->sizeB());
         glEnd();
         glColor3f(0.3f, 0.3f, 1.0f);
         draw_segment(Segment(avr, avr + it->normal));

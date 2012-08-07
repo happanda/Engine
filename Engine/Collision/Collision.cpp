@@ -3,6 +3,32 @@
 #include "Collision\GJK.h"
 #include "SAT.h"
 
+Collision::Collision(Body* bodyA, Body* bodyB): BodyA(bodyA), BodyB(bodyB)
+{
+}
+void Collision::setApoints(Vector2* points, size_t size)
+{
+   size_t i = 0;
+   for (; i < MAX_CONTACT_POINTS && i < size; ++i)
+      pointsA[i] = points[i];
+   m_sizeA = i;
+}
+void Collision::setBpoints(Vector2* points, size_t size)
+{
+   size_t i = 0;
+   for (; i < MAX_CONTACT_POINTS && i < size; ++i)
+      pointsB[i] = points[i];
+   m_sizeB = i;
+}
+size_t Collision::sizeA() const
+{
+   return m_sizeA;
+}
+size_t Collision::sizeB() const
+{
+   return m_sizeB;
+}
+
 void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
 {
     collisions.clear();
@@ -12,9 +38,7 @@ void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
         {
             if (it != jt && bbox_check_collision(&(*it), &(*jt)))
             {
-                Collision coll;
-                coll.body_one = &(*it);
-                coll.body_two = &(*jt);
+                Collision coll(&(*it), &(*jt));
                 if (gjk_check_collision(*(it->form), *(jt->form), &gjk_support, coll))
                 {
                     collisions.push_back(coll);

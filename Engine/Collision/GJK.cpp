@@ -147,34 +147,56 @@ void gjk_get_edge_features(const Simplex& simplex, Collision& collision,
    // can't be true simultaneously
    if ((simplex.A[edgeP1] - simplex.A[edgeP2]).norm2sq() < DBL_EPSILON)
    {
-      collision.one.push_back(simplex.A[edgeP1]);
+      Vector2 pA = simplex.A[edgeP1];
+      collision.setApoints(&pA, 1);
+      Vector2 pB = closest_point(collision.pointsA[0], Segment(simplex.B[edgeP1], simplex.B[edgeP2]));
+      collision.setBpoints(&pB, 1);
+
+      /*collision.one.push_back(simplex.A[edgeP1]);
       collision.two.push_back(closest_point(collision.one.at(0),
-         Segment(simplex.B[edgeP1], simplex.B[edgeP2])));
+         Segment(simplex.B[edgeP1], simplex.B[edgeP2])));*/
+
       collision.normal = perpendicular(simplex.B[edgeP2] - simplex.B[edgeP1],
-         collision.body_one->form->point - collision.body_two->form->point);
+         collision.BodyA->form->point - collision.BodyB->form->point);
    }
    else if ((simplex.B[edgeP1] - simplex.B[edgeP2]).norm2sq() < DBL_EPSILON)
    {
-      Body* body_tmp = collision.body_one;
-      collision.body_one = collision.body_two;
-      collision.body_two = body_tmp;
+      Body* body_tmp = collision.BodyA;
+      collision.BodyA = collision.BodyB;
+      collision.BodyB = body_tmp;
 
-      collision.one.push_back(simplex.B[edgeP1]);
+      Vector2 pA = simplex.B[edgeP1];
+      collision.setApoints(&pA, 1);
+      Vector2 pB = closest_point(collision.pointsA[0], Segment(simplex.A[edgeP1], simplex.A[edgeP2]));
+      collision.setBpoints(&pB, 1);
+
+      /*collision.one.push_back(simplex.B[edgeP1]);
       collision.two.push_back(closest_point(collision.one.at(0),
-         Segment(simplex.A[edgeP1], simplex.A[edgeP2])));
+         Segment(simplex.A[edgeP1], simplex.A[edgeP2])));*/
       collision.normal = perpendicular(simplex.A[edgeP2] - simplex.A[edgeP1],
-         collision.body_one->form->point - collision.body_two->form->point);
+         collision.BodyA->form->point - collision.BodyB->form->point);
    }
    else
    {
       Segment AA(simplex.A[edgeP1], simplex.A[edgeP2]);
       Segment BB(simplex.B[edgeP1], simplex.B[edgeP2]);
-      collision.one.push_back(closest_point(simplex.B[edgeP1], AA));
+
+      Vector2 psA[2];
+      psA[0] = closest_point(simplex.B[edgeP1], AA);
+      psA[1] = closest_point(simplex.B[edgeP2], AA);
+      Vector2 psB[2];
+      psB[0] = closest_point(simplex.A[edgeP2], BB);
+      psB[1] = closest_point(simplex.A[edgeP1], BB);
+      collision.setApoints(psA, 2);
+      collision.setBpoints(psB, 2);
+
+      /*collision.one.push_back(closest_point(simplex.B[edgeP1], AA));
       collision.one.push_back(closest_point(simplex.B[edgeP2], AA));
       collision.two.push_back(closest_point(simplex.A[edgeP2], BB));
-      collision.two.push_back(closest_point(simplex.A[edgeP1], BB));
+      collision.two.push_back(closest_point(simplex.A[edgeP1], BB));*/
+
       collision.normal = perpendicular(simplex.B[edgeP2] - simplex.B[edgeP1],
-         collision.body_one->form->point - collision.body_two->form->point);
+         collision.BodyA->form->point - collision.BodyB->form->point);
    }
 }
 
