@@ -22,6 +22,7 @@ enum simplex_min_norm
 class Simplex
 {
 public:
+   Simplex();
    std::deque<Vector2> A;
    std::deque<Vector2> B;
    std::deque<Vector2> P;
@@ -34,7 +35,7 @@ public:
    void leave_1();
    void leave_1_2();
    void leave_1_3();
-   size_t size() { return P.size(); }
+   size_t size() const;
    double norm();
 };
 

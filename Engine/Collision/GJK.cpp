@@ -221,6 +221,8 @@ void epa_get_features(shape& shapeA, shape& shapeB,
 }
 
 
+Simplex::Simplex()
+{ }
 void Simplex::push(Vector2 a, Vector2 b, Vector2 p)
 {
    A.push_front(a);
@@ -277,6 +279,10 @@ void Simplex::leave_1_3()
    clear();
    push(a2, b2, p2);
    push(a0, b0, p0);
+}
+size_t Simplex::size() const
+{
+   return P.size();
 }
 double Simplex::norm()
 {
