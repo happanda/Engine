@@ -55,9 +55,9 @@ size_t Collision::sizeB() const
 void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
 {
     collisions.clear();
-    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
+    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
-        for (std::vector<Body>::iterator jt = it; jt != bodies.end(); jt++)
+        for (std::vector<Body>::iterator jt = it; jt != bodies.end(); ++jt)
         {
             if (it != jt && bbox_check_collision(&(*it), &(*jt)))
             {

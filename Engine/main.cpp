@@ -147,7 +147,7 @@ Body* click_inside(int x, int y, Vector2& local)
     screen_coords2world(x, y, cursor_xpos, cursor_ypos);
     Vector2 localCoord;
     const Vector2 p(cursor_xpos, cursor_ypos);
-    for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); it++)
+    for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); ++it)
     {
         if (check_point_inside(p, &(*it), localCoord))
         {

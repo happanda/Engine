@@ -95,7 +95,7 @@ void draw_collisions(const std::vector<Collision>& collisions)
 {
     glColor3f(1.0f, 0.0f, 0.0f);
     for (std::vector<Collision>::const_iterator it = collisions.begin();
-        it != collisions.end(); it++)
+        it != collisions.end(); ++it)
     {
         glColor3f(0.0f, 1.0f, 0.0f);
         glBegin(GL_LINE_LOOP);
@@ -128,7 +128,7 @@ void draw_constraints(const std::vector<Constraint*>& constraints)
     double eps_rad = 0.5;
     glColor3f(1.0f, 0.0f, 0.0f);
     for (std::vector<Constraint*>::const_iterator it = constraints.begin();
-        it != constraints.end(); it++)
+        it != constraints.end(); ++it)
     {
         switch((*it)->Type)
         {
@@ -182,7 +182,7 @@ void draw_segment(Segment segment)
 void draw_simplex(Simplex simplex)
 {
     glBegin(GL_LINE_LOOP);
-    for (std::deque<Vector2>::iterator it = simplex.P.begin(); it != simplex.P.end(); it++)
+    for (std::deque<Vector2>::iterator it = simplex.P.begin(); it != simplex.P.end(); ++it)
         glVertex2f(it->v1, it->v2);
     glEnd();
 }

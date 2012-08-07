@@ -62,7 +62,7 @@ void World::resolve_collision(double deltaT)
     const double min_impulse = 0.0000001;
     const double bias_factor = 0.3;
     const double delta_slop = 0.002;
-    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
+    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); ++it)
     {
         if (it->BodyA->mass < vars.UNMOVABLE_MASS
             || it->BodyB->mass < vars.UNMOVABLE_MASS)
@@ -91,7 +91,7 @@ void World::resolve_collision(double deltaT)
 void World::resolve_constraints(double deltaT)
 {
     const double min_impulse = 0.0000001;
-    for (std::vector<Constraint*>::iterator it = constraints.begin(); it != constraints.end(); it++)
+    for (std::vector<Constraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
     {
         Constraint* cc = *it;
         if (cc->bodyA->mass < vars.UNMOVABLE_MASS)
@@ -111,7 +111,7 @@ void World::resolve_collision_deprecated(double deltaT)
     const double min_impulse = 0.0000001;
     const double bias_factor = 0.3;
     const double delta_slop = 0.002;
-    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); it++)
+    for (std::vector<Collision>::iterator it = collisions.begin(); it != collisions.end(); ++it)
     {
         Vector2 tang = it->normal.perpendicular();
 
@@ -219,12 +219,12 @@ void World::resolve_collision_deprecated(double deltaT)
 
 void World::apply_forces(double deltaT)
 {
-    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); it++)
+    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
         if (it->mass < vars.UNMOVABLE_MASS)
             it->velocity = it->velocity + vars.GRAVITATION * deltaT;
     }
-    for (std::vector<Force>::iterator it = forces.begin(); it != forces.end(); it++)
+    for (std::vector<Force>::iterator it = forces.begin(); it != forces.end(); ++it)
     {
         if (it->Body->mass < vars.UNMOVABLE_MASS)
             it->Apply();
