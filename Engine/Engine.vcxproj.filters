@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Graphics">
+      <UniqueIdentifier>{120bde1f-cdd2-4a00-b0d5-e0e879a2d3d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Body">
+      <UniqueIdentifier>{f151eb45-5800-4981-ac5b-ed6d33ea8d6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{20198afe-a951-4cae-9362-67c891c9b86a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="World">
+      <UniqueIdentifier>{c828eb4c-69ed-4d9b-80c4-bcd9e8441578}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Collision">
+      <UniqueIdentifier>{8e64e719-f182-4f94-a6c2-f7ef0ff99bcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Test">
+      <UniqueIdentifier>{93bd10f0-0ef0-400e-bc37-f7c789e80047}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Contraints">
+      <UniqueIdentifier>{81c8de59-62a6-4f56-aa09-46a0c84383da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Force">
+      <UniqueIdentifier>{e1cb901f-dc2b-4492-97b9-3cc4d18ea4d8}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Graphics\Draw.cpp">
+      <Filter>Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Body\Body.cpp">
+      <Filter>Body</Filter>
+    </ClCompile>
+    <ClCompile Include="Body\Shape.cpp">
+      <Filter>Body</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Geometry.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\LinearAlgebra.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\MathRoutines.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrix2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Matrix3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\PGSsolver.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="Math\Vector3.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="World\World.cpp">
+      <Filter>World</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\Collision.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\GJK.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\SAT.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Constraints\Constraint.cpp">
+      <Filter>Contraints</Filter>
+    </ClCompile>
+    <ClCompile Include="Constraints\ContactConstraint.cpp">
+      <Filter>Contraints</Filter>
+    </ClCompile>
+    <ClCompile Include="Constraints\DoFConstraint.cpp">
+      <Filter>Contraints</Filter>
+    </ClCompile>
+    <ClCompile Include="Constraints\FrictionConstraint.cpp">
+      <Filter>Contraints</Filter>
+    </ClCompile>
+    <ClCompile Include="Force\Force.cpp">
+      <Filter>Force</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Graphics\Draw.h">
+      <Filter>Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Body\Body.h">
+      <Filter>Body</Filter>
+    </ClInclude>
+    <ClInclude Include="Body\Shape.h">
+      <Filter>Body</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Geometry.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\LinearAlgebra.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\MathRoutines.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Matrix3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\PGSsolver.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector2.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Math\Vector3.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="World\World.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="World\WorldVars.h">
+      <Filter>World</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\Collision.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\GJK.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\SAT.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="test_gjk.h">
+      <Filter>Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\Constraint.h">
+      <Filter>Contraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\ContactConstraint.h">
+      <Filter>Contraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\DoFConstraint.h">
+      <Filter>Contraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Constraints\FrictionConstraint.h">
+      <Filter>Contraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Force\Force.h">
+      <Filter>Force</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
