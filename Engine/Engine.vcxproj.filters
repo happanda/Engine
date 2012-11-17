@@ -25,6 +25,9 @@
     <Filter Include="Force">
       <UniqueIdentifier>{e1cb901f-dc2b-4492-97b9-3cc4d18ea4d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Motors">
+      <UniqueIdentifier>{a3c5ebe8-82d0-4792-9470-d5946b7f4b09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Graphics\Draw.cpp">
@@ -88,6 +91,9 @@
       <Filter>Force</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Motors\DoFmotor.cpp">
+      <Filter>Motors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Draw.h">
@@ -155,6 +161,9 @@
     </ClInclude>
     <ClInclude Include="Force\Force.h">
       <Filter>Force</Filter>
+    </ClInclude>
+    <ClInclude Include="Motors\DoFmotor.h">
+      <Filter>Motors</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

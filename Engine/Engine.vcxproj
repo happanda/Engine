@@ -108,6 +108,7 @@ copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)
     <ClCompile Include="Math\PGSsolver.cpp" />
     <ClCompile Include="Math\Vector2.cpp" />
     <ClCompile Include="Math\Vector3.cpp" />
+    <ClCompile Include="Motors\DoFmotor.cpp" />
     <ClCompile Include="World\World.cpp" />
     <ClCompile Include="Collision\Collision.cpp" />
     <ClCompile Include="Collision\GJK.cpp" />
@@ -131,6 +132,7 @@ copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)
     <ClInclude Include="Math\PGSsolver.h" />
     <ClInclude Include="Math\Vector2.h" />
     <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="Motors\DoFmotor.h" />
     <ClInclude Include="World\World.h" />
     <ClInclude Include="World\WorldVars.h" />
     <ClInclude Include="Collision\Collision.h" />

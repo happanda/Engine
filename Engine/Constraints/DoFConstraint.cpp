@@ -1,9 +1,10 @@
 #include <float.h>
 #include "DoFConstraint.h"
 #include "Math\PGSsolver.h"
+#include "World\World.h"
 
 DoFConstraint::DoFConstraint(Body* body, DoFType type, world_vars* vars):
-Constraint(body, Vector2::ORIGIN, NULL, Vector2::ORIGIN, vars), dof_type(type)
+    Constraint(body, Vector2::ORIGIN, NULL, Vector2::ORIGIN, vars), dof_type(type)
 {
     Type = DOF_CONSTRAINT;
     A = std::vector<std::vector<double>>(3);
@@ -20,8 +21,18 @@ Constraint(body, Vector2::ORIGIN, NULL, Vector2::ORIGIN, vars), dof_type(type)
         A[1][1] = bodyA->iMass;
     if ((type & ANGLE) != 0)
         A[2][2] = bodyA->iInert;
-
     //min_lambda = (1 + w_vars->RESTITUTION) / A[0][0] * w_vars->iTimeStep;
+}
+
+void DoFConstraint::ChangeConstraint(DoFType type)
+{
+    dof_type = type;
+    if ((type & X_AXIS) != 0)
+        A[0][0] = bodyA->iMass;
+    if ((type & Y_AXIS) != 0)
+        A[1][1] = bodyA->iMass;
+    if ((type & ANGLE) != 0)
+        A[2][2] = bodyA->iInert;
 }
 
 void DoFConstraint::init()
@@ -40,7 +51,7 @@ void DoFConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     init();
     if (!Enough())
     {
-        SolveLambda(A, Eta, Lambda, -DBL_MAX, DBL_MAX);
+        SolveLambda(A, Eta, Lambda, -0.01, 0.01);
         impulse = Vector2(1, 0) * Lambda[0] + Vector2(0, 1) * Lambda[1];
         torque = Lambda[2];
         /*if (impulse + sum_impulse < 0)

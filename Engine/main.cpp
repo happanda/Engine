@@ -8,6 +8,7 @@
 #include "Body\Body.h"
 #include "Graphics\Draw.h"
 #include "Constraints\DoFConstraint.h"
+#include "Motors\DoFmotor.h"
 #include "test_GJK.h"
 #include "glut/glut.h"
 #include "anttweakbar\AntTweakBar.h"
@@ -28,6 +29,7 @@ bool draw_tw = true;
 
 void init_bodies1();
 void init_bodies2();
+void init_bodies3();
 void init_angry_circles();
 void init_many_rectangles();
 void init_many_circles();
@@ -131,9 +133,10 @@ void keyboard(unsigned char key, int x, int y)
     if (key == '1') { glut_init(); init_bodies1(); tw_init(); draw_tw = true; }
     //if (key == '0') { test_gjk_init(); draw_tw = false; }
     if (key == '2') { glut_init(); init_bodies2(); tw_init(); draw_tw = true; }
-    if (key == '3') { glut_init(); init_many_rectangles(); tw_init(); draw_tw = true; }
-    if (key == '4') { glut_init(); init_many_circles(); tw_init(); draw_tw = true; }
-    if (key == '5') { glut_init(); init_angry_circles(); tw_init(); draw_tw = true; }
+    if (key == '3') { glut_init(); init_bodies3(); tw_init(); draw_tw = true; }
+    if (key == '4') { glut_init(); init_many_rectangles(); tw_init(); draw_tw = true; }
+    if (key == '5') { glut_init(); init_many_circles(); tw_init(); draw_tw = true; }
+    if (key == '6') { glut_init(); init_angry_circles(); tw_init(); draw_tw = true; }
     if (draw_tw)
         TwEventKeyboardGLUT(key, x, y);
     glutBitmapCharacter(GLUT_BITMAP_8_BY_13, key);
@@ -284,7 +287,7 @@ int main(int argc, char** argv)
     tw_init();
     init_color();
 
-    init_bodies1();
+    init_bodies3();
     pause = false;
     glutMainLoop();
 }
@@ -425,6 +428,36 @@ void init_bodies2()
     world.addConstraint(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
     world.addConstraint(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
     //world.addConstraint(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
+}
+
+void init_bodies3()
+{
+    world_vars wvars = world.vars;
+    wvars.GRAVITATION.v2 = 0;
+    wvars.RESTITUTION = 0.5;
+    wvars.FRICTION = 0.4;
+    world.init();
+    world.vars = wvars;
+    
+    double bigmass = wvars.UNMOVABLE_MASS;
+    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    //world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+
+    world.addBody(Body(new rectangle(-4, 0, 0, 2, 4), 6, 0, 0, 0));
+    world.addBody(Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
+    //world.addBody(Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
+    
+    // some simple axis constraints
+    DoFmotor* motor = new DoFmotor(&world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
+    world.addConstraint(motor);
+    std::vector<double> motor_bias;
+    motor_bias.push_back(-0.05);
+    motor_bias.push_back(0.01);
+    motor_bias.push_back(-0.1);
+    motor->SetMotorBias(motor_bias);
+    motor->SetMotorLimits(-1, 1);
 }
 
 void init_angry_circles()
