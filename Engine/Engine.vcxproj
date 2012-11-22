@@ -97,6 +97,7 @@ copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Body\Rope.cpp" />
     <ClCompile Include="Graphics\Draw.cpp" />
     <ClCompile Include="Body\Body.cpp" />
     <ClCompile Include="Body\Shape.cpp" />
@@ -121,6 +122,7 @@ copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Body\Rope.h" />
     <ClInclude Include="Graphics\Draw.h" />
     <ClInclude Include="Body\Body.h" />
     <ClInclude Include="Body\Shape.h" />

@@ -94,6 +94,9 @@
     <ClCompile Include="Motors\DoFmotor.cpp">
       <Filter>Motors</Filter>
     </ClCompile>
+    <ClCompile Include="Body\Rope.cpp">
+      <Filter>Body</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Draw.h">
@@ -164,6 +167,9 @@
     </ClInclude>
     <ClInclude Include="Motors\DoFmotor.h">
       <Filter>Motors</Filter>
+    </ClInclude>
+    <ClInclude Include="Body\Rope.h">
+      <Filter>Body</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -15,8 +15,7 @@ public:
    Vector2 velocity;
    double angle_vel;
 
-   Body(const shape* sh, double mazz, double velocity_x, double velocity_y,
-      double angle_vel);
+   Body(const shape* sh, double mazz, double velocity_x, double velocity_y, double angle_vel);
    Body(const Body& body);
    const Body& operator=(const Body& body);
    ~Body();
