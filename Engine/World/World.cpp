@@ -236,6 +236,11 @@ void World::addBody(Body body)
     bodies.push_back(body);
 }
 
+void World::addRope(Rope rope)
+{
+    ropes.push_back(rope);
+}
+
 void World::addConstraint(Constraint* constraint)
 {
     constraints.push_back(constraint);

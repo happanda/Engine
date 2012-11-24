@@ -63,6 +63,7 @@ void step()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         draw_bodies(world.bodies);
+        draw_ropes(world.ropes);
         if (draw_cos)
         {
             draw_collisions(world.collisions);
@@ -449,6 +450,7 @@ void init_bodies3()
     world.addBody(Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
     //world.addBody(Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
     
+    world.addRope(Rope(Vector2(-3, 2), 5, 10, 0.1, 0.1));
     // some simple axis constraints
     DoFmotor* motor = new DoFmotor(&world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
     world.addConstraint(motor);

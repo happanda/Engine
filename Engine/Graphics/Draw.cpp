@@ -91,6 +91,31 @@ void draw_bodies(const std::vector<Body>& bodies)
     }
 }
 
+void draw_ropes(const std::vector<Rope>& ropes)
+{
+    glColor3f(0.0f, 0.0f, 0.0f);
+    int numRopes = ropes.size();
+    for (int i = 0; i < numRopes; i++)
+    {
+        for (size_t j = 0; j < ropes[i].points.size(); ++j)
+        {
+            circle* circ  = static_cast<circle*>(ropes[i].points[j]->form);
+            GLfloat twoPi = 2.0f * 3.14159f;
+
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(ropes[i].points[j]->form->point.v1, ropes[i].points[j]->form->point.v2);
+            for (int numsec = 0; numsec <= CIRCLE_SEGMENTS; numsec++)
+            {
+                glVertex2f(ropes[i].points[j]->form->point.v1 + circ->radius
+                    * cos(ropes[i].points[j]->form->alpha + numsec *  twoPi / CIRCLE_SEGMENTS),
+                    ropes[i].points[j]->form->point.v2 + circ->radius
+                    * sin(ropes[i].points[j]->form->alpha + numsec * twoPi / CIRCLE_SEGMENTS));
+            }
+            glEnd();
+        }
+    }
+}
+
 void draw_collisions(const std::vector<Collision>& collisions)
 {
     glColor3f(1.0f, 0.0f, 0.0f);

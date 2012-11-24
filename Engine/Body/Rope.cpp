@@ -1,8 +1,8 @@
 
 #include "Rope.h"
 
-const double Rope::radius   = 0.04;
-const double Rope::distance = 0.1;
+const double Rope::radius   = 0.1;
+const double Rope::distance = 0.21;
 
 Rope::Rope(Vector2 const& point, size_t num_points, double mazz, double elast, double damp)
     : points    (num_points)
@@ -12,7 +12,8 @@ Rope::Rope(Vector2 const& point, size_t num_points, double mazz, double elast, d
     Vector2 disp(0, -distance);
     for (size_t i = 0; i < num_points; ++i)
     {
-        points.push_back(new Body(new circle(disp.v1, disp.v2, 0, radius), mazz, 0, 0, 0));
+        points[i] = new Body(new circle(disp.v1, disp.v2, 0, radius), mazz, 0, 0, 0);
+        disp.v2 -= distance;
     }
 }
 
