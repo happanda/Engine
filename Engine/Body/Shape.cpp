@@ -1,4 +1,4 @@
-
+#include <algorithm>
 #include "Shape.h"
 /*------------------- bbox -------------------*/
 bbox::bbox(): left(0), right(0), top(0), bottom(0)
@@ -47,8 +47,15 @@ void rectangle::get_points(Vector2& p1, Vector2& p2, Vector2& p3, Vector2& p4, d
 }
 bbox rectangle::bounding_box() const
 {
-   return bbox(point.v1 - half_diag, point.v1 + half_diag,
-      point.v2 + half_diag, point.v2 - half_diag);
+   Vector2 p1, p2, p3, p4;
+   get_points(p1, p2, p3, p4, 0);
+   double min_x = std::min(std::min(p1.v1, p2.v1), std::min(p3.v1, p4.v1));
+   double max_x = std::max(std::max(p1.v1, p2.v1), std::max(p3.v1, p4.v1));
+   double min_y = std::min(std::min(p1.v2, p2.v2), std::min(p3.v2, p4.v2));
+   double max_y = std::max(std::max(p1.v2, p2.v2), std::max(p3.v2, p4.v2));
+   return bbox(min_x, max_x, max_y, min_y);
+   /*return bbox(point.v1 - half_diag, point.v1 + half_diag,
+      point.v2 + half_diag, point.v2 - half_diag);*/
 }
 /*------------------ circle ------------------*/
 circle::circle()

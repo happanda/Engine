@@ -58,34 +58,24 @@ size_t Collision::sizeB() const
 
 void gjk_collide(std::vector<Body*>& bodies, std::vector<Collision*>& collisions)
 {
+    collisions.clear();
     clock_t c = clock();
     std::vector<long> times;
 
-    collisions.clear();
     for (std::vector<Body*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
         for (std::vector<Body*>::iterator jt = it; jt != bodies.end(); ++jt)
         {
-            if (it - bodies.begin() == 2 && jt - bodies.begin() == 23)
-            {
-                std::cout << "HERE" << std::endl;
-            }
+            //std::cout << "A " << clock() - c << std::endl;
             if (it != jt && bbox_check_collision(*it, *jt))
             {
-                if (clock() - c >= 1050)
-                {
-                    c = clock();
-                    std::cout << (*it)->mass << " " << it - bodies.begin() << std::endl;
-                    std::cout << (*jt)->mass << " " << jt - bodies.begin() << std::endl;
-                }
                 Collision* coll = new Collision(*it, *jt);
-                if (gjk_check_collision(*((*it)->form), *((*it)->form), &gjk_support, *coll))
+                if (gjk_check_collision(*((*it)->form), *((*jt)->form), &gjk_support, *coll))
                 {
                     collisions.push_back(coll);
                 }
+                //std::cout << "B " << clock() - c << std::endl;
             }
-            
-            //times.push_back(clock() - c);
         }
     }
 }

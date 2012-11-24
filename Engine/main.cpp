@@ -289,6 +289,7 @@ int main(int argc, char** argv)
     init_color();
 
     init_bodies3();
+    //test_gjk_init();
     pause = false;
     glutMainLoop();
 }
@@ -450,7 +451,7 @@ void init_bodies3()
     world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
     //world.addBody(new Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
     
-    world.addRope(new Rope(Vector2(-8, 4), 25, 10, 50, 0.1));
+    world.addRope(new Rope(Vector2(-8, 4), 25, 10, 0.2, 0.1));
     // some simple axis constraints
     DoFmotor* motor = new DoFmotor(world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
     world.addConstraint(motor);
