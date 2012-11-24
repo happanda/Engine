@@ -41,15 +41,15 @@ void reshape_window(int width, int height)
         0.0, 1.0, 0.0); /* up is in +Y direction */
 }
 
-void draw_bodies(const std::vector<Body>& bodies)
+void draw_bodies(const std::vector<Body*>& bodies)
 {
     glColor3f(0.0f, 0.0f, 0.0f);
     int numBodies = bodies.size();
     for (int i = 0; i < numBodies; i++)
     {
-        if (bodies[i].form->type == sh_rectangle)
+        if (bodies[i]->form->type == sh_rectangle)
         {
-            rectangle* rect = static_cast<rectangle*>(bodies[i].form);
+            rectangle* rect = static_cast<rectangle*>(bodies[i]->form);
             Vector2 p1, p2, p3, p4;
             rect->get_points(p1, p2, p3, p4, 0);
 
@@ -60,26 +60,26 @@ void draw_bodies(const std::vector<Body>& bodies)
             glVertex2f(p4.v1, p4.v2);
             glEnd();
         }
-        if (bodies[i].form->type == sh_circle)
+        if (bodies[i]->form->type == sh_circle)
         {
-            circle* circ = static_cast<circle*>(bodies[i].form);
+            circle* circ = static_cast<circle*>(bodies[i]->form);
             GLfloat twoPi = 2.0f * 3.14159f;
 
             glBegin(GL_LINE_LOOP);
-            glVertex2f(bodies[i].form->point.v1, bodies[i].form->point.v2);
+            glVertex2f(bodies[i]->form->point.v1, bodies[i]->form->point.v2);
             for (int numsec = 0; numsec <= CIRCLE_SEGMENTS; numsec++)
             {
-                glVertex2f(bodies[i].form->point.v1 + circ->radius
-                    * cos(bodies[i].form->alpha + numsec *  twoPi / CIRCLE_SEGMENTS),
-                    bodies[i].form->point.v2 + circ->radius
-                    * sin(bodies[i].form->alpha + numsec * twoPi / CIRCLE_SEGMENTS));
+                glVertex2f(bodies[i]->form->point.v1 + circ->radius
+                    * cos(bodies[i]->form->alpha + numsec *  twoPi / CIRCLE_SEGMENTS),
+                    bodies[i]->form->point.v2 + circ->radius
+                    * sin(bodies[i]->form->alpha + numsec * twoPi / CIRCLE_SEGMENTS));
             }
             glEnd();
         }
-        if (bodies[i].form->type == sh_surface)
+        if (bodies[i]->form->type == sh_surface)
         {
             double faraway = SURFACE_DISTANCE;
-            surface* surf = static_cast<surface*>(bodies[i].form);
+            surface* surf = static_cast<surface*>(bodies[i]->form);
 
             glBegin(GL_LINE_LOOP);
             glVertex2f(surf->point.v1 + faraway * cos(surf->alpha),

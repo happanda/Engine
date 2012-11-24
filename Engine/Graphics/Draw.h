@@ -17,8 +17,8 @@ const double CIRCLE_SEGMENTS = 50;
 
 void init_color();
 void reshape_window(int width, int height);
-void draw_bodies(const std::vector<Body>& bodies);
-void draw_ropes(const std::vector<Rope>& ropes);
+void draw_bodies(const std::vector<Body*>& bodies);
+//void draw_ropes(const std::vector<Rope>& ropes);
 void draw_collisions(const std::vector<Collision>& collisions);
 void draw_constraints(const std::vector<Constraint*>& constraints);
 void draw_simplex(Simplex simplex);

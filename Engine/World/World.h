@@ -15,8 +15,8 @@ public:
     static const size_t FORCE_DIM = 6;
     World();
     void init();
-    void addBody(Body body);
-    void addRope(Rope rope);
+    void addBody(Body* body);
+    void addRope(Rope* rope);
     void addConstraint(Constraint* constraint);
     void addForce(Force force);
     void removeForce(int id);
@@ -26,8 +26,8 @@ public:
     void resolve_constraints(double deltaT);
 
     std::vector<Collision> collisions;
-    std::vector<Body> bodies;
-    std::vector<Rope> ropes;
+    std::vector<Body*> bodies;
+    std::vector<Rope*> ropes;
     std::vector<Constraint*> constraints;
     std::vector<Force> forces;
     world_vars vars;

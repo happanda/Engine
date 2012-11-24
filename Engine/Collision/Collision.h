@@ -32,7 +32,7 @@ private:
    size_t m_sizeB;
 };
 
-void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions);
+void gjk_collide(std::vector<Body*>& bodies, std::vector<Collision>& collisions);
 
 bool bbox_check_collision(const Body& bodyA, const Body& bodyB);
 

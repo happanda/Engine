@@ -17,7 +17,6 @@ struct Rope
 
     const Rope& operator=(const Rope& rope);
 
-private:
     static const double radius;     // radius of points
     static const double distance;   // distance between points
 };

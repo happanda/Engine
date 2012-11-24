@@ -40,7 +40,7 @@ void test_gjk_key(unsigned char key, int x, int y)
       angle = angle_delta;
    if (key == 'd' || key == 'o')
       angle = -angle_delta;
-   shape* sh = world.bodies[body_num].form;
+   shape* sh = world.bodies[body_num]->form;
    sh->alpha += angle;
    sh->point.v1 += move_x;
    sh->point.v2 += move_y;
@@ -69,16 +69,16 @@ void test_gjk_init()
 {
    world.init();
    world.vars.GRAVITATION = Vector2::ORIGIN;
-   Body body = Body(&(rectangle()), 0, 0, 0, 0);
+   Body* body;// = new Body(&(rectangle()), 0, 0, 0, 0);
    rectangle* rect;
 
    rect = new rectangle(0, 0, 0, 8, 6);
-   body = Body(rect, 4, 0, 0, 0);
+   body = new Body(rect, 4, 0, 0, 0);
    world.addBody(body);
    delete rect;
 
    rect = new rectangle(0, 5, 0, 5, 5);
-   body = Body(rect, 4, 0, 0, 0);
+   body = new Body(rect, 4, 0, 0, 0);
    world.addBody(body);
    delete rect;
 

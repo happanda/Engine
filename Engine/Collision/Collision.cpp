@@ -3,7 +3,9 @@
 #include "Collision\GJK.h"
 #include "SAT.h"
 
-Collision::Collision(Body* bodyA, Body* bodyB): BodyA(bodyA), BodyB(bodyB)
+Collision::Collision(Body* bodyA, Body* bodyB)
+    : BodyA(bodyA), BodyB(bodyB)
+    , m_sizeA(0), m_sizeB(0)
 {
 }
 Collision::Collision(const Collision& other): BodyA(other.BodyA), BodyB(other.BodyB)
@@ -52,17 +54,17 @@ size_t Collision::sizeB() const
    return m_sizeB;
 }
 
-void gjk_collide(std::vector<Body>& bodies, std::vector<Collision>& collisions)
+void gjk_collide(std::vector<Body*>& bodies, std::vector<Collision>& collisions)
 {
     collisions.clear();
-    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); ++it)
+    for (std::vector<Body*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
-        for (std::vector<Body>::iterator jt = it; jt != bodies.end(); ++jt)
+        for (std::vector<Body*>::iterator jt = it; jt != bodies.end(); ++jt)
         {
-            if (it != jt && bbox_check_collision(*it, *jt))
+            if (it != jt && bbox_check_collision(**it, **jt))
             {
-                Collision coll(&(*it), &(*jt));
-                if (gjk_check_collision(*(it->form), *(jt->form), &gjk_support, coll))
+                Collision coll(&(**it), &(**jt));
+                if (gjk_check_collision(*((*it)->form), *((*it)->form), &gjk_support, coll))
                 {
                     collisions.push_back(coll);
                 }

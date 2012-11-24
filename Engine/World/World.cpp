@@ -1,6 +1,8 @@
 
 #include "world.h"
+#include <iostream>
 #include <stdio.h>
+#include <time.h>
 #include "Collision\GJK.h"
 #include "Math\MathRoutines.h"
 #include "Graphics\Draw.h"
@@ -33,6 +35,7 @@ void World::init()
 
 void World::update(double deltaT)
 {
+    clock_t c = clock();
     force_ext[0] = vars.GRAVITATION.v1;
     force_ext[1] = vars.GRAVITATION.v2;
     force_ext[2] = 0;
@@ -46,13 +49,14 @@ void World::update(double deltaT)
     resolve_collision(deltaT);
     resolve_constraints(deltaT);
     double energy = 0;
-    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); ++it)
+    for (std::vector<Body*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
-        it->form->rotate(it->angle_vel * deltaT);
-        it->form->point = it->form->point + it->velocity * deltaT;
-        energy += (it->mass * it->velocity.norm2sq()
-            + it->inert * it->angle_vel * it->angle_vel) / 2;
+        (*it)->form->rotate((*it)->angle_vel * deltaT);
+        (*it)->form->point = (*it)->form->point + (*it)->velocity * deltaT;
+        energy += ((*it)->mass * (*it)->velocity.norm2sq()
+            + (*it)->inert * (*it)->angle_vel * (*it)->angle_vel) / 2;
     }
+    std::cout << ((double)clock() - c) / CLOCKS_PER_SEC << std::endl;
     // printf("Total kinetic energy: %.2f\n", energy);
 }
 
@@ -219,11 +223,27 @@ void World::resolve_collision_deprecated(double deltaT)
 
 void World::apply_forces(double deltaT)
 {
-    for (std::vector<Body>::iterator it = bodies.begin(); it != bodies.end(); ++it)
+    for (std::vector<Body*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
-        if (it->mass < vars.UNMOVABLE_MASS)
-            it->velocity = it->velocity + vars.GRAVITATION * deltaT;
+        if ((*it)->mass < vars.UNMOVABLE_MASS)
+            (*it)->velocity = (*it)->velocity + vars.GRAVITATION * deltaT;
     }
+    /*for (std::vector<Rope*>::iterator it = ropes.begin(); it != ropes.end(); ++it)
+    {
+        for (size_t j = 0; j < (*it)->points.size(); ++j)
+        {
+            Rope & rope = **it;
+            if (j < (*it)->points.size() - 1)
+            {
+                Vector2 direction = rope.points[j + 1]->form->point - rope.points[j]->form->point;
+                double delta      = direction.norm2() - Rope::distance;
+                direction.normalize2();
+                direction  = direction * delta * rope.elasticity;
+                rope.points[j]->velocity     = rope.points[j]->velocity + direction;
+                rope.points[j + 1]->velocity = rope.points[j]->velocity - direction;
+            }
+        }
+    }*/
     for (std::vector<Force>::iterator it = forces.begin(); it != forces.end(); ++it)
     {
         if (it->Body->mass < vars.UNMOVABLE_MASS)
@@ -231,14 +251,16 @@ void World::apply_forces(double deltaT)
     }
 }
 
-void World::addBody(Body body)
+void World::addBody(Body* body)
 {
     bodies.push_back(body);
 }
 
-void World::addRope(Rope rope)
+void World::addRope(Rope* rope)
 {
     ropes.push_back(rope);
+    for (auto it = rope->points.begin(); it != rope->points.end(); ++it)
+        bodies.push_back(*it);
 }
 
 void World::addConstraint(Constraint* constraint)

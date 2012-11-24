@@ -63,7 +63,7 @@ void step()
     {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         draw_bodies(world.bodies);
-        draw_ropes(world.ropes);
+        //draw_ropes(world.ropes);
         if (draw_cos)
         {
             draw_collisions(world.collisions);
@@ -118,8 +118,8 @@ void keyboard(unsigned char key, int x, int y)
     if (key == 'y')
     {
         int r = rand() % world.bodies.size();
-        if (world.bodies.at(r).mass < world.vars.UNMOVABLE_MASS)
-            world.bodies.at(r).velocity = world.bodies.at(r).velocity + Vector2(0, 12);
+        if (world.bodies[r]->mass < world.vars.UNMOVABLE_MASS)
+            world.bodies[r]->velocity = world.bodies[r]->velocity + Vector2(0, 12);
     }
     if (key == '+' || key == '-')
     {
@@ -151,12 +151,12 @@ Body* click_inside(int x, int y, Vector2& local)
     screen_coords2world(x, y, cursor_xpos, cursor_ypos);
     Vector2 localCoord;
     const Vector2 p(cursor_xpos, cursor_ypos);
-    for (std::vector<Body>::iterator it = world.bodies.begin(); it != world.bodies.end(); ++it)
+    for (std::vector<Body*>::iterator it = world.bodies.begin(); it != world.bodies.end(); ++it)
     {
-        if (check_point_inside(p, &(*it), localCoord))
+        if (check_point_inside(p, *it, localCoord))
         {
             local = localCoord;
-            return &(*it);
+            return *it;
         }
     }
     return 0;
@@ -345,41 +345,41 @@ void init_bodies1()
     double angle_vel = 0;
 
     double vel = 4;
-    world.addBody(Body(new circle(-7, 60, 0, 2), 6, 0, 0, 0));
-    world.addBody(Body(new circle(7, -10.8, 0, 1), 2, 0, 0, 0));
-    world.addBody(Body(new circle(7, -8.8, 0, 1), 1, 0, 0, 0));
-    world.addBody(Body(new circle(7, -6.8, 0, 1), 1, 0, 0, 0));
-    world.addBody(Body(new circle(7, -4.8, 0, 1), 1, 0, 0, 0));
-    world.addBody(Body(new circle(7, -2.8, 0, 1), 1, 0, 0, 0));
-    world.addBody(Body(new circle(7, -0.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new circle(-7, 60, 0, 2), 6, 0, 0, 0));
+    world.addBody(new Body(new circle(7, -10.8, 0, 1), 2, 0, 0, 0));
+    world.addBody(new Body(new circle(7, -8.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new circle(7, -6.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new circle(7, -4.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new circle(7, -2.8, 0, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new circle(7, -0.8, 0, 1), 1, 0, 0, 0));
 
-    world.addBody(Body(new rectangle(0, -10, -0.28666, 16, 0.5), 8, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -10, -0.28666, 16, 0.5), 8, 0, 0, 0));
 
-    /*world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
-    world.addBody(Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));*/
+    /*world.addBody(new Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
+    world.addBody(new Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
+    world.addBody(new Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
+    world.addBody(new Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));*/
 
     // bounds
     double bigmass = wvars.UNMOVABLE_MASS;
-    /*world.addBody(Body(new rectangle(0, 2, 0, 2, 29), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(20, 2, 0, 2, 29), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(-20, 2, 0, 2, 29), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 18, 0, 2000, 3), bigmass, 0, 0, 0));*/
-    world.addBody(Body(new rectangle(0, -14, 0, 2000, 3), bigmass, 0, 0, 0));
+    /*world.addBody(new Body(new rectangle(0, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(20, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-20, 2, 0, 2, 29), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 18, 0, 2000, 3), bigmass, 0, 0, 0));*/
+    world.addBody(new Body(new rectangle(0, -14, 0, 2000, 3), bigmass, 0, 0, 0));
     // bounds
 
     // some simple axis constraints
     int ind = 0;
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], X_AXIS, &(world.vars)));
 
-    world.addConstraint(new DoFConstraint(&world.bodies[ind++], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[ind++], XY_AXIS, &(world.vars)));
 }
 
 void init_bodies2()
@@ -393,10 +393,10 @@ void init_bodies2()
     double angle_vel = 0;
 
     double vel = 4;
-    world.addBody(Body(new rectangle(0, 11, 0, 7.8, 0.5), 50, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 3, 0, 7.8, 0.5), 50, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -5, 0, 7.8, 0.5), 50, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -13, 0, 7.8, 0.5), 50, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 11, 0, 7.8, 0.5), 50, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 3, 0, 7.8, 0.5), 50, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -5, 0, 7.8, 0.5), 50, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -13, 0, 7.8, 0.5), 50, 0, 0, 0));
 
     int minx = -3, maxx = 3;
     double y = 15;
@@ -405,29 +405,29 @@ void init_bodies2()
     for (int i = 0; i < s; i++)
     {
         double rx = rand() % (maxx - minx) + minx;
-        world.addBody(Body(new circle(rx, y, (double)rand(), 0.5),
+        world.addBody(new Body(new circle(rx, y, (double)rand(), 0.5),
             1, 0, 0, 0));
         y += 3;
     }
 
-    /*world.addBody(Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
-    world.addBody(Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
-    world.addBody(Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));*/
+    /*world.addBody(new Body(new circle(-5, 5, 0, 1), 1, -vel, 0, 0));
+    world.addBody(new Body(new circle(5, 5, 0, 1), 1, vel, 0, 0));
+    world.addBody(new Body(new circle(-5, 15, 0, 1), 1, -vel, 0, 0));
+    world.addBody(new Body(new circle(5, 15, 0, 1), 1, vel, 0, 0));*/
 
     // bounds
     double bigmass = wvars.UNMOVABLE_MASS;
-    world.addBody(Body(new rectangle(-5, 0, 0, 2, 200), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(5, 0, 0, 2, 200), bigmass, 0, 0, 0));
-    //world.addBody(Body(new rectangle(0, 18, 0, 12, 3), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -101, 0, 12, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-5, 0, 0, 2, 200), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(5, 0, 0, 2, 200), bigmass, 0, 0, 0));
+    //world.addBody(new Body(new rectangle(0, 18, 0, 12, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -101, 0, 12, 3), bigmass, 0, 0, 0));
     // bounds
 
     // some simple axis constraints
-    world.addConstraint(new DoFConstraint(&world.bodies[0], XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[1], XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[2], XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(&world.bodies[3], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[0], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[1], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[2], XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(world.bodies[3], XY_AXIS, &(world.vars)));
     //world.addConstraint(new DoFConstraint(&world.bodies[4], XY_AXIS, &(world.vars)));
 }
 
@@ -441,18 +441,18 @@ void init_bodies3()
     world.vars = wvars;
     
     double bigmass = wvars.UNMOVABLE_MASS;
-    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    //world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    //world.addBody(new Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
 
-    world.addBody(Body(new rectangle(-4, 0, 0, 2, 4), 6, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
-    //world.addBody(Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
+    //world.addBody(new Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
     
-    world.addRope(Rope(Vector2(-3, 2), 5, 10, 0.1, 0.1));
+    world.addRope(new Rope(Vector2(-8, 4), 25, 10, 50, 0.1));
     // some simple axis constraints
-    DoFmotor* motor = new DoFmotor(&world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
+    DoFmotor* motor = new DoFmotor(world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
     world.addConstraint(motor);
     std::vector<double> motor_bias;
     motor_bias.push_back(-0.05);
@@ -473,41 +473,41 @@ void init_angry_circles()
 
     // bounds
     double bigmass = 100000;
-    //world.addBody(Body(new rectangle(0, 14, 0, 2000, 3), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -16, 0, 5000, 4), bigmass, 0, 0, 0));
+    //world.addBody(new Body(new rectangle(0, 14, 0, 2000, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -16, 0, 5000, 4), bigmass, 0, 0, 0));
     // bounds
 
     double mx = 25;
     // castle
-    world.addBody(Body(new rectangle(mx, -13, 0, 12, 2), 24, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx, -10.5, 0, 2, 3), 6, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx - 5, -10.5, 0, 2, 3), 6, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx + 5, -10.5, 0, 2, 3), 6, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx, -8.5, 0, 6, 1), 6, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx - 4.5, -8, 0, 3, 2), 6, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx + 4.5, -8, 0, 3, 2), 6, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx - 4, -6, 0, 2, 2), 4, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx + 4, -6, 0, 2, 2), 4, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx, -4.5, 0, 9, 1), 9, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx, -3.5, 0, 1, 1), 1, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx - 4, -3.5, 0, 1, 1), 1, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx + 4, -3.5, 0, 1, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx, -13, 0, 12, 2), 24, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx, -10.5, 0, 2, 3), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx - 5, -10.5, 0, 2, 3), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx + 5, -10.5, 0, 2, 3), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx, -8.5, 0, 6, 1), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx - 4.5, -8, 0, 3, 2), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx + 4.5, -8, 0, 3, 2), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx - 4, -6, 0, 2, 2), 4, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx + 4, -6, 0, 2, 2), 4, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx, -4.5, 0, 9, 1), 9, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx, -3.5, 0, 1, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx - 4, -3.5, 0, 1, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx + 4, -3.5, 0, 1, 1), 1, 0, 0, 0));
     
     // defenders
-    world.addBody(Body(new circle(mx - 2.5, -11.5, 0, 0.5), 0.5, 0, 0, 0));
-    world.addBody(Body(new circle(mx + 2.5, -11.5, 0, 0.5), 0.5, 0, 0, 0));
-    world.addBody(Body(new circle(mx, -7, 0, 1), 1, 0, 0, 0));
+    world.addBody(new Body(new circle(mx - 2.5, -11.5, 0, 0.5), 0.5, 0, 0, 0));
+    world.addBody(new Body(new circle(mx + 2.5, -11.5, 0, 0.5), 0.5, 0, 0, 0));
+    world.addBody(new Body(new circle(mx, -7, 0, 1), 1, 0, 0, 0));
 
     mx = -21;
     // attackers
-    world.addBody(Body(new circle(mx, -13.5, 0, 0.5), 1, 0, 0, 0));
-    world.addBody(Body(new circle(mx - 2, -13, 0, 1), 2, 0, 0, 0));
-    world.addBody(Body(new circle(mx - 5, -12.5, 0, 1.5), 4, 0, 0, 0));
+    world.addBody(new Body(new circle(mx, -13.5, 0, 0.5), 1, 0, 0, 0));
+    world.addBody(new Body(new circle(mx - 2, -13, 0, 1), 2, 0, 0, 0));
+    world.addBody(new Body(new circle(mx - 5, -12.5, 0, 1.5), 4, 0, 0, 0));
 
     mx = -15;
     // canon
-    world.addBody(Body(new rectangle(mx - 4.5, -12, 0, 2, 4), wvars.UNMOVABLE_MASS, 0, 0, 0));
-    world.addBody(Body(new rectangle(mx, -12.6, 0.25, 7, 1), wvars.UNMOVABLE_MASS, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx - 4.5, -12, 0, 2, 4), wvars.UNMOVABLE_MASS, 0, 0, 0));
+    world.addBody(new Body(new rectangle(mx, -12.6, 0.25, 7, 1), wvars.UNMOVABLE_MASS, 0, 0, 0));
 }
 
 void init_many_rectangles()
@@ -527,7 +527,7 @@ void init_many_rectangles()
         for (int j = -s + 2; j < s; j += 4)
         {
             double r = rand() % 2 + 1;
-            world.addBody(Body(new rectangle(i, j, (double)rand() / sp, r, 3 - r),
+            world.addBody(new Body(new rectangle(i, j, (double)rand() / sp, r, 3 - r),
                 1, (double)rand() / sp - (double)rand() / sp,
             (double)rand() / sp - (double)rand() / sp, 0));
         }
@@ -535,18 +535,18 @@ void init_many_rectangles()
 
     // bounds
     double bigmass = 100000;
-    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
     // bounds
     for (size_t i = 0; i < world.bodies.size(); i++)
     {
         int r = rand() % 10;
         if (r == 0 || r == 1)
-            world.addConstraint(new DoFConstraint(&world.bodies[i], XY_AXIS, &(world.vars)));
+            world.addConstraint(new DoFConstraint(world.bodies[i], XY_AXIS, &(world.vars)));
         if (r == 2 || r == 3)
-            world.addConstraint(new DoFConstraint(&world.bodies[i], ANGLE, &(world.vars)));
+            world.addConstraint(new DoFConstraint(world.bodies[i], ANGLE, &(world.vars)));
     }
 }
 
@@ -567,7 +567,7 @@ void init_many_circles()
         for (int j = -s + 2; j < s; j += 4)
         {
             double r = rand() % 2 + 1;
-            world.addBody(Body(new circle(i, j, (double)rand(), 1), 3.14,
+            world.addBody(new Body(new circle(i, j, (double)rand(), 1), 3.14,
                 (double)rand() / sp - (double)rand() / sp,
                 (double)rand() / sp - (double)rand() / sp, 0));
         }
@@ -575,10 +575,10 @@ void init_many_circles()
 
     // bounds
     double bigmass = 100000;
-    world.addBody(Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
-    world.addBody(Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
     // bounds
 }
 
@@ -587,34 +587,34 @@ void stack_init()
     world.init();
 
     double angle_vel = 0;
-    std::vector<Body> bodies;
+    std::vector<Body*> bodies;
 
-    Body body = Body(&(rectangle()), 0, 0, 0, 0);
+    Body* body;// = Body(&(rectangle()), 0, 0, 0, 0);
     rectangle* rect;
 
     // lower bound
     rect = new rectangle(0, -14, 0, 200, 4);
-    body = Body(rect, 100000, 0, 0, 0);
+    body = new Body(rect, 100000, 0, 0, 0);
     bodies.push_back(body);
     delete rect;
 
     rect = new rectangle(0, -10, 0, 4, 4);
-    body = Body(rect, 16, 0, 0, 0);
+    body = new Body(rect, 16, 0, 0, 0);
     bodies.push_back(body);
     delete rect;
 
     rect = new rectangle(0, -7, 0, 8, 2);
-    body = Body(rect, 16, 0, 0, 0);
+    body = new Body(rect, 16, 0, 0, 0);
     bodies.push_back(body);
     delete rect;
 
     rect = new rectangle(0, -3, 0, 2, 6);
-    body = Body(rect, 12, 0, 0, 0);
+    body = new Body(rect, 12, 0, 0, 0);
     bodies.push_back(body);
     delete rect;
 
     rect = new rectangle(0.5, 2, 0, 4, 4);
-    body = Body(rect, 12, 0, 0, 0);
+    body = new Body(rect, 12, 0, 0, 0);
     bodies.push_back(body);
     delete rect;
 
