@@ -116,33 +116,33 @@ void draw_ropes(const std::vector<Rope>& ropes)
     }
 }
 
-void draw_collisions(const std::vector<Collision>& collisions)
+void draw_collisions(const std::vector<Collision*>& collisions)
 {
     glColor3f(1.0f, 0.0f, 0.0f);
-    for (std::vector<Collision>::const_iterator it = collisions.begin();
+    for (std::vector<Collision*>::const_iterator it = collisions.begin();
         it != collisions.end(); ++it)
     {
         glColor3f(0.0f, 1.0f, 0.0f);
         glBegin(GL_LINE_LOOP);
-        for (size_t pt = 0; pt < it->sizeA(); ++it)
+        for (size_t pt = 0; pt < (*it)->sizeA(); ++pt)
         {
-           draw_point(it->pointsA[pt]);
-           glVertex2f(it->pointsA[pt].v1, it->pointsA[pt].v2);
+           draw_point((*it)->pointsA[pt]);
+           glVertex2f((*it)->pointsA[pt].v1, (*it)->pointsA[pt].v2);
         }
         glEnd();
         glColor3f(0.0f, 0.0f, 1.0f);
         glBegin(GL_LINE_LOOP);
         Vector2 avr(0,0);
-        for (size_t pt = 0; pt < it->sizeB(); ++it)
+        for (size_t pt = 0; pt < (*it)->sizeB(); ++pt)
         {
-            draw_point(it->pointsB[pt]);
-            avr = avr + it->pointsB[pt];
-            glVertex2f(it->pointsB[pt].v1, it->pointsB[pt].v2);
+            draw_point((*it)->pointsB[pt]);
+            avr = avr + (*it)->pointsB[pt];
+            glVertex2f((*it)->pointsB[pt].v1, (*it)->pointsB[pt].v2);
         }
-        avr = avr * ((double)1 / (double)it->sizeB());
+        avr = avr * ((double)1 / (double)(*it)->sizeB());
         glEnd();
         glColor3f(0.3f, 0.3f, 1.0f);
-        draw_segment(Segment(avr, avr + it->normal));
+        draw_segment(Segment(avr, avr + (*it)->normal));
     }
 }
 

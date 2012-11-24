@@ -25,7 +25,7 @@ public:
     void resolve_collision(double deltaT);
     void resolve_constraints(double deltaT);
 
-    std::vector<Collision> collisions;
+    std::vector<Collision*> collisions;
     std::vector<Body*> bodies;
     std::vector<Rope*> ropes;
     std::vector<Constraint*> constraints;

@@ -1,4 +1,6 @@
 
+#include <iostream>
+#include <time.h>
 #include "Collision.h"
 #include "Collision\GJK.h"
 #include "SAT.h"
@@ -54,29 +56,38 @@ size_t Collision::sizeB() const
    return m_sizeB;
 }
 
-void gjk_collide(std::vector<Body*>& bodies, std::vector<Collision>& collisions)
+void gjk_collide(std::vector<Body*>& bodies, std::vector<Collision*>& collisions)
 {
+    clock_t c = clock();
+    std::vector<long> times;
     collisions.clear();
     for (std::vector<Body*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
         for (std::vector<Body*>::iterator jt = it; jt != bodies.end(); ++jt)
         {
-            if (it != jt && bbox_check_collision(**it, **jt))
+
+            //std::cout << ((double)clock() - c) / CLOCKS_PER_SEC << std::endl;
+            if (it != jt && bbox_check_collision(*it, *jt))
             {
-                Collision coll(&(**it), &(**jt));
-                if (gjk_check_collision(*((*it)->form), *((*it)->form), &gjk_support, coll))
+                Collision* coll = new Collision(*it, *jt);
+                if (gjk_check_collision(*((*it)->form), *((*it)->form), &gjk_support, *coll))
                 {
                     collisions.push_back(coll);
                 }
             }
+            times.push_back(clock() - c);
         }
+        /*if (((double)clock() - c) / CLOCKS_PER_SEC > 0.002)
+        {
+            std::cout << ((double)clock() - c) / CLOCKS_PER_SEC << std::endl;
+        }*/
     }
 }
 
-bool bbox_check_collision(const Body& bodyA, const Body& bodyB)
+bool bbox_check_collision(const Body* bodyA, const Body* bodyB)
 {
-    bbox bboxA = bodyA.form->bounding_box();
-    bbox bboxB = bodyB.form->bounding_box();
+    bbox bboxA = bodyA->form->bounding_box();
+    bbox bboxB = bodyB->form->bounding_box();
     if (bboxA.right < bboxB.left || bboxB.right < bboxA.left
         || bboxA.top < bboxB.bottom || bboxB.top < bboxA.bottom)
         return false;
