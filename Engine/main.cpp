@@ -434,7 +434,7 @@ void init_bodies2()
 void init_bodies3()
 {
     world_vars wvars = world.vars;
-    wvars.GRAVITATION.v2 = 0;
+    wvars.GRAVITATION.v2 = -0;
     wvars.RESTITUTION = 0.5;
     wvars.FRICTION = 0.4;
     world.init();
@@ -450,16 +450,16 @@ void init_bodies3()
     world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
     //world.addBody(new Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
     
-    world.addRope(new Rope(Vector2(-8, 4), 25, 10, 0.5, 0.1));
+    world.addRope(new Rope(Vector2(8, 10), 30, 10, 100, 10));
     // some simple axis constraints
-    DoFmotor* motor = new DoFmotor(world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
-    world.addConstraint(motor);
-    std::vector<double> motor_bias;
+    //DoFmotor* motor = new DoFmotor(world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
+    //world.addConstraint(motor);
+    /*std::vector<double> motor_bias;
     motor_bias.push_back(-0.05);
     motor_bias.push_back(0.01);
     motor_bias.push_back(-0.1);
     motor->SetMotorBias(motor_bias);
-    motor->SetMotorLimits(-1, 1);
+    motor->SetMotorLimits(-1, 1);*/
 }
 
 void init_angry_circles()
