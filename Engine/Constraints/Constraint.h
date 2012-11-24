@@ -24,7 +24,7 @@ class Constraint
 public:
     Constraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars);
     Constraint(const Constraint& constr);
-    const Constraint& operator=(const Constraint& body);
+    const Constraint& operator=(const Constraint& constr);
 
     void DeltaImpulse();
     void ApplyImpulse();

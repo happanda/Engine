@@ -224,7 +224,7 @@ void World::apply_forces(double deltaT)
         if ((*it)->mass < vars.UNMOVABLE_MASS)
             (*it)->velocity = (*it)->velocity + vars.GRAVITATION * deltaT;
     }
-    /*for (std::vector<Rope*>::iterator it = ropes.begin(); it != ropes.end(); ++it)
+    for (std::vector<Rope*>::iterator it = ropes.begin(); it != ropes.end(); ++it)
     {
         for (size_t j = 0; j < (*it)->points.size(); ++j)
         {
@@ -235,11 +235,11 @@ void World::apply_forces(double deltaT)
                 double delta      = direction.norm2() - Rope::distance;
                 direction.normalize2();
                 direction  = direction * delta * rope.elasticity;
-                rope.points[j]->velocity     = rope.points[j]->velocity + direction;
-                rope.points[j + 1]->velocity = rope.points[j]->velocity - direction;
+                rope.points[j]->velocity     = rope.points[j]->velocity - direction;
+                rope.points[j + 1]->velocity = rope.points[j]->velocity + direction;
             }
         }
-    }*/
+    }
     for (std::vector<Force>::iterator it = forces.begin(); it != forces.end(); ++it)
     {
         if (it->Body->mass < vars.UNMOVABLE_MASS)

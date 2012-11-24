@@ -51,7 +51,7 @@ void DoFConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     init();
     if (!Enough())
     {
-        SolveLambda(A, Eta, Lambda, -0.01, 0.01);
+        SolveLambda(A, Eta, Lambda, -DBL_MAX, DBL_MAX);
         impulse = Vector2(1, 0) * Lambda[0] + Vector2(0, 1) * Lambda[1];
         torque = Lambda[2];
         /*if (impulse + sum_impulse < 0)
