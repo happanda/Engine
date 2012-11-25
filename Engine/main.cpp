@@ -15,8 +15,8 @@
 
 World world;
 Force* drag_force = 0;
-double drag_force_spring_coef = 20;
-double drag_force_damper_coef = 10;
+double drag_force_spring_coef = 50;
+double drag_force_damper_coef = 20;
 Body* kickBody = 0;
 
 double motion_x = 0;
@@ -450,7 +450,10 @@ void init_bodies3()
     world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
     //world.addBody(new Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
     
-    world.addRope(new Rope(Vector2(8, 10), 30, 10, 100, 10));
+    Rope* rope = new Rope(Vector2(8, 10), 30, 10, 100, 0.005);
+    world.addRope(rope);
+
+    world.addConstraint(new DoFConstraint(rope->points[0], XY_AXIS, &(world.vars)));
     // some simple axis constraints
     //DoFmotor* motor = new DoFmotor(world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
     //world.addConstraint(motor);

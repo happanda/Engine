@@ -235,9 +235,12 @@ void World::apply_forces(double deltaT)
                 double delta      = direction.norm2() - Rope::distance;
                 if (delta > 0.00001)
                 {
-                    direction  = direction * rope.elasticity * deltaT;
-                    rope.points[j]->velocity     = rope.points[j]->velocity + direction * rope.points[j]->iMass;
-                    rope.points[j + 1]->velocity = rope.points[j + 1]->velocity - direction * rope.points[j]->iMass;
+                    direction.normalize2();
+                    direction = direction * delta * rope.elasticity * deltaT;
+                    rope.points[j]->velocity = rope.points[j]->velocity * (1 - rope.damping)
+                        + direction * rope.points[j]->iMass;
+                    rope.points[j + 1]->velocity = rope.points[j + 1]->velocity * (1 - rope.damping)
+                        - direction * rope.points[j]->iMass;
                 }
             }
         }
