@@ -100,6 +100,9 @@
     <ClCompile Include="Constraints\FixedConstraint.cpp">
       <Filter>Contraints</Filter>
     </ClCompile>
+    <ClCompile Include="Body\Chain.cpp">
+      <Filter>Body</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Draw.h">
@@ -176,6 +179,9 @@
     </ClInclude>
     <ClInclude Include="Constraints\FixedConstraint.h">
       <Filter>Contraints</Filter>
+    </ClInclude>
+    <ClInclude Include="Body\Chain.h">
+      <Filter>Body</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
