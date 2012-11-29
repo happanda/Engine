@@ -11,7 +11,8 @@ enum ConstraintType
     BASE_CONSTRAINT,
     CONTACT_CONSTRAINT,
     FRICTION_CONSTRAINT,
-    DOF_CONSTRAINT
+    DOF_CONSTRAINT,
+    FIXED_CONSTRAINT
 };
 
 struct ConstraintInit
