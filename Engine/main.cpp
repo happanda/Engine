@@ -8,6 +8,7 @@
 #include "Body\Body.h"
 #include "Graphics\Draw.h"
 #include "Constraints\DoFConstraint.h"
+#include "Constraints\FixedConstraint.h"
 #include "Motors\DoFmotor.h"
 #include "test_GJK.h"
 #include "glut/glut.h"
@@ -442,18 +443,20 @@ void init_bodies3()
     
     double bigmass = wvars.UNMOVABLE_MASS;
     world.addBody(new Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    //world.addBody(new Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
     world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
     world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
 
     world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 6, 0, 0, 0));
     world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
-    //world.addBody(new Body(new circle(0, 0, 0, 4), 6, 0, 0, 0));
+    world.addConstraint(new FixedConstraint(world.bodies[4], Vector2::ORIGIN, world.bodies[5],
+        Vector2::ORIGIN, &(world.vars)));
     
-    Rope* rope = new Rope(Vector2(8, 10), 30, 10, 100, 0.005);
-    world.addRope(rope);
+    /*Rope* rope = new Rope(Vector2(8, 10), 30, 10, 100, 0.005);
+    world.addRope(rope);*/
 
-    world.addConstraint(new DoFConstraint(rope->points[0], XY_AXIS, &(world.vars)));
+    //world.addConstraint(new DoFConstraint(rope->points[0], XY_AXIS, &(world.vars)));
+
     // some simple axis constraints
     //DoFmotor* motor = new DoFmotor(world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
     //world.addConstraint(motor);

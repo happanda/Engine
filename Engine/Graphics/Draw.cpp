@@ -158,25 +158,31 @@ void draw_constraints(const std::vector<Constraint*>& constraints)
         switch((*it)->Type)
         {
         case DOF_CONSTRAINT:
-            glColor3f(1.0f, 0.0f, 0.0f);
-            DoFType dof_type = ((DoFConstraint*)*it)->dof_type;
-            if ((dof_type & X_AXIS) != 0)
-                draw_segment(Segment((*it)->bodyA->form->point, (*it)->bodyA->form->point + eps_x));
-            if ((dof_type & Y_AXIS) != 0)
-                draw_segment(Segment((*it)->bodyA->form->point, (*it)->bodyA->form->point + eps_y));
-            if ((dof_type & ANGLE) != 0)
             {
-                GLfloat twoPi = 2.0f * 3.14159f;
-                glBegin(GL_LINE_LOOP);
-                for (int numsec = 0; numsec <= CIRCLE_SEGMENTS; numsec++)
+                glColor3f(1.0f, 0.0f, 0.0f);
+                DoFType dof_type = ((DoFConstraint*)*it)->dof_type;
+                if ((dof_type & X_AXIS) != 0)
+                    draw_segment(Segment((*it)->bodyA->form->point, (*it)->bodyA->form->point + eps_x));
+                if ((dof_type & Y_AXIS) != 0)
+                    draw_segment(Segment((*it)->bodyA->form->point, (*it)->bodyA->form->point + eps_y));
+                if ((dof_type & ANGLE) != 0)
                 {
-                    glVertex2f((*it)->bodyA->form->point.v1 + eps_rad
-                        * cos((*it)->bodyA->form->alpha + numsec *  twoPi / CIRCLE_SEGMENTS),
-                        (*it)->bodyA->form->point.v2 + eps_rad
-                        * sin((*it)->bodyA->form->alpha + numsec * twoPi / CIRCLE_SEGMENTS));
+                    GLfloat twoPi = 2.0f * 3.14159f;
+                    glBegin(GL_LINE_LOOP);
+                    for (int numsec = 0; numsec <= CIRCLE_SEGMENTS; numsec++)
+                    {
+                        glVertex2f((*it)->bodyA->form->point.v1 + eps_rad
+                            * cos((*it)->bodyA->form->alpha + numsec *  twoPi / CIRCLE_SEGMENTS),
+                            (*it)->bodyA->form->point.v2 + eps_rad
+                            * sin((*it)->bodyA->form->alpha + numsec * twoPi / CIRCLE_SEGMENTS));
+                    }
+                    glEnd();
                 }
-                glEnd();
+                break;
             }
+        case FIXED_CONSTRAINT:
+            glColor3f(1.0f, 0.0f, 0.0f);
+            draw_segment(Segment((*it)->bodyA->form->point, (*it)->bodyB->form->point));
             break;
         }
     }

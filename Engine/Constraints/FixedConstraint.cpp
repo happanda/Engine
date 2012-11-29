@@ -1,3 +1,4 @@
+#include <iostream>
 #include <float.h>
 #include "FixedConstraint.h"
 #include "Math\PGSsolver.h"
@@ -20,7 +21,9 @@ FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 r
 void FixedConstraint::init()
 {
     Vector2 deltaP = bodyB->form->point - bodyA->form->point;
-    Eta[0] = deltaP * (bodyA->velocity - bodyB->velocity) * w_vars->iTimeStep;
+    deltaP.normalize2();
+    double rel_vel = deltaP * (bodyA->velocity - bodyB->velocity);
+    Eta[0] = rel_vel * w_vars->iTimeStep;
 }
 
 void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
@@ -31,7 +34,9 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     if (!Enough())
     {
         SolveLambda(A, Eta, Lambda, -DBL_MAX, DBL_MAX);
-        impulse = (bodyB->form->point - bodyA->form->point) * Lambda[0];
+        Vector2 dist = -bodyB->form->point + bodyA->form->point;
+        dist.normalize2();
+        impulse = dist * Lambda[0] * 0.5;
     }
     else
     {
@@ -46,6 +51,5 @@ size_t FixedConstraint::NumIter(void) const
 
 bool FixedConstraint::Enough(void) const
 {
-    return (bodyB->velocity - bodyA->velocity) * (bodyB->form->point - bodyA->form->point) <= 0.0001
-        || Constraint::Enough();
+    return Constraint::Enough();
 }
