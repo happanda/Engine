@@ -264,6 +264,14 @@ void World::addRope(Rope* rope)
         bodies.push_back(*it);
 }
 
+void World::addChain(Chain* chain)
+{
+    for (auto it = chain->points.begin(); it != chain->points.end(); ++it)
+        addBody(*it);
+    for (auto it = chain->constraints_.begin(); it != chain->constraints_.end(); ++it)
+        addConstraint(*it);
+}
+
 void World::addConstraint(Constraint* constraint)
 {
     constraints.push_back(constraint);

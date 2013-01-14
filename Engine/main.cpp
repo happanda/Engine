@@ -447,11 +447,14 @@ void init_bodies3()
     world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
     world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
 
-    world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 6, 0, 0, 0));
-    world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 6, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 1, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 12, 0, 0, 0));
     world.addConstraint(new FixedConstraint(world.bodies[4], Vector2::ORIGIN, world.bodies[5],
         Vector2::ORIGIN, &(world.vars)));
     
+    Chain* chain = new Chain(Vector2(8, 2), 2, 0.5, &world.vars);
+    world.addChain(chain);
+
     /*Rope* rope = new Rope(Vector2(8, 10), 30, 10, 100, 0.005);
     world.addRope(rope);*/
 

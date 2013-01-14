@@ -5,6 +5,7 @@
 #include "WorldVars.h"
 #include "Body\Body.h"
 #include "Body\Rope.h"
+#include "Body\Chain.h"
 #include "Force\Force.h"
 #include "Collision\Collision.h"
 #include "Constraints\Constraint.h"
@@ -17,6 +18,7 @@ public:
     void init();
     void addBody(Body* body);
     void addRope(Rope* rope);
+    void addChain(Chain* chain);
     void addConstraint(Constraint* constraint);
     void addForce(Force force);
     void removeForce(int id);
