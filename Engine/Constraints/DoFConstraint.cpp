@@ -66,7 +66,7 @@ void DoFConstraint::_deltaImpulse(Vector2& impulse, double& torque)
 
 size_t DoFConstraint::NumIter(void) const
 {
-    return 5;
+    return 50;
 }
 
 bool DoFConstraint::Enough(void) const

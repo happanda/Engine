@@ -452,11 +452,11 @@ void init_bodies3()
     world.addConstraint(new FixedConstraint(world.bodies[4], Vector2::ORIGIN, world.bodies[5],
         Vector2::ORIGIN, &(world.vars)));
     
-    Chain* chain = new Chain(Vector2(8, 2), 2, 0.5, &world.vars);
-    world.addChain(chain);
+    /*Chain* chain = new Chain(Vector2(8, 2), 20, 0.5, &world.vars);
+    world.addChain(chain);*/
 
-    /*Rope* rope = new Rope(Vector2(8, 10), 30, 10, 100, 0.005);
-    world.addRope(rope);*/
+    Rope* rope = new Rope(Vector2(8, 10), 30, 10, 100, 0.005);
+    world.addRope(rope);
 
     //world.addConstraint(new DoFConstraint(rope->points[0], XY_AXIS, &(world.vars)));
 

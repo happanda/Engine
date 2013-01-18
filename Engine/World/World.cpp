@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include "world.h"
 #include <stdio.h>
 #include "Collision\GJK.h"
@@ -103,6 +104,8 @@ void World::resolve_constraints(double deltaT)
                 cc->ApplyImpulse();
             }
         }
+
+        cc->Fix();
     }
 }
 

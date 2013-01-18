@@ -29,8 +29,9 @@ public:
 
     void DeltaImpulse();
     void ApplyImpulse();
-    bool Enough(void) const;
-    size_t NumIter(void) const;
+    virtual void Fix();
+    virtual bool Enough(void) const;
+    virtual size_t NumIter(void) const;
 
     Body* bodyA;
     Body* bodyB;

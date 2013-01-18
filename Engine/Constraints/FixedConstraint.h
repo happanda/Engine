@@ -10,8 +10,13 @@ public:
     size_t NumIter(void) const;
     bool Enough(void) const;
 protected:
+    void Fix();
     void _deltaImpulse(Vector2& impulse, double& torque);
     void init();
+
+private:
+    double init_dist_;
+    double rel_vel_;
 };
 
 #endif

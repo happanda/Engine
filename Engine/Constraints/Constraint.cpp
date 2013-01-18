@@ -56,6 +56,10 @@ void Constraint::ApplyImpulse()
    }
 }
 
+void Constraint::Fix()
+{
+}
+
 Constraint::Constraint(const Constraint& constr):
     Type(constr.Type), bodyA(constr.bodyA), bodyB(constr.bodyB),
     rA(constr.rA), rB(constr.rB), w_vars(constr.w_vars)

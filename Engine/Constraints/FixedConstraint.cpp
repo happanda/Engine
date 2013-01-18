@@ -12,9 +12,9 @@ FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 r
     A[0] = std::vector<double>(1);
     Eta = std::vector<double>(1);
     Lambda = std::vector<double>(1, 1);
-    //impulseDirection = _collision->normal;
 
     Vector2 dist = (bodyB->form->point - bodyA->form->point);
+    init_dist_ = dist.norm2();
     dist.normalize2();
 
     /************************************************************************/
@@ -23,19 +23,21 @@ FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 r
     A[0][0] = (bodyA->iMass + bodyB->iMass)
         + bodyA->iInert * (dist * bodyA->form->point) * (dist * bodyA->form->point)
         + bodyB->iInert * (dist * bodyB->form->point) * (dist * bodyB->form->point);
-    //min_lambda = (1 + w_vars->RESTITUTION) / A[0][0] * w_vars->iTimeStep;
 }
 
 void FixedConstraint::init()
 {
+    Vector2 dist = (bodyB->form->point - bodyA->form->point);
+    dist.normalize2();
+
+    A[0][0] = (bodyA->iMass + bodyB->iMass)
+        + bodyA->iInert * (dist * bodyA->form->point) * (dist * bodyA->form->point)
+        + bodyB->iInert * (dist * bodyB->form->point) * (dist * bodyB->form->point);
+
     Vector2 deltaP = bodyB->form->point - bodyA->form->point;
     deltaP.normalize2();
-    double rel_vel = deltaP * (bodyA->velocity - bodyB->velocity);
-    Eta[0] = rel_vel;// * w_vars->iTimeStep;
-    /*if (Eta[0] > 0)
-    {
-        std::cout << Eta[0] << std::endl;
-    }*/
+    rel_vel_ = deltaP * (bodyB->velocity - bodyA->velocity);
+    Eta[0] = -rel_vel_;
 }
 
 void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
@@ -56,12 +58,28 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     }
 }
 
+void FixedConstraint::Fix()
+{
+    Vector2 dist = bodyB->form->point - bodyA->form->point;
+
+    double delta = dist.norm2() - init_dist_;
+    if (abs(delta) > DBL_EPSILON)
+    {
+        dist.normalize2();
+        bodyA->form->point = bodyA->form->point + dist * (delta / 2);
+        bodyB->form->point = bodyB->form->point - dist * (delta / 2);
+    }
+}
+
 size_t FixedConstraint::NumIter(void) const
 {
-    return 50;
+    return 500;
 }
 
 bool FixedConstraint::Enough(void) const
 {
-    return Constraint::Enough();
+    Vector2 deltaP = bodyB->form->point - bodyA->form->point;
+    deltaP.normalize2();
+    double rel_vel = deltaP * (bodyB->velocity - bodyA->velocity);
+    return abs(rel_vel) < DBL_EPSILON || Constraint::Enough();
 }
