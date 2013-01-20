@@ -30,13 +30,11 @@ void FixedConstraint::init()
     Vector2 dist = (bodyB->form->point - bodyA->form->point);
     dist.normalize2();
 
-    A[0][0] = (bodyA->iMass + bodyB->iMass)
-        + bodyA->iInert * (dist * bodyA->form->point) * (dist * bodyA->form->point)
-        + bodyB->iInert * (dist * bodyB->form->point) * (dist * bodyB->form->point);
+    A[0][0] = (bodyA->iMass + bodyB->iMass);
+        //+ bodyA->iInert * (dist * bodyA->form->point) * (dist * bodyA->form->point)
+        //+ bodyB->iInert * (dist * bodyB->form->point) * (dist * bodyB->form->point);
 
-    Vector2 deltaP = bodyB->form->point - bodyA->form->point;
-    deltaP.normalize2();
-    rel_vel_ = deltaP * (bodyB->velocity - bodyA->velocity);
+    rel_vel_ = dist * (bodyB->velocity - bodyA->velocity);
     Eta[0] = -rel_vel_;
 }
 
@@ -48,7 +46,7 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     if (!Enough())
     {
         SolveLambda(A, Eta, Lambda, -DBL_MAX, DBL_MAX);
-        Vector2 dist = -bodyB->form->point + bodyA->form->point;
+        Vector2 dist = -(bodyB->form->point - bodyA->form->point);
         dist.normalize2();
         impulse = dist * Lambda[0] * 0.5;
     }
@@ -66,8 +64,12 @@ void FixedConstraint::Fix()
     if (abs(delta) > DBL_EPSILON)
     {
         dist.normalize2();
-        bodyA->form->point = bodyA->form->point + dist * (delta / 2);
-        bodyB->form->point = bodyB->form->point - dist * (delta / 2);
+
+        double fix_d = A[0][0] * delta;
+        Vector2 fix_dist = dist * fix_d;
+
+        bodyA->form->point = bodyA->form->point + fix_dist * bodyA->iMass;
+        bodyB->form->point = bodyB->form->point + fix_dist * bodyB->iMass;
     }
 }
 

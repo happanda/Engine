@@ -4,7 +4,8 @@
 const double Rope::radius   = 0.2;
 const double Rope::distance = 0.45;
 
-Rope::Rope(Vector2 const& point, size_t num_points, double mazz, double elast, double damp)
+Rope::Rope(Vector2 const& point, size_t num_points, double mazz, double elast, double damp,
+    orientation_t orient)
     : points    (num_points)
     , elasticity(elast)
     , damping   (damp)
@@ -14,7 +15,10 @@ Rope::Rope(Vector2 const& point, size_t num_points, double mazz, double elast, d
     for (size_t i = 0; i < num_points; ++i)
     {
         points[i] = new Body(new circle(disp.v1, disp.v2, 0, radius), single_mass, 0, 0, 0);
-        disp.v2 -= distance;
+        if (orient == o_vertical)
+            disp.v2 -= distance;
+        else
+            disp.v1 += distance;
     }
 }
 

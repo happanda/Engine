@@ -2,7 +2,7 @@
 #include "Chain.h"
 
 const double Chain::radius   = 0.2;
-const double Chain::distance = 0.5;
+const double Chain::distance = 0.9;
 
 Chain::Chain(Vector2 const& point, size_t num_points, double mazz, world_vars* vars)
     : points    (num_points)
