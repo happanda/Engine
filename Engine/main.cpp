@@ -466,7 +466,8 @@ void init_bodies3()
     
     Chain* chain = new Chain(Vector2(8, 2), 15, 15, &world.vars);
     world.addChain(chain);
-
+    world.addConstraint(new DoFConstraint(chain->points.front(), XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(chain->points.back(), XY_AXIS, &(world.vars)));
 
     /*Rope* rope = new Rope(Vector2(8, 0), 30, 10, 500, 0.05, o_horizontal);
     world.addRope(rope);

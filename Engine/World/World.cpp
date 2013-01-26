@@ -50,10 +50,15 @@ void World::update(double deltaT)
         resolve_collision(deltaT);
         resolve_constraints(deltaT);
     }
-
     for (std::vector<Constraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
     {
-        (*it)->Fix();
+        if (dynamic_cast<FixedConstraint*>(*it) != NULL)
+            (*it)->Fix();
+    }
+    for (std::vector<Constraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
+    {
+        if (dynamic_cast<DoFConstraint*>(*it) != NULL)
+            (*it)->Fix();
     }
 
     double energy = 0;

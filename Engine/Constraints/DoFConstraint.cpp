@@ -16,11 +16,20 @@ DoFConstraint::DoFConstraint(Body* body, DoFType type, world_vars* vars):
     //impulseDirection = _collision->normal;
 
     if ((type & X_AXIS) != 0)
+    {
+        x_init_ = body->form->point.v1;
         A[0][0] = bodyA->iMass;
+    }
     if ((type & Y_AXIS) != 0)
+    {
+        y_init_ = body->form->point.v2;
         A[1][1] = bodyA->iMass;
+    }
     if ((type & ANGLE) != 0)
+    {
+        angle_init_ = body->form->alpha;
         A[2][2] = bodyA->iInert;
+    }
     //min_lambda = (1 + w_vars->RESTITUTION) / A[0][0] * w_vars->iTimeStep;
 }
 
@@ -44,6 +53,25 @@ void DoFConstraint::init()
         Eta[1] = -bodyA->velocity.v2;
     if ((dof_type & ANGLE) != 0)
         Eta[2] = -bodyA->angle_vel;
+}
+
+void DoFConstraint::Fix()
+{
+    Vector2 dist = bodyA->form->point;
+    double angle = bodyA->form->alpha;
+
+    if ((dof_type & X_AXIS) != 0)
+    {
+        bodyA->form->point.v1 = x_init_;
+    }
+    if ((dof_type & Y_AXIS) != 0)
+    {
+        bodyA->form->point.v2 = y_init_;
+    }
+    if ((dof_type & ANGLE) != 0)
+    {
+        bodyA->form->alpha = angle_init_;
+    }
 }
 
 void DoFConstraint::_deltaImpulse(Vector2& impulse, double& torque)

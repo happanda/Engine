@@ -24,8 +24,14 @@ public:
     bool Enough(void) const;
     DoFType dof_type;
 protected:
+    void Fix();
     void _deltaImpulse(Vector2& impulse, double& torque);
     void init();
+
+private:
+    double x_init_;
+    double y_init_;
+    double angle_init_;
 };
 
 #endif
