@@ -91,12 +91,17 @@ void step()
             glColor3f(0.0f, 0.0f, 1.0f);
             draw_segment(Segment(Vector2(wx, wy), kickBody->form->point));
         }
-
-        world.update(world.vars.timeStep);
-        prevCl = cl;
+                
         if (draw_tw)
             TwDraw();
         glutSwapBuffers();
+    }
+
+    int factor = 4;
+    if (cl > prevCl + (double)CLOCKS_PER_SEC * speed / 1000 && !pause)
+    {
+        world.update(world.vars.timeStep);
+        prevCl = cl;
     }
 }
 
@@ -447,19 +452,26 @@ void init_bodies3()
     world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
     world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
 
+    
+    world.addBody(new Body(new rectangle(-12, 0, 0, 2, 4), 1, 0, 0, 0));
+    world.addBody(new Body(new rectangle(-8, 0, 0, 2, 4), 1, 0, 0, 0));
     world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 1, 0, 0, 0));
-    world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 12, 0, 0, 0));
-    world.addConstraint(new FixedConstraint(world.bodies[4], Vector2::ORIGIN, world.bodies[5],
+    world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 1, 0, 0, 0));
+    world.addConstraint(new FixedConstraint(world.bodies[5], Vector2::ORIGIN, world.bodies[4],
+        Vector2::ORIGIN, &(world.vars)));
+    world.addConstraint(new FixedConstraint(world.bodies[5], Vector2::ORIGIN, world.bodies[6],
+        Vector2::ORIGIN, &(world.vars)));
+    world.addConstraint(new FixedConstraint(world.bodies[6], Vector2::ORIGIN, world.bodies[7],
         Vector2::ORIGIN, &(world.vars)));
     
-    /*Chain* chain = new Chain(Vector2(8, 2), 2, 0.5, &world.vars);
-    world.addChain(chain);*/
+    Chain* chain = new Chain(Vector2(8, 2), 15, 15, &world.vars);
+    world.addChain(chain);
 
-    Rope* rope = new Rope(Vector2(8, 0), 30, 10, 500, 0.05, o_horizontal);
+
+    /*Rope* rope = new Rope(Vector2(8, 0), 30, 10, 500, 0.05, o_horizontal);
     world.addRope(rope);
-
     world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(rope->points.back(), XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(rope->points.back(), XY_AXIS, &(world.vars)));*/
 
     // some simple axis constraints
     //DoFmotor* motor = new DoFmotor(world.bodies[4], MOVE_XY_ROTATE, &(world.vars));
@@ -572,7 +584,7 @@ void init_many_circles()
 
     int s = 12;
     double sp = (double)RAND_MAX / 12;
-    for (int i = -s; i < s; i += 4)
+    for (int i = 0; i < 2 * s; i += 4)
     {
         for (int j = -s + 2; j < s; j += 4)
         {
@@ -582,6 +594,11 @@ void init_many_circles()
                 (double)rand() / sp - (double)rand() / sp, 0));
         }
     }
+
+    Rope* rope = new Rope(Vector2(-3, 12), 55, 10, 500, 0.05, o_vertical);
+    world.addRope(rope);
+    world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(rope->points.back(), XY_AXIS, &(world.vars)));
 
     // bounds
     double bigmass = 100000;

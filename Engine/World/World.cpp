@@ -43,9 +43,19 @@ void World::update(double deltaT)
     force_ext[5] = 0;
 
     apply_forces(deltaT);
-    gjk_collide(bodies, collisions);
-    resolve_collision(deltaT);
-    resolve_constraints(deltaT);
+    
+    for (size_t i = 0; i < 1; ++i)
+    {
+        gjk_collide(bodies, collisions);
+        resolve_collision(deltaT);
+        resolve_constraints(deltaT);
+    }
+
+    for (std::vector<Constraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
+    {
+        (*it)->Fix();
+    }
+
     double energy = 0;
     for (std::vector<Body*>::iterator it = bodies.begin(); it != bodies.end(); ++it)
     {
@@ -104,8 +114,6 @@ void World::resolve_constraints(double deltaT)
                 cc->ApplyImpulse();
             }
         }
-
-        cc->Fix();
     }
 }
 

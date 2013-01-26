@@ -61,6 +61,8 @@ void FixedConstraint::Fix()
     Vector2 dist = bodyB->form->point - bodyA->form->point;
 
     double delta = dist.norm2() - init_dist_;
+    dist.normalize2();
+
     if (abs(delta) > DBL_EPSILON)
     {
         dist.normalize2();
@@ -68,8 +70,8 @@ void FixedConstraint::Fix()
         double fix_d = A[0][0] * delta;
         Vector2 fix_dist = dist * fix_d;
 
-        bodyA->form->point = bodyA->form->point + fix_dist * bodyA->iMass;
-        bodyB->form->point = bodyB->form->point + fix_dist * bodyB->iMass;
+        bodyA->form->point = bodyA->form->point + fix_dist * bodyA->iMass * 0.5;
+        bodyB->form->point = bodyB->form->point - fix_dist * bodyB->iMass * 0.5;
     }
 }
 
