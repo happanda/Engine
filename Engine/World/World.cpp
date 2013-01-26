@@ -273,6 +273,16 @@ void World::addBody(Body* body)
     bodies.push_back(body);
 }
 
+void World::addDestructable(Destructable* destr)
+{
+    for (size_t i = 0; i < destr->parts.size(); ++i)
+        for (size_t j = 0; j < destr->parts[i].size(); ++j)
+            bodies.push_back(destr->parts[i][j]);
+
+    for (auto it = destr->constraints.begin(); it != destr->constraints.end(); ++it)
+        addConstraint(*it);
+}
+
 void World::addRope(Rope* rope)
 {
     ropes.push_back(rope);

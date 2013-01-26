@@ -98,6 +98,7 @@ copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Body\Chain.cpp" />
+    <ClCompile Include="Body\Destructable.cpp" />
     <ClCompile Include="Body\Rope.cpp" />
     <ClCompile Include="Constraints\FixedConstraint.cpp" />
     <ClCompile Include="Graphics\Draw.cpp" />
@@ -125,6 +126,7 @@ copy $(SolutionDir)\lib\anttweakbar\AntTweakBar.dll $(OutDir)
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Body\Chain.h" />
+    <ClInclude Include="Body\Destructable.h" />
     <ClInclude Include="Body\Rope.h" />
     <ClInclude Include="Constraints\FixedConstraint.h" />
     <ClInclude Include="Graphics\Draw.h" />

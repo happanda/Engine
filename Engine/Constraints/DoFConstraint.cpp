@@ -57,9 +57,6 @@ void DoFConstraint::init()
 
 void DoFConstraint::Fix()
 {
-    Vector2 dist = bodyA->form->point;
-    double angle = bodyA->form->alpha;
-
     if ((dof_type & X_AXIS) != 0)
     {
         bodyA->form->point.v1 = x_init_;

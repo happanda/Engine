@@ -5,6 +5,7 @@
 #include <float.h>
 #include "World\World.h"
 #include "Body\Shape.h"
+#include "Body\Destructable.h"
 #include "Body\Body.h"
 #include "Graphics\Draw.h"
 #include "Constraints\DoFConstraint.h"
@@ -452,7 +453,10 @@ void init_bodies3()
     world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
     world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
 
-    
+
+    /*Destructable* destr = new Destructable(Vector2::ORIGIN, 10, 10, 100, &world.vars);
+    world.addDestructable(destr);*/
+
     world.addBody(new Body(new rectangle(-12, 0, 0, 2, 4), 1, 0, 0, 0));
     world.addBody(new Body(new rectangle(-8, 0, 0, 2, 4), 1, 0, 0, 0));
     world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 1, 0, 0, 0));

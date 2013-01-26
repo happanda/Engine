@@ -4,6 +4,7 @@
 #include <vector>
 #include "WorldVars.h"
 #include "Body\Body.h"
+#include "Body\Destructable.h"
 #include "Body\Rope.h"
 #include "Body\Chain.h"
 #include "Force\Force.h"
@@ -17,6 +18,7 @@ public:
     World();
     void init();
     void addBody(Body* body);
+    void addDestructable(Destructable* destr);
     void addRope(Rope* rope);
     void addChain(Chain* chain);
     void addConstraint(Constraint* constraint);

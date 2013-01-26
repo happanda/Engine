@@ -103,6 +103,9 @@
     <ClCompile Include="Body\Chain.cpp">
       <Filter>Body</Filter>
     </ClCompile>
+    <ClCompile Include="Body\Destructable.cpp">
+      <Filter>Body</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Graphics\Draw.h">
@@ -181,6 +184,9 @@
       <Filter>Contraints</Filter>
     </ClInclude>
     <ClInclude Include="Body\Chain.h">
+      <Filter>Body</Filter>
+    </ClInclude>
+    <ClInclude Include="Body\Destructable.h">
       <Filter>Body</Filter>
     </ClInclude>
   </ItemGroup>
