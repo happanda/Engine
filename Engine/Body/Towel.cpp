@@ -3,8 +3,8 @@
 Destructable::Destructable(Vector2 const& point, size_t width, size_t height, double mazz, world_vars* vars)
     : w_vars    (vars)
 {
-    part_width  = 2;
-    part_height = 2;
+    part_width  = 0.4;
+    part_height = 0.4;
 
     size_t num_parts = width * height;
     double single_mass = mazz / num_parts;
@@ -21,10 +21,8 @@ Destructable::Destructable(Vector2 const& point, size_t width, size_t height, do
 
     for (size_t i = 0; i < width; ++i)
         for (size_t j = 0; j < height - 1; ++j)
-        {
             constraints.push_back(new FixedConstraint(parts[i][j], Vector2::ORIGIN, parts[i][j + 1],
                 Vector2::ORIGIN, w_vars));
-        }
 
     for (size_t i = 0; i < width - 1; ++i)
         for (size_t j = 0; j < height; ++j)

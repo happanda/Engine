@@ -36,7 +36,7 @@ void FixedConstraint::init()
         + bodyB->iInert * (dist3.cross(rB3).v3) * (dist3.cross(rB3).v3);
 
     rel_vel_ = dist * (bodyB->point_velocity(bodyB->form->point + rB)
-        - bodyB->point_velocity(bodyB->form->point + rB));
+        - bodyA->point_velocity(bodyA->form->point + rA));
     Eta[0] = -rel_vel_;
 }
 
@@ -69,18 +69,17 @@ void FixedConstraint::Fix()
     {
         dist.normalize2();
 
-        double fix_d = delta;
-        Vector2 fix_dist = dist * fix_d;
+        Vector2 fix_dist = dist * delta;
 
         bodyA->form->point = bodyA->form->point + fix_dist * bodyA->iMass * 0.5;
         bodyB->form->point = bodyB->form->point - fix_dist * bodyB->iMass * 0.5;
 
-        Vector3 dist3(dist.v1, dist.v2, 0);
+        Vector3 dist3(fix_dist.v1, fix_dist.v2, 0);
         Vector3 rA3(rA.v1, rA.v2, 0);
         Vector3 rB3(rB.v1, rB.v2, 0);
 
-        //bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iMass;
-        //bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iMass;
+        bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert;
+        bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert;
     }
 }
 
@@ -91,8 +90,9 @@ size_t FixedConstraint::NumIter(void) const
 
 bool FixedConstraint::Enough(void) const
 {
-    Vector2 deltaP = bodyB->form->point - bodyA->form->point;
+    Vector2 deltaP = bodyB->form->point + rB - bodyA->form->point - rA;
     deltaP.normalize2();
-    double rel_vel = deltaP * (bodyB->velocity - bodyA->velocity);
+    double rel_vel = deltaP * (bodyB->point_velocity(bodyB->form->point + rB)
+        - bodyA->point_velocity(bodyA->form->point + rA));
     return abs(rel_vel) < DBL_EPSILON || Constraint::Enough();
 }

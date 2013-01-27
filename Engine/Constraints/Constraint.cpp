@@ -40,6 +40,7 @@ void Constraint::ApplyImpulse()
       Vector3 r3(rA.v1, rA.v2, 0);
       r3 = r3.cross(imp3);
       double ro1 = r3.v3;
+
       bodyA->angle_vel += iinrt1 * ro1;
       bodyA->angle_vel += iinrt1 * Torque;
    }

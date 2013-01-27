@@ -454,24 +454,26 @@ void init_bodies3()
     world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
 
 
-    /*Destructable* destr = new Destructable(Vector2::ORIGIN, 10, 10, 100, &world.vars);
+    /*Destructable* destr = new Destructable(Vector2::ORIGIN, 12, 5, 100, &world.vars);
     world.addDestructable(destr);*/
 
     world.addBody(new Body(new rectangle(-12, 0, 0, 2, 4), 1, 0, 0, 0));
     world.addBody(new Body(new rectangle(-8, 0, 0, 2, 4), 1, 0, 0, 0));
-    //world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 1, 0, 0, 0));
-    //world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 1, 0, 0, 0));
-    world.addConstraint(new FixedConstraint(world.bodies[5], Vector2(4, 0), world.bodies[4],
-        Vector2(-4, 0), &(world.vars)));
-    /*world.addConstraint(new FixedConstraint(world.bodies[5], Vector2::ORIGIN, world.bodies[6],
+    world.addBody(new Body(new rectangle(-4, 0, 0, 2, 4), 1, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 0, 0, 2, 4), 1, 0, 0, 0));
+    world.addConstraint(new FixedConstraint(world.bodies[5], Vector2::ORIGIN, world.bodies[4],
+        Vector2::ORIGIN, &(world.vars)));
+    world.addConstraint(new FixedConstraint(world.bodies[5], Vector2::ORIGIN, world.bodies[4],
+        Vector2::ORIGIN, &(world.vars)));
+    world.addConstraint(new FixedConstraint(world.bodies[5], Vector2::ORIGIN, world.bodies[6],
         Vector2::ORIGIN, &(world.vars)));
     world.addConstraint(new FixedConstraint(world.bodies[6], Vector2::ORIGIN, world.bodies[7],
-        Vector2::ORIGIN, &(world.vars)));*/
+        Vector2::ORIGIN, &(world.vars)));
     
-    Chain* chain = new Chain(Vector2(8, 2), 15, 15, &world.vars);
+    /*Chain* chain = new Chain(Vector2(8, 2), 15, 15, &world.vars);
     world.addChain(chain);
     world.addConstraint(new DoFConstraint(chain->points.front(), XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(chain->points.back(), XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(chain->points.back(), XY_AXIS, &(world.vars)));*/
 
     /*Rope* rope = new Rope(Vector2(8, 0), 30, 10, 500, 0.05, o_horizontal);
     world.addRope(rope);
