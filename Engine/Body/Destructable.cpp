@@ -14,10 +14,8 @@ Destructable::Destructable(Vector2 const& point, size_t width, size_t height, do
         parts.push_back(std::vector<Body*>());
         for (size_t j = 0; j < height; ++j)
         {
-            parts[i].push_back(new Body(new circle(point.v1 + i * (part_width + 0.), point.v2 + j * (part_height + 0.),
-                0, part_width / 2.1), single_mass, 0, 0, 0));
-            /*parts[i].push_back(new Body(new rectangle(point.v1 + i * (part_width + 0.), point.v2 + j * (part_height + 0.),
-                0, part_width, part_height), single_mass, 0, 0, 0));*/
+            parts[i].push_back(new Body(new rectangle(point.v1 + i * (part_width + 0.), point.v2 + j * (part_height + 0.),
+                0, part_width, part_height), single_mass, 0, 0, 0));
         }
     }
 

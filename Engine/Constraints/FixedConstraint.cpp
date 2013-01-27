@@ -5,7 +5,7 @@
 #include "World\World.h"
 
 FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars)
-    : Constraint(bodyA, Vector2::ORIGIN, bodyB, Vector2::ORIGIN, vars)
+    : Constraint(bodyA, rA, bodyB, rB, vars)
 {
     Type = FIXED_CONSTRAINT;
     A = std::vector<std::vector<double>>(1);
@@ -13,28 +13,30 @@ FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 r
     Eta = std::vector<double>(1);
     Lambda = std::vector<double>(1, 1);
 
-    Vector2 dist = (bodyB->form->point - bodyA->form->point);
+    Vector2 dist = (bodyB->form->point + rB - bodyA->form->point - rA);
     init_dist_ = dist.norm2();
     dist.normalize2();
 
     /************************************************************************/
     /* http://www.codezealot.org/archives/267                               */
     /************************************************************************/
-    A[0][0] = (bodyA->iMass + bodyB->iMass)
-        + bodyA->iInert * (dist * bodyA->form->point) * (dist * bodyA->form->point)
-        + bodyB->iInert * (dist * bodyB->form->point) * (dist * bodyB->form->point);
 }
 
 void FixedConstraint::init()
 {
-    Vector2 dist = (bodyB->form->point - bodyA->form->point);
+    Vector2 dist = (bodyB->form->point + rB - bodyA->form->point - rA);
     dist.normalize2();
 
-    A[0][0] = (bodyA->iMass + bodyB->iMass);
-        //+ bodyA->iInert * (dist * bodyA->form->point) * (dist * bodyA->form->point)
-        //+ bodyB->iInert * (dist * bodyB->form->point) * (dist * bodyB->form->point);
+    Vector3 dist3(dist.v1, dist.v2, 0);
+    Vector3 rA3(rA.v1, rA.v2, 0);
+    Vector3 rB3(rB.v1, rB.v2, 0);
 
-    rel_vel_ = dist * (bodyB->velocity - bodyA->velocity);
+    A[0][0] = (bodyA->iMass + bodyB->iMass)
+        + bodyA->iInert * (dist3.cross(rA3).v3) * (dist3.cross(rA3).v3)
+        + bodyB->iInert * (dist3.cross(rB3).v3) * (dist3.cross(rB3).v3);
+
+    rel_vel_ = dist * (bodyB->point_velocity(bodyB->form->point + rB)
+        - bodyB->point_velocity(bodyB->form->point + rB));
     Eta[0] = -rel_vel_;
 }
 
@@ -46,7 +48,7 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     if (!Enough())
     {
         SolveLambda(A, Eta, Lambda, -DBL_MAX, DBL_MAX);
-        Vector2 dist = -(bodyB->form->point - bodyA->form->point);
+        Vector2 dist = -(bodyB->form->point + rB - bodyA->form->point - rA);
         dist.normalize2();
         impulse = dist * Lambda[0] * 0.5;
     }
@@ -58,7 +60,7 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
 
 void FixedConstraint::Fix()
 {
-    Vector2 dist = bodyB->form->point - bodyA->form->point;
+    Vector2 dist = bodyB->form->point + rB - bodyA->form->point - rA;
 
     double delta = dist.norm2() - init_dist_;
     dist.normalize2();
@@ -67,11 +69,18 @@ void FixedConstraint::Fix()
     {
         dist.normalize2();
 
-        double fix_d = A[0][0] * delta;
+        double fix_d = delta;
         Vector2 fix_dist = dist * fix_d;
 
         bodyA->form->point = bodyA->form->point + fix_dist * bodyA->iMass * 0.5;
         bodyB->form->point = bodyB->form->point - fix_dist * bodyB->iMass * 0.5;
+
+        Vector3 dist3(dist.v1, dist.v2, 0);
+        Vector3 rA3(rA.v1, rA.v2, 0);
+        Vector3 rB3(rB.v1, rB.v2, 0);
+
+        //bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iMass;
+        //bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iMass;
     }
 }
 

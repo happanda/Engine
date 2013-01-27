@@ -182,7 +182,8 @@ void draw_constraints(const std::vector<Constraint*>& constraints)
             }
         case FIXED_CONSTRAINT:
             glColor3f(1.0f, 0.0f, 0.0f);
-            draw_segment(Segment((*it)->bodyA->form->point, (*it)->bodyB->form->point));
+            draw_segment(Segment((*it)->bodyA->form->point + (*it)->rA,
+                (*it)->bodyB->form->point + (*it)->rB));
             break;
         }
     }
