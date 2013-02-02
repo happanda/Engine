@@ -83,7 +83,7 @@ void FixedConstraint::Fix()
     double delta = dist.norm2() - init_dist_;
     dist.normalize2();
 
-    /*if (abs(delta) > DBL_EPSILON)
+    if (abs(delta) > DBL_EPSILON)
     {
         dist.normalize2();
 
@@ -96,9 +96,9 @@ void FixedConstraint::Fix()
         Vector3 rA3(rA.v1, rA.v2, 0);
         Vector3 rB3(rB.v1, rB.v2, 0);
 
-        bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert;
-        bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert;
-    }*/
+        /*bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert * 0.5;
+        bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert * 0.5;*/
+    }
 }
 
 size_t FixedConstraint::NumIter(void) const
