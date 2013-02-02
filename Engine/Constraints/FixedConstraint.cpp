@@ -6,6 +6,8 @@
 
 FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars)
     : Constraint(bodyA, rA, bodyB, rB, vars)
+    , rAorig    (rA)
+    , rBorig    (rB)
 {
     Type = FIXED_CONSTRAINT;
     A = std::vector<std::vector<double>>(1);
@@ -24,6 +26,13 @@ FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 r
 
 void FixedConstraint::init()
 {
+    rA = rAorig;
+    rA.rot(bodyA->form->alpha);
+    rB = rBorig;
+    rB.rot(bodyB->form->alpha);
+
+    //std::cout << "Ra: " << rA.v1 << " " << rA.v2 << "   Rb: " << rB.v1 << " " << rB.v2 << std::endl;
+
     Vector2 dist = (bodyB->form->point + rB - bodyA->form->point - rA);
     dist.normalize2();
 
@@ -38,6 +47,9 @@ void FixedConstraint::init()
     rel_vel_ = dist * (bodyB->point_velocity(bodyB->form->point + rB)
         - bodyA->point_velocity(bodyA->form->point + rA));
     Eta[0] = -rel_vel_;
+
+    if (rel_vel_ > 0.1)
+        std::cout << "A: " << A[0][0] << "   rel vel: " << Eta[0] << std::endl;
 }
 
 void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
@@ -48,6 +60,7 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     if (!Enough())
     {
         SolveLambda(A, Eta, Lambda, -DBL_MAX, DBL_MAX);
+
         Vector2 dist = -(bodyB->form->point + rB - bodyA->form->point - rA);
         dist.normalize2();
         impulse = dist * Lambda[0] * 0.5;
@@ -60,12 +73,17 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
 
 void FixedConstraint::Fix()
 {
+    rA = rAorig;
+    rA.rot(bodyA->form->alpha);
+    rB = rBorig;
+    rB.rot(bodyB->form->alpha);
+
     Vector2 dist = bodyB->form->point + rB - bodyA->form->point - rA;
 
     double delta = dist.norm2() - init_dist_;
     dist.normalize2();
 
-    if (abs(delta) > DBL_EPSILON)
+    /*if (abs(delta) > DBL_EPSILON)
     {
         dist.normalize2();
 
@@ -80,7 +98,7 @@ void FixedConstraint::Fix()
 
         bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert;
         bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert;
-    }
+    }*/
 }
 
 size_t FixedConstraint::NumIter(void) const
@@ -90,6 +108,11 @@ size_t FixedConstraint::NumIter(void) const
 
 bool FixedConstraint::Enough(void) const
 {
+    Vector2 rA = rAorig;
+    rA.rot(bodyA->form->alpha);
+    Vector2 rB = rBorig;
+    rB.rot(bodyB->form->alpha);
+
     Vector2 deltaP = bodyB->form->point + rB - bodyA->form->point - rA;
     deltaP.normalize2();
     double rel_vel = deltaP * (bodyB->point_velocity(bodyB->form->point + rB)

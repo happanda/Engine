@@ -3,9 +3,9 @@
 /* Arbitrary members */
 Vector2 rotate(Vector2 vect, double angle)
 {
-   double acos = cos(angle);
-   double asin = sin(angle);
-   Matrix2 m(acos, -asin, asin, acos);
+   double cos_ = cos(angle);
+   double sin_ = sin(angle);
+   Matrix2 m(cos_, -sin_, sin_, cos_);
    return m * vect;
 }
 

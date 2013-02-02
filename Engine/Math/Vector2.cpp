@@ -1,13 +1,11 @@
 #include "Vector2.h"
+#include "LinearAlgebra.h"
 
 const Vector2 Vector2::ORIGIN = Vector2(0, 0);
 
 void Vector2::rot(double angle)
 {
-   double acos = cos(angle);
-   double asin = sin(angle);
-   v1 = v1 * acos - v2 * asin;
-   v2 = v1 * asin + v2 * acos;
+    *this = ::rotate(*this, angle);
 }
 void Vector2::normalize2()
 {

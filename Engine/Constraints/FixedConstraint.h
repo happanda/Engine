@@ -17,6 +17,9 @@ protected:
 private:
     double init_dist_;
     double rel_vel_;
+
+    Vector2 rAorig;
+    Vector2 rBorig;
 };
 
 #endif

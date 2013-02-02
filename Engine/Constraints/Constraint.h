@@ -35,8 +35,8 @@ public:
 
     Body* bodyA;
     Body* bodyB;
-    const Vector2 rA;
-    const Vector2 rB;
+    Vector2 rA;
+    Vector2 rB;
 
     void SetForceExt(double* force);
     double ForceExt[6];
