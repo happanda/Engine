@@ -6,9 +6,12 @@
 class FixedConstraint : public Constraint
 {
 public:
-    FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars);
+    FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars, bool destructable = false);
     size_t NumIter(void) const;
     bool Enough(void) const;
+
+    bool    Destructable;
+    double  DestrThreshold;
 protected:
     void Fix();
     void _deltaImpulse(Vector2& impulse, double& torque);

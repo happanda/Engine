@@ -20,9 +20,9 @@ void World::init()
     collisions.clear();
     constraints.clear();
     // arbitrary numbers
-    bodies.reserve(100);
+    bodies.reserve(200);
     collisions.reserve(1000);
-    constraints.reserve(100);
+    constraints.reserve(200);
     vars.timeStep = 0.016;
     vars.iTimeStep = 1 / vars.timeStep;
     vars.UNMOVABLE_MASS = 5000;
@@ -107,15 +107,25 @@ void World::resolve_collision(double deltaT)
 void World::resolve_constraints(double deltaT)
 {
     const double min_impulse = 0.0000001;
-    for (std::vector<Constraint*>::iterator it = constraints.begin(); it != constraints.end(); ++it)
+    for (size_t i = 0; i < constraints.size(); ++i)
     {
-        Constraint* cc = *it;
+        Constraint* cc = constraints[i];
         if (cc->bodyA->mass < vars.UNMOVABLE_MASS)
         {
             cc->SetForceExt(force_ext);
             for (size_t num_iter = 0; num_iter < cc->NumIter() && !cc->Enough(); num_iter++)
             {
                 cc->DeltaImpulse();
+                if (cc->Type == FIXED_CONSTRAINT)
+                {
+                    FixedConstraint* fc = static_cast<FixedConstraint*>(cc);
+                    if (fc->Destructable && fc->Impulse.norm2sq() > fc->DestrThreshold)
+                    {
+                        constraints.erase(constraints.begin() + i);
+                        --i;
+                        break;
+                    }
+                }
                 cc->ApplyImpulse();
             }
         }

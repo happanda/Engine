@@ -4,10 +4,12 @@
 #include "Math\PGSsolver.h"
 #include "World\World.h"
 
-FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars)
+FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars, bool destructable)
     : Constraint(bodyA, rA, bodyB, rB, vars)
     , rAorig    (rA)
     , rBorig    (rB)
+    , Destructable  (destructable)
+    , DestrThreshold(3000)
 {
     Type = FIXED_CONSTRAINT;
     A = std::vector<std::vector<double>>(1);
@@ -48,8 +50,8 @@ void FixedConstraint::init()
         - bodyA->point_velocity(bodyA->form->point + rA));
     Eta[0] = -rel_vel_;
 
-    if (rel_vel_ > 0.1)
-        std::cout << "A: " << A[0][0] << "   rel vel: " << Eta[0] << std::endl;
+    /*if (rel_vel_ > 0.1)
+        std::cout << "A: " << A[0][0] << "   rel vel: " << Eta[0] << std::endl;*/
 }
 
 void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
@@ -60,7 +62,7 @@ void FixedConstraint::_deltaImpulse(Vector2& impulse, double& torque)
     if (!Enough())
     {
         SolveLambda(A, Eta, Lambda, -DBL_MAX, DBL_MAX);
-
+        
         Vector2 dist = -(bodyB->form->point + rB - bodyA->form->point - rA);
         dist.normalize2();
         impulse = dist * Lambda[0] * 0.5;
@@ -81,7 +83,6 @@ void FixedConstraint::Fix()
     Vector2 dist = bodyB->form->point + rB - bodyA->form->point - rA;
 
     double delta = dist.norm2() - init_dist_;
-    dist.normalize2();
 
     if (abs(delta) > DBL_EPSILON)
     {
@@ -96,8 +97,8 @@ void FixedConstraint::Fix()
         Vector3 rA3(rA.v1, rA.v2, 0);
         Vector3 rB3(rB.v1, rB.v2, 0);
 
-        /*bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert * 0.5;
-        bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert * 0.5;*/
+        /*bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert * 0.1;
+        bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert * 0.1;*/
     }
 }
 

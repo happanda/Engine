@@ -19,22 +19,24 @@ Destructable::Destructable(Vector2 const& point, size_t width, size_t height, do
         }
     }
 
+    bool destr = true;
+
     for (size_t i = 0; i < width; ++i)
         for (size_t j = 0; j < height - 1; ++j)
         {
             constraints.push_back(new FixedConstraint(parts[i][j], Vector2(part_width / 2, part_height / 2),
-                parts[i][j + 1], Vector2(part_width / 2, -part_height / 2), w_vars));
+                parts[i][j + 1], Vector2(part_width / 2, -part_height / 2), w_vars, destr));
             constraints.push_back(new FixedConstraint(parts[i][j], Vector2(-part_width / 2, part_height / 2),
-                parts[i][j + 1], Vector2(-part_width / 2, -part_height / 2), w_vars));
+                parts[i][j + 1], Vector2(-part_width / 2, -part_height / 2), w_vars, destr));
         }
 
     for (size_t i = 0; i < width - 1; ++i)
         for (size_t j = 0; j < height; ++j)
         {
             constraints.push_back(new FixedConstraint(parts[i][j], Vector2(part_width / 2, part_height / 2),
-                parts[i + 1][j], Vector2(-part_width / 2, part_height / 2), w_vars));
+                parts[i + 1][j], Vector2(-part_width / 2, part_height / 2), w_vars, destr));
             constraints.push_back(new FixedConstraint(parts[i][j], Vector2(part_width / 2, -part_height / 2),
-                parts[i + 1][j], Vector2(-part_width / 2, -part_height / 2), w_vars));
+                parts[i + 1][j], Vector2(-part_width / 2, -part_height / 2), w_vars, destr));
         }
 }
 
