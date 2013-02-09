@@ -10,8 +10,6 @@
 
 struct Destructable
 {
-    std::vector<Body*> points;
-
     Destructable(Vector2 const& point, size_t width, size_t height, double mazz, world_vars* vars);
     Destructable(const Destructable& destr);
     Destructable& operator=(const Destructable& rope);

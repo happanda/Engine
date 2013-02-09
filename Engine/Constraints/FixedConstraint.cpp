@@ -9,7 +9,7 @@ FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 r
     , rAorig    (rA)
     , rBorig    (rB)
     , Destructable  (destructable)
-    , DestrThreshold(3000)
+    , DestrThreshold(100)
 {
     Type = FIXED_CONSTRAINT;
     A = std::vector<std::vector<double>>(1);
@@ -97,8 +97,8 @@ void FixedConstraint::Fix()
         Vector3 rA3(rA.v1, rA.v2, 0);
         Vector3 rB3(rB.v1, rB.v2, 0);
 
-        /*bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert * 0.1;
-        bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert * 0.1;*/
+        //bodyA->form->alpha += rA3.cross(dist3).v3 * bodyA->iInert * 0.01;
+        //bodyB->form->alpha += rB3.cross(dist3).v3 * bodyB->iInert * 0.01;
     }
 }
 

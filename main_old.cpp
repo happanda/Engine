@@ -341,3 +341,4 @@ void stack_init()
         world.addBody(bodies[nb]);
     }
 }
+

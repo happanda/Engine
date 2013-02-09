@@ -1,8 +1,8 @@
 
 #include "Rope.h"
 
-const double Rope::radius   = 0.2;
-const double Rope::distance = 0.45;
+const double Rope::radius   = 0.4;
+const double Rope::distance = 0.85;
 
 Rope::Rope(Vector2 const& point, size_t num_points, double mazz, double elast, double damp,
     orientation_t orient)

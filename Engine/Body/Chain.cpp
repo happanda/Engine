@@ -4,7 +4,7 @@
 const double Chain::radius   = 0.2;
 const double Chain::distance = 0.9;
 
-Chain::Chain(Vector2 const& point, size_t num_points, double mazz, world_vars* vars)
+Chain::Chain(Vector2 const& point, size_t num_points, double mazz, world_vars* vars, orientation_t orient)
     : points    (num_points)
     , w_vars    (vars)
 {
@@ -13,7 +13,10 @@ Chain::Chain(Vector2 const& point, size_t num_points, double mazz, world_vars* v
     for (size_t i = 0; i < num_points; ++i)
     {
         points[i] = new Body(new circle(disp.v1, disp.v2, 0, radius), single_mass, 0, 0, 0);
-        disp.v2  -= distance;
+        if (orient == o_vertical)
+            disp.v2 -= distance;
+        else
+            disp.v1 += distance;
         if (i > 0)
         {
             constraints_.push_back(new FixedConstraint(points[i], Vector2::ORIGIN, points[i - 1],

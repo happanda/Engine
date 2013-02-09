@@ -15,6 +15,8 @@
 #include "glut/glut.h"
 #include "anttweakbar\AntTweakBar.h"
 
+TwBar* bar;
+
 World world;
 Body* player_body = 0;
 Force* drag_force = 0;
@@ -120,7 +122,7 @@ void reshape(int width, int height)
 
 void keyboard(unsigned char key, int x, int y)
 {
-    if (key == '1')
+    if (key == 'g')
         init_game();
     if (key == 'p')
         pause = !pause;
@@ -242,32 +244,36 @@ void specialKey(int key, int x, int y)
         return;
 
     double vel_delta = 1;
-    double max_vel = 15;
+    double max_vel = 30;
     if (key == GLUT_KEY_UP)
     {
-        if (player_body->velocity.v2 <= 0)
-            player_body->velocity.v2 = 12;
+        if (player_body->velocity.v2 < 0)
+            player_body->velocity.v2 += vel_delta;
+        player_body->velocity.v2 += vel_delta;
     }
     if (key == GLUT_KEY_DOWN)
     {
+        if (player_body->velocity.v2 > 0)
+            player_body->velocity.v2 -= vel_delta;
+        player_body->velocity.v2 -= vel_delta;
     }
     if (key == GLUT_KEY_LEFT)
     {
-        if (player_body->angle_vel < 0)
-            player_body->angle_vel = -0;
-        player_body->angle_vel += vel_delta;
+        if (player_body->velocity.v1 > 0)
+            player_body->velocity.v1 -= vel_delta;
+        player_body->velocity.v1 -= vel_delta;
     }
     if (key == GLUT_KEY_RIGHT)
     {
-        if (player_body->angle_vel > 0)
-            player_body->angle_vel = 0;
-        player_body->angle_vel -= vel_delta;
+        if (player_body->velocity.v1 < 0)
+            player_body->velocity.v1 += vel_delta;
+        player_body->velocity.v1 += vel_delta;
     }
 
-    if (player_body->angle_vel > max_vel)
-        player_body->angle_vel = max_vel;
-    if (player_body->angle_vel < -max_vel)
-        player_body->angle_vel = -max_vel;
+    if (player_body->velocity.v1 > max_vel)
+        player_body->velocity.v1 = max_vel;
+    if (player_body->velocity.v1 < -max_vel)
+        player_body->velocity.v1 = -max_vel;
 }
 
 int main(int argc, char** argv)
@@ -316,8 +322,8 @@ void tw_init()
     TwInit(TW_OPENGL, NULL);
 
     // Create a tweak bar
-    TwBar* bar = TwNewBar("TweakBar");
-    TwDefine(" TweakBar size='200 100' color='100 100 100' ");
+    bar = TwNewBar("TweakBar");
+    TwDefine(" TweakBar size='200 120' color='100 100 100' ");
     TwAddVarRW(bar, "Restitution", TW_TYPE_DOUBLE, &world.vars.RESTITUTION,
         " min=0.0 max=1.0 step=0.05 help='Coefficient of restitution, default 0.5.' ");
     TwAddVarRW(bar, "Friction", TW_TYPE_DOUBLE, &world.vars.FRICTION,
@@ -330,7 +336,7 @@ void tw_init()
 void init_game()
 {
     world_vars wvars = world.vars;
-    wvars.GRAVITATION.v2 = -9.8;
+    wvars.GRAVITATION.v2 = 0;//-9.8;
     wvars.RESTITUTION = 0.3;
     wvars.FRICTION = 0.5;
     world.init();
@@ -339,11 +345,52 @@ void init_game()
     // PLAYER
     world.addBody(new Body(new circle(0, 0, 0, 2), 10, 0, 0, 0));
     player_body = &(*world.bodies.front());
+    player_body->form->point = Vector2(40, 0);
+
+    TwAddVarRW(bar, "X", TW_TYPE_DOUBLE, &player_body->form->point.v1, " step=1 help='X coordinate' ");
+    TwAddVarRW(bar, "Y", TW_TYPE_DOUBLE, &player_body->form->point.v2, " step=1 help='Y coordinate' ");
 
     double bigmass = wvars.UNMOVABLE_MASS;
-    world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, -10, 0, 100, 4), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(51, -18.5, 0, 2, 21), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(71, -30, 0, 40, 2), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(91, -13.5, 0, 2, 31), bigmass, 0, 0, 0));
 
+    // windmill
+    world.addBody(new Body(new rectangle(71, -10, 0, 36, 1), 38, 0, 0, 0));
+    world.addConstraint(new DoFConstraint(&*world.bodies.back(), X_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(&*world.bodies.back(), Y_AXIS, &(world.vars)));
+    DoFmotor* motor = new DoFmotor(world.bodies.back(), MOVE_XY_ROTATE, &(world.vars));
+    world.addConstraint(motor);
+    //std::vector<double> motor_bias;
+    //motor_bias.push_back(-0.05);
+    //motor_bias.push_back(0.01);
+    //motor_bias.push_back(-0.1);
+    //motor->SetMotorBias(motor_bias);
+    motor->SetMotorLimits(-10, 10);
 
-    //Destructable* destr = new Destructable(Vector2::ORIGIN, 2, 2, 100, &world.vars);
-    //world.addDestructable(destr);
+    world.addBody(new Body(new rectangle(122, 0, 0, 60, 4), bigmass, 0, 0, 0));
+
+    //Chain* chain = new Chain(Vector2(153, 10), 20, 20, &world.vars, o_horizontal);
+    //world.addChain(chain);
+    //world.addConstraint(new DoFConstraint(chain->points.back(), XY_AXIS, &(world.vars)));
+
+    Rope* rope = new Rope(Vector2(153, 0), 30, 100, 1000, 0.1, o_horizontal);
+    world.addRope(rope);
+    world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
+    world.addConstraint(new DoFConstraint(rope->points.back(), XY_AXIS, &(world.vars)));
+
+    world.addBody(new Body(new rectangle(206, 11, 0.4, 60, 2), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(243, 22.5, 0, 20, 1), bigmass, 0, 0, 0));
+
+    world.addBody(new Body(new rectangle(253, -28, 0, 1, 100), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(280, -18, 0, 1, 80), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(273, -79, 0, 41, 2), bigmass, 0, 0, 0));
+
+    Destructable* destr = new Destructable(Vector2(245, 24), 1, 4, 60, &world.vars);
+    world.addDestructable(destr);
+    //world.addConstraint(new DoFConstraint(destr->parts.front().front(), X_AXIS, &(world.vars)));
+    //world.addConstraint(new DoFConstraint(destr->parts.front().front(), Y_AXIS, &(world.vars)));
+    //world.addConstraint(new DoFConstraint(destr->parts.back().back(), X_AXIS, &(world.vars)));
+    //world.addConstraint(new DoFConstraint(destr->parts.back().back(), Y_AXIS, &(world.vars)));
 }
