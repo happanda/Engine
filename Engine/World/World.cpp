@@ -101,7 +101,10 @@ void World::resolve_collision(double deltaT)
                 }
             }
         }
+
+        delete *it;
     }
+    collisions.clear();
 }
 
 void World::resolve_constraints(double deltaT)

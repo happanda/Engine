@@ -120,6 +120,8 @@ void reshape(int width, int height)
 
 void keyboard(unsigned char key, int x, int y)
 {
+    if (key == '1')
+        init_game();
     if (key == 'p')
         pause = !pause;
     if (key == 'q')
@@ -243,6 +245,8 @@ void specialKey(int key, int x, int y)
     double max_vel = 15;
     if (key == GLUT_KEY_UP)
     {
+        if (player_body->velocity.v2 <= 0)
+            player_body->velocity.v2 = 12;
     }
     if (key == GLUT_KEY_DOWN)
     {
@@ -337,9 +341,6 @@ void init_game()
     player_body = &(*world.bodies.front());
 
     double bigmass = wvars.UNMOVABLE_MASS;
-    world.addBody(new Body(new rectangle(-40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(new Body(new rectangle(40, 0, 0, 20, 25), bigmass, 0, 0, 0));
-    world.addBody(new Body(new rectangle(0, 14, 0, 200, 3), bigmass, 0, 0, 0));
     world.addBody(new Body(new rectangle(0, -14, 0, 200, 3), bigmass, 0, 0, 0));
 
 

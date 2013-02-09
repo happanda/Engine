@@ -2,7 +2,7 @@
 #define _USE_MATH_DEFINES
 #include "math.h"
 
-double zoom_distance = 20;
+double zoom_distance = 30;
 double camera_xpos = 0;
 double camera_ypos = 0;
 double viewfield_minx = 0;
