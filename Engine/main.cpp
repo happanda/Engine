@@ -343,10 +343,10 @@ void init_game()
     world.vars = wvars;
 
     // PLAYER
-    //world.addBody(new Body(new circle(0, 0, 0, 2), 10, 0, 0, 0));
-    world.addBody(new Body(new rectangle(0, 0, 0, 2, 2), 10, 0, 0, 0));
+    world.addBody(new Body(new circle(0, 0, 0, 2), 10, 0, 0, 0));
+    //world.addBody(new Body(new rectangle(0, 0, 0, 2, 2), 10, 0, 0, 0));
     player_body = &(*world.bodies.front());
-    player_body->form->point = Vector2(50, 0);
+    player_body->form->point = Vector2(220, 40);
 
     TwAddVarRW(bar, "X", TW_TYPE_DOUBLE, &player_body->form->point.v1, " step=1 help='X coordinate' ");
     TwAddVarRW(bar, "Y", TW_TYPE_DOUBLE, &player_body->form->point.v2, " step=1 help='Y coordinate' ");
@@ -377,23 +377,38 @@ void init_game()
 
     world.addBody(new Body(new rectangle(122, 0, 0, 60, 4), bigmass, 0, 0, 0));
 
-    //Chain* chain = new Chain(Vector2(153, 10), 20, 20, &world.vars, o_horizontal);
+    //Chain* chain = new Chain(Vector2(153, 0), 10, 30, &world.vars, o_horizontal);
     //world.addChain(chain);
+    //world.addConstraint(new DoFConstraint(chain->points.front(), XY_AXIS, &(world.vars)));
     //world.addConstraint(new DoFConstraint(chain->points.back(), XY_AXIS, &(world.vars)));
 
-    Rope* rope = new Rope(Vector2(153, 0), 30, 100, 1000, 0.1, o_horizontal);
+    Rope* rope = new Rope(Vector2(103, 20), 16, 10, 300, 0.01, o_vertical);
     world.addRope(rope);
     world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
-    world.addConstraint(new DoFConstraint(rope->points.back(), XY_AXIS, &(world.vars)));
+    rope = new Rope(Vector2(113, 20), 16, 10, 300, 0.01, o_vertical);
+    world.addRope(rope);
+    world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
+    rope = new Rope(Vector2(123, 20), 16, 10, 300, 0.01, o_vertical);
+    world.addRope(rope);
+    world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
+    rope = new Rope(Vector2(133, 20), 16, 10, 300, 0.01, o_vertical);
+    world.addRope(rope);
+    world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
+    rope = new Rope(Vector2(143, 20), 16, 10, 300, 0.01, o_vertical);
+    world.addRope(rope);
+    world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
+    rope = new Rope(Vector2(153, 20), 16, 10, 300, 0.01, o_vertical);
+    world.addRope(rope);
+    world.addConstraint(new DoFConstraint(rope->points.front(), XY_AXIS, &(world.vars)));
 
-    world.addBody(new Body(new rectangle(206, 11, 0.4, 60, 2), bigmass, 0, 0, 0));
-    world.addBody(new Body(new rectangle(243, 22.5, 0, 20, 1), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(180, 11, 0.4, 60, 2), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(218, 22.5, 0, 20, 1), bigmass, 0, 0, 0));
 
-    world.addBody(new Body(new rectangle(253, -28, 0, 1, 100), bigmass, 0, 0, 0));
-    world.addBody(new Body(new rectangle(280, -18, 0, 1, 80), bigmass, 0, 0, 0));
-    world.addBody(new Body(new rectangle(273, -79, 0, 41, 2), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(228, -28, 0, 1, 100), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(260, -18, 0, 1, 80), bigmass, 0, 0, 0));
+    world.addBody(new Body(new rectangle(248, -79, 0, 41, 2), bigmass, 0, 0, 0));
 
-    Destructable* destr = new Destructable(Vector2(245, 24), 1, 4, 60, &world.vars);
+    Destructable* destr = new Destructable(Vector2(220, 25), 5, 3, 60, &world.vars);
     world.addDestructable(destr);
     //world.addConstraint(new DoFConstraint(destr->parts.front().front(), X_AXIS, &(world.vars)));
     //world.addConstraint(new DoFConstraint(destr->parts.front().front(), Y_AXIS, &(world.vars)));

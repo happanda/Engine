@@ -9,7 +9,7 @@ FixedConstraint::FixedConstraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 r
     , rAorig    (rA)
     , rBorig    (rB)
     , Destructable  (destructable)
-    , DestrThreshold(100)
+    , DestrThreshold(200)
 {
     Type = FIXED_CONSTRAINT;
     A = std::vector<std::vector<double>>(1);
@@ -90,8 +90,8 @@ void FixedConstraint::Fix()
 
         Vector2 fix_dist = dist * delta;
 
-        bodyA->form->point = bodyA->form->point + fix_dist * bodyA->iMass * 0.5;
-        bodyB->form->point = bodyB->form->point - fix_dist * bodyB->iMass * 0.5;
+        bodyA->form->point = bodyA->form->point + fix_dist * bodyA->iMass * 0.7;
+        bodyB->form->point = bodyB->form->point - fix_dist * bodyB->iMass * 0.7;
 
         Vector3 dist3(fix_dist.v1, fix_dist.v2, 0);
         Vector3 rA3(rA.v1, rA.v2, 0);
@@ -104,7 +104,7 @@ void FixedConstraint::Fix()
 
 size_t FixedConstraint::NumIter(void) const
 {
-    return 500;
+    return 100;
 }
 
 bool FixedConstraint::Enough(void) const
