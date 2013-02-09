@@ -5,14 +5,14 @@
 
 enum DoFmotorType
 {
-    STABLE          = 0x000,
-    MOVE_X          = 0x001,
-    MOVE_Y          = 0x002,
-    MOVE_XY         = 0x003,
-    ROTATE          = 0x004,
-    MOVE_X_ROTATE   = 0x005,
-    MOVE_Y_ROTATE   = 0x006,
-    MOVE_XY_ROTATE  = 0x007
+    STABLE          = 0,
+    MOVE_X          = 1,
+    MOVE_Y          = 2,
+    MOVE_XY         = 3,
+    ROTATE          = 4,
+    MOVE_X_ROTATE   = 5,
+    MOVE_Y_ROTATE   = 6,
+    MOVE_XY_ROTATE  = 7
 };
 
 class DoFmotor
@@ -22,14 +22,18 @@ public:
     DoFmotor(Body* body, DoFmotorType type, world_vars* vars);
     DoFmotorType motor_type;
     void SetMotorBias(std::vector<double> const& dzeta);
-    void SetMotorLimits(double lower_limit, double upper_limit);
+    void SetMotorAcceleration(double lower_limit, double upper_limit);
+    void SetMotorLimits(std::vector<double> const& max_speed);
 protected:
     void _deltaImpulse(Vector2& impulse, double& torque);
+    bool Enough(void) const;
 private:
     void init();
+    void Fix ();
     double              lower_lambda;
     double              upper_lambda;
     std::vector<double> motor_bias_;
+    std::vector<double> max_speed;
 };
 
 #endif

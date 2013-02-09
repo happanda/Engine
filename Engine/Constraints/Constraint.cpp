@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Constraint.h"
 
 Constraint::Constraint(Body* bodyA, Vector2 rA, Body* bodyB, Vector2 rB, world_vars* vars):

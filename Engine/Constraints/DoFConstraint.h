@@ -5,14 +5,14 @@
 
 enum DoFType
 {
-    NONE     = 0x000,
-    X_AXIS   = 0x001,
-    Y_AXIS   = 0x002,
-    XY_AXIS  = 0x003,
-    ANGLE    = 0x004,
-    X_ANGLE  = 0x005,
-    Y_ANGLE  = 0x006,
-    XY_ANGLE = 0x007
+    NONE     = 0,
+    X_AXIS   = 1,
+    Y_AXIS   = 2,
+    XY_AXIS  = 3,
+    ANGLE    = 4,
+    X_ANGLE  = 5,
+    Y_ANGLE  = 6,
+    XY_ANGLE = 7
 };
 
 class DoFConstraint : public Constraint
@@ -25,8 +25,8 @@ public:
     DoFType dof_type;
 protected:
     void Fix();
-    void _deltaImpulse(Vector2& impulse, double& torque);
-    void init();
+    virtual void _deltaImpulse(Vector2& impulse, double& torque);
+    virtual void init();
 
 private:
     double x_init_;

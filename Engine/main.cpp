@@ -336,16 +336,17 @@ void tw_init()
 void init_game()
 {
     world_vars wvars = world.vars;
-    wvars.GRAVITATION.v2 = 0;//-9.8;
+    wvars.GRAVITATION.v2 = -9.8;
     wvars.RESTITUTION = 0.3;
     wvars.FRICTION = 0.5;
     world.init();
     world.vars = wvars;
 
     // PLAYER
-    world.addBody(new Body(new circle(0, 0, 0, 2), 10, 0, 0, 0));
+    //world.addBody(new Body(new circle(0, 0, 0, 2), 10, 0, 0, 0));
+    world.addBody(new Body(new rectangle(0, 0, 0, 2, 2), 10, 0, 0, 0));
     player_body = &(*world.bodies.front());
-    player_body->form->point = Vector2(40, 0);
+    player_body->form->point = Vector2(50, 0);
 
     TwAddVarRW(bar, "X", TW_TYPE_DOUBLE, &player_body->form->point.v1, " step=1 help='X coordinate' ");
     TwAddVarRW(bar, "Y", TW_TYPE_DOUBLE, &player_body->form->point.v2, " step=1 help='Y coordinate' ");
@@ -362,12 +363,17 @@ void init_game()
     world.addConstraint(new DoFConstraint(&*world.bodies.back(), Y_AXIS, &(world.vars)));
     DoFmotor* motor = new DoFmotor(world.bodies.back(), MOVE_XY_ROTATE, &(world.vars));
     world.addConstraint(motor);
-    //std::vector<double> motor_bias;
-    //motor_bias.push_back(-0.05);
-    //motor_bias.push_back(0.01);
-    //motor_bias.push_back(-0.1);
-    //motor->SetMotorBias(motor_bias);
-    motor->SetMotorLimits(-10, 10);
+    std::vector<double> motor_bias;
+    motor_bias.push_back(0.0);
+    motor_bias.push_back(0.0);
+    motor_bias.push_back(-0.1);
+    motor->SetMotorBias(motor_bias);
+    motor->SetMotorAcceleration(-3, 3);
+    std::vector<double> max_speed;
+    max_speed.push_back(0.0);
+    max_speed.push_back(0.0);
+    max_speed.push_back(1);
+    motor->SetMotorLimits(max_speed);
 
     world.addBody(new Body(new rectangle(122, 0, 0, 60, 4), bigmass, 0, 0, 0));
 

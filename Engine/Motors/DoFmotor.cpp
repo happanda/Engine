@@ -1,4 +1,5 @@
 
+#include <iostream>
 #include "DoFmotor.h"
 #include "Math\PGSsolver.h"
 
@@ -36,6 +37,9 @@ DoFmotor::DoFmotor(Body* body, DoFmotorType type, world_vars* vars)
     motor_bias_.push_back(0);
     motor_bias_.push_back(0);
     motor_bias_.push_back(0);
+    max_speed.push_back(1);
+    max_speed.push_back(1);
+    max_speed.push_back(0.5);
 }
 
 void DoFmotor::SetMotorBias(std::vector<double> const& dzeta)
@@ -46,12 +50,16 @@ void DoFmotor::SetMotorBias(std::vector<double> const& dzeta)
 void DoFmotor::init()
 {
     DoFConstraint::init();
-    if ((motor_type & MOVE_X) != 0)
+    if ((motor_type & MOVE_X) != 0 && bodyA->velocity.v1 > -max_speed[0] && bodyA->velocity.v1 < max_speed[0])
         Eta[0] += w_vars->iTimeStep * motor_bias_[0];
-    if ((motor_type & MOVE_Y) != 0)
+    if ((motor_type & MOVE_Y) != 0 && bodyA->velocity.v2 > -max_speed[1] && bodyA->velocity.v2 < max_speed[1])
         Eta[1] += w_vars->iTimeStep * motor_bias_[1];
-    if ((motor_type & ROTATE) != 0)
+    if ((motor_type & ROTATE) != 0 && bodyA->angle_vel > -max_speed[2] && bodyA->angle_vel < max_speed[2])
         Eta[2] += w_vars->iTimeStep * motor_bias_[2];
+}
+
+void DoFmotor::Fix()
+{
 }
 
 void DoFmotor::_deltaImpulse(Vector2& impulse, double& torque)
@@ -72,8 +80,18 @@ void DoFmotor::_deltaImpulse(Vector2& impulse, double& torque)
     }
 }
 
-void DoFmotor::SetMotorLimits( double lower_limit, double upper_limit )
+void DoFmotor::SetMotorAcceleration( double lower_limit, double upper_limit )
 {
     lower_lambda = lower_limit;
     upper_lambda = upper_limit;
+}
+
+void DoFmotor::SetMotorLimits(std::vector<double> const& max_sp)
+{
+    max_speed = max_sp;
+}
+
+bool DoFmotor::Enough(void) const
+{
+    return false;
 }
